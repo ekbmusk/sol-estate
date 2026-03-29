@@ -11,5 +11,6 @@ pub struct Proposal {
     pub votes_against: u64,
     pub deadline: i64,
     pub executed: bool,
+    pub proposal_id: u64,
     pub bump: u8,
 }
