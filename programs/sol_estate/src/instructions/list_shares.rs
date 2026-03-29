@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
 use crate::errors::SolEstateError;
+use crate::events::SharesListed;
 use crate::state::{InvestorRecord, Listing, PropertyAccount};
 
 #[derive(Accounts)]
@@ -43,6 +44,7 @@ pub struct ListShares<'info> {
     #[account(
         mut,
         constraint = escrow_share_account.mint == property.share_mint,
+        constraint = escrow_share_account.owner == listing.key(),
     )]
     pub escrow_share_account: Account<'info, TokenAccount>,
 
@@ -84,6 +86,13 @@ pub fn handle_list_shares(ctx: Context<ListShares>, amount: u64, price_per_share
     listing.price_per_share = price_per_share;
     listing.active = true;
     listing.bump = ctx.bumps.listing;
+
+    emit!(SharesListed {
+        property_id: ctx.accounts.property.property_id.clone(),
+        seller: ctx.accounts.seller.key(),
+        amount,
+        price_per_share,
+    });
 
     msg!(
         "Listed {} shares at {} KZTE per share",

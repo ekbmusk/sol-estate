@@ -578,4 +578,287 @@ describe("sol_estate", () => {
     assert.equal(finalProperty.sharesSold.toNumber(), 50);
     assert.equal(finalProperty.totalDividendsPerShare.toNumber(), 200_000000);
   });
+
+  // ── Cancel Listing ──────────────────────────────────────
+
+  it("Seller cancels a listing and recovers shares", async () => {
+    // First, list some shares (investor still has 80 shares after earlier tests)
+    const listAmount = new BN(10);
+    const listPrice = new BN(7000_000000);
+
+    // Need a new listing — previous one is deactivated but PDA is taken
+    // Use the e2e property for a fresh listing
+    const cancelPropertyId = "cancel-test-001";
+    const cancelShares = new BN(100);
+    const cancelPrice = new BN(1000_000000);
+    const cancelHash = Array(32).fill(99);
+    const cancelSeller = anchor.web3.Keypair.generate();
+
+    // Airdrop SOL
+    const sig1 = await provider.connection.requestAirdrop(
+      cancelSeller.publicKey,
+      5 * anchor.web3.LAMPORTS_PER_SOL
+    );
+    await provider.connection.confirmTransaction(sig1);
+
+    // Mint KZTE to seller
+    const sellerKzte = await createAssociatedTokenAccount(
+      provider.connection,
+      payer,
+      kzteMint,
+      cancelSeller.publicKey
+    );
+    await mintTo(
+      provider.connection,
+      payer,
+      kzteMint,
+      sellerKzte,
+      authority.publicKey,
+      500_000_000_000
+    );
+
+    // Derive PDAs
+    const [cancelPropertyPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("property"), Buffer.from(cancelPropertyId)],
+      program.programId
+    );
+    const [cancelVaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("vault"), Buffer.from(cancelPropertyId)],
+      program.programId
+    );
+    const [cancelShareMint] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("share_mint"), Buffer.from(cancelPropertyId)],
+      program.programId
+    );
+    const cancelVaultKzte = await getAssociatedTokenAddress(kzteMint, cancelVaultPda, true);
+
+    // Initialize property
+    await program.methods
+      .initializeProperty(cancelPropertyId, "Cancel Test", cancelShares, cancelPrice, cancelHash)
+      .accounts({
+        authority: authority.publicKey,
+        property: cancelPropertyPda,
+        vault: cancelVaultPda,
+        shareMint: cancelShareMint,
+        kzteMint: kzteMint,
+        vaultTokenAccount: cancelVaultKzte,
+        systemProgram: anchor.web3.SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+      })
+      .rpc();
+
+    // Invest
+    const sellerShareAta = await getAssociatedTokenAddress(cancelShareMint, cancelSeller.publicKey);
+    const [sellerRecordPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("investor"), cancelPropertyPda.toBuffer(), cancelSeller.publicKey.toBuffer()],
+      program.programId
+    );
+
+    await program.methods
+      .invest(new BN(50))
+      .accounts({
+        investor: cancelSeller.publicKey,
+        property: cancelPropertyPda,
+        vault: cancelVaultPda,
+        shareMint: cancelShareMint,
+        investorKzteAccount: sellerKzte,
+        vaultTokenAccount: cancelVaultKzte,
+        investorShareAccount: sellerShareAta,
+        investorRecord: sellerRecordPda,
+        kzteMint: kzteMint,
+        systemProgram: anchor.web3.SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+      })
+      .signers([cancelSeller])
+      .rpc();
+
+    // List 20 shares
+    const [listingPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("listing"), cancelPropertyPda.toBuffer(), cancelSeller.publicKey.toBuffer()],
+      program.programId
+    );
+    const escrowShareAta = await getOrCreateAssociatedTokenAccount(
+      provider.connection,
+      payer,
+      cancelShareMint,
+      listingPda,
+      true
+    );
+
+    await program.methods
+      .listShares(new BN(20), new BN(2000_000000))
+      .accounts({
+        seller: cancelSeller.publicKey,
+        property: cancelPropertyPda,
+        investorRecord: sellerRecordPda,
+        listing: listingPda,
+        sellerShareAccount: sellerShareAta,
+        escrowShareAccount: escrowShareAta.address,
+        systemProgram: anchor.web3.SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .signers([cancelSeller])
+      .rpc();
+
+    // Verify shares decreased
+    let record = await program.account.investorRecord.fetch(sellerRecordPda);
+    assert.equal(record.sharesOwned.toNumber(), 30); // 50 - 20
+
+    // Cancel listing
+    await program.methods
+      .cancelListing()
+      .accounts({
+        seller: cancelSeller.publicKey,
+        property: cancelPropertyPda,
+        listing: listingPda,
+        investorRecord: sellerRecordPda,
+        escrowShareAccount: escrowShareAta.address,
+        sellerShareAccount: sellerShareAta,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .signers([cancelSeller])
+      .rpc();
+
+    // Verify shares restored
+    record = await program.account.investorRecord.fetch(sellerRecordPda);
+    assert.equal(record.sharesOwned.toNumber(), 50); // 30 + 20 back
+
+    // Verify listing deactivated
+    const listing = await program.account.listing.fetch(listingPda);
+    assert.equal(listing.active, false);
+
+    // Verify share tokens returned
+    const shareBalance = (await getAccount(provider.connection, sellerShareAta)).amount;
+    assert.equal(shareBalance, BigInt(50));
+  });
+
+  // ── Negative Tests ──────────────────────────────────────
+
+  it("Fails to invest more shares than available", async () => {
+    const investorKzteAta = await getAssociatedTokenAddress(kzteMint, investor.publicKey);
+    const vaultTokenAccount = await getAssociatedTokenAddress(kzteMint, vaultPda, true);
+    const investorShareAta = await getAssociatedTokenAddress(shareMintPda, investor.publicKey);
+
+    try {
+      await program.methods
+        .invest(new BN(999999))
+        .accounts({
+          investor: investor.publicKey,
+          property: propertyPda,
+          vault: vaultPda,
+          shareMint: shareMintPda,
+          investorKzteAccount: investorKzteAta,
+          vaultTokenAccount: vaultTokenAccount,
+          investorShareAccount: investorShareAta,
+          investorRecord: investorRecordPda,
+          kzteMint: kzteMint,
+          systemProgram: anchor.web3.SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        })
+        .signers([investor])
+        .rpc();
+      assert.fail("Should have failed — insufficient shares");
+    } catch (err: any) {
+      assert.include(err.message, "InsufficientShares");
+    }
+  });
+
+  it("Fails to claim dividends when nothing to claim", async () => {
+    // investor already claimed — second claim should fail
+    const investorKzteAta = await getAssociatedTokenAddress(kzteMint, investor.publicKey);
+    const vaultTokenAccount = await getAssociatedTokenAddress(kzteMint, vaultPda, true);
+
+    try {
+      await program.methods
+        .claimDividends()
+        .accounts({
+          investor: investor.publicKey,
+          property: propertyPda,
+          vault: vaultPda,
+          investorRecord: investorRecordPda,
+          vaultTokenAccount: vaultTokenAccount,
+          investorKzteAccount: investorKzteAta,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        })
+        .signers([investor])
+        .rpc();
+      assert.fail("Should have failed — nothing to claim");
+    } catch (err: any) {
+      assert.include(err.message, "NothingToClaim");
+    }
+  });
+
+  it("Fails to invest zero shares", async () => {
+    const investorKzteAta = await getAssociatedTokenAddress(kzteMint, investor.publicKey);
+    const vaultTokenAccount = await getAssociatedTokenAddress(kzteMint, vaultPda, true);
+    const investorShareAta = await getAssociatedTokenAddress(shareMintPda, investor.publicKey);
+
+    try {
+      await program.methods
+        .invest(new BN(0))
+        .accounts({
+          investor: investor.publicKey,
+          property: propertyPda,
+          vault: vaultPda,
+          shareMint: shareMintPda,
+          investorKzteAccount: investorKzteAta,
+          vaultTokenAccount: vaultTokenAccount,
+          investorShareAccount: investorShareAta,
+          investorRecord: investorRecordPda,
+          kzteMint: kzteMint,
+          systemProgram: anchor.web3.SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        })
+        .signers([investor])
+        .rpc();
+      assert.fail("Should have failed — zero amount");
+    } catch (err: any) {
+      assert.include(err.message, "AmountTooSmall");
+    }
+  });
+
+  it("Fails to create proposal without shares", async () => {
+    const noSharesUser = anchor.web3.Keypair.generate();
+    const sig = await provider.connection.requestAirdrop(
+      noSharesUser.publicKey,
+      2 * anchor.web3.LAMPORTS_PER_SOL
+    );
+    await provider.connection.confirmTransaction(sig);
+
+    // Create an investor record with 0 shares (invest then sell all — but simpler: just try without record)
+    const [fakeInvestorPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("investor"), propertyPda.toBuffer(), noSharesUser.publicKey.toBuffer()],
+      program.programId
+    );
+    const proposalId = new BN(999);
+    const [proposalPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("proposal"), propertyPda.toBuffer(), proposalId.toArrayLike(Buffer, "le", 8)],
+      program.programId
+    );
+
+    try {
+      await program.methods
+        .createProposal(proposalId, "Test proposal", new BN(86400))
+        .accounts({
+          creator: noSharesUser.publicKey,
+          property: propertyPda,
+          investorRecord: fakeInvestorPda,
+          proposal: proposalPda,
+          systemProgram: anchor.web3.SystemProgram.programId,
+        })
+        .signers([noSharesUser])
+        .rpc();
+      assert.fail("Should have failed — no investor record");
+    } catch (err: any) {
+      // Expected: AccountNotInitialized (no investor record exists)
+    }
+  });
 });

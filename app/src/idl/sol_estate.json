@@ -301,6 +301,127 @@
       "args": []
     },
     {
+      "name": "cancel_listing",
+      "discriminator": [
+        41,
+        183,
+        50,
+        232,
+        230,
+        233,
+        157,
+        70
+      ],
+      "accounts": [
+        {
+          "name": "seller",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "property",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  101,
+                  114,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "property.property_id",
+                "account": "PropertyAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "property"
+              },
+              {
+                "kind": "account",
+                "path": "seller"
+              }
+            ]
+          }
+        },
+        {
+          "name": "investor_record",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  118,
+                  101,
+                  115,
+                  116,
+                  111,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "property"
+              },
+              {
+                "kind": "account",
+                "path": "seller"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_share_account",
+          "docs": [
+            "Escrow share account (return shares to seller)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "seller_share_account",
+          "docs": [
+            "Seller's share token account (destination)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "claim_dividends",
       "discriminator": [
         105,
@@ -1561,6 +1682,125 @@
       ]
     }
   ],
+  "events": [
+    {
+      "name": "DividendsClaimed",
+      "discriminator": [
+        47,
+        49,
+        16,
+        88,
+        139,
+        132,
+        245,
+        16
+      ]
+    },
+    {
+      "name": "DividendsDistributed",
+      "discriminator": [
+        117,
+        213,
+        170,
+        55,
+        19,
+        80,
+        211,
+        101
+      ]
+    },
+    {
+      "name": "ListingCancelled",
+      "discriminator": [
+        11,
+        46,
+        163,
+        10,
+        103,
+        80,
+        139,
+        194
+      ]
+    },
+    {
+      "name": "PropertyInitialized",
+      "discriminator": [
+        140,
+        125,
+        250,
+        1,
+        67,
+        188,
+        132,
+        137
+      ]
+    },
+    {
+      "name": "ProposalCreated",
+      "discriminator": [
+        186,
+        8,
+        160,
+        108,
+        81,
+        13,
+        51,
+        206
+      ]
+    },
+    {
+      "name": "SharesBought",
+      "discriminator": [
+        240,
+        98,
+        69,
+        10,
+        253,
+        234,
+        226,
+        65
+      ]
+    },
+    {
+      "name": "SharesListed",
+      "discriminator": [
+        233,
+        5,
+        16,
+        63,
+        107,
+        7,
+        205,
+        196
+      ]
+    },
+    {
+      "name": "SharesPurchased",
+      "discriminator": [
+        24,
+        220,
+        223,
+        28,
+        213,
+        182,
+        47,
+        22
+      ]
+    },
+    {
+      "name": "VoteCast",
+      "discriminator": [
+        39,
+        53,
+        195,
+        104,
+        188,
+        17,
+        225,
+        213
+      ]
+    }
+  ],
   "errors": [
     {
       "code": 6000,
@@ -1619,6 +1859,46 @@
     }
   ],
   "types": [
+    {
+      "name": "DividendsClaimed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "property_id",
+            "type": "string"
+          },
+          {
+            "name": "investor",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DividendsDistributed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "property_id",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "dividend_per_share",
+            "type": "u64"
+          }
+        ]
+      }
+    },
     {
       "name": "InvestorRecord",
       "type": {
@@ -1679,6 +1959,26 @@
           {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ListingCancelled",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "property_id",
+            "type": "string"
+          },
+          {
+            "name": "seller",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
           }
         ]
       }
@@ -1749,6 +2049,30 @@
       }
     },
     {
+      "name": "PropertyInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "property_id",
+            "type": "string"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_shares",
+            "type": "u64"
+          },
+          {
+            "name": "price_per_share",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
       "name": "PropertyStatus",
       "type": {
         "kind": "enum",
@@ -1810,6 +2134,106 @@
       }
     },
     {
+      "name": "ProposalCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "property_id",
+            "type": "string"
+          },
+          {
+            "name": "proposal_id",
+            "type": "u64"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "deadline",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SharesBought",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "property_id",
+            "type": "string"
+          },
+          {
+            "name": "buyer",
+            "type": "pubkey"
+          },
+          {
+            "name": "seller",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "total_cost",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SharesListed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "property_id",
+            "type": "string"
+          },
+          {
+            "name": "seller",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "price_per_share",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SharesPurchased",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "property_id",
+            "type": "string"
+          },
+          {
+            "name": "investor",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "total_cost",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
       "name": "VaultAccount",
       "type": {
         "kind": "struct",
@@ -1833,6 +2257,30 @@
           {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VoteCast",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "proposal_id",
+            "type": "u64"
+          },
+          {
+            "name": "voter",
+            "type": "pubkey"
+          },
+          {
+            "name": "approve",
+            "type": "bool"
+          },
+          {
+            "name": "weight",
+            "type": "u64"
           }
         ]
       }

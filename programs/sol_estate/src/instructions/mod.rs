@@ -6,6 +6,7 @@ pub mod list_shares;
 pub mod buy_shares;
 pub mod create_proposal;
 pub mod vote;
+pub mod cancel_listing;
 
 pub use initialize_property::*;
 pub use invest::*;
@@ -15,3 +16,4 @@ pub use list_shares::*;
 pub use buy_shares::*;
 pub use create_proposal::*;
 pub use vote::*;
+pub use cancel_listing::*;

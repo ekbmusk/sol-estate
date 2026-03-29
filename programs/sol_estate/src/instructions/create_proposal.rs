@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::errors::SolEstateError;
+use crate::events::ProposalCreated;
 use crate::state::{InvestorRecord, PropertyAccount, Proposal};
 
 #[derive(Accounts)]
@@ -60,6 +61,13 @@ pub fn handle_create_proposal(
     proposal.executed = false;
     proposal.proposal_id = proposal_id;
     proposal.bump = ctx.bumps.proposal;
+
+    emit!(ProposalCreated {
+        property_id: ctx.accounts.property.property_id.clone(),
+        proposal_id,
+        creator: ctx.accounts.creator.key(),
+        deadline,
+    });
 
     msg!("Proposal {} created", proposal_id);
     Ok(())

@@ -5,6 +5,7 @@ use anchor_spl::{
 };
 
 use crate::errors::SolEstateError;
+use crate::events::SharesPurchased;
 use crate::state::{InvestorRecord, PropertyAccount, PropertyStatus, VaultAccount};
 
 #[derive(Accounts)]
@@ -126,6 +127,7 @@ pub fn handle_invest(ctx: Context<Invest>, amount: u64) -> Result<()> {
     // Capture keys before mutable borrows
     let investor_key = ctx.accounts.investor.key();
     let property_key = ctx.accounts.property.key();
+    let property_id_str = ctx.accounts.property.property_id.clone();
     let investor_record_bump = ctx.bumps.investor_record;
 
     // Update property
@@ -167,6 +169,13 @@ pub fn handle_invest(ctx: Context<Invest>, amount: u64) -> Result<()> {
         .kzte_invested
         .checked_add(total_cost)
         .ok_or(error!(SolEstateError::Overflow))?;
+
+    emit!(SharesPurchased {
+        property_id: property_id_str,
+        investor: investor_key,
+        amount,
+        total_cost,
+    });
 
     msg!("Invested {} shares for {} KZTE", amount, total_cost);
     Ok(())

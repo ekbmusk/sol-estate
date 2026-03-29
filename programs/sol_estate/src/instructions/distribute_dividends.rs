@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
 use crate::errors::SolEstateError;
+use crate::events::DividendsDistributed;
 use crate::state::{PropertyAccount, VaultAccount};
 
 #[derive(Accounts)]
@@ -36,6 +37,7 @@ pub struct DistributeDividends<'info> {
     #[account(
         mut,
         constraint = vault_token_account.mint == vault.kzte_mint,
+        constraint = vault_token_account.owner == vault.key(),
     )]
     pub vault_token_account: Account<'info, TokenAccount>,
 
@@ -63,11 +65,18 @@ pub fn handle_distribute_dividends(ctx: Context<DistributeDividends>, amount: u6
         .checked_div(property.shares_sold)
         .ok_or(error!(SolEstateError::Overflow))?;
 
+    let property_id_str = property.property_id.clone();
     let property = &mut ctx.accounts.property;
     property.total_dividends_per_share = property
         .total_dividends_per_share
         .checked_add(dividend_per_share)
         .ok_or(error!(SolEstateError::Overflow))?;
+
+    emit!(DividendsDistributed {
+        property_id: property_id_str,
+        amount,
+        dividend_per_share,
+    });
 
     msg!(
         "Distributed {} KZTE as dividends ({} per share)",

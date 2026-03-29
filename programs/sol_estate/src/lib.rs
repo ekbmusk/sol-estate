@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 
 pub mod errors;
+pub mod events;
 pub mod instructions;
 pub mod state;
 
@@ -56,6 +57,10 @@ pub mod sol_estate {
 
     pub fn buy_shares(ctx: Context<BuyShares>) -> Result<()> {
         instructions::buy_shares::handle_buy_shares(ctx)
+    }
+
+    pub fn cancel_listing(ctx: Context<CancelListing>) -> Result<()> {
+        instructions::cancel_listing::handle_cancel_listing(ctx)
     }
 
     // ── Wave 3 ──────────────────────────────────────────────

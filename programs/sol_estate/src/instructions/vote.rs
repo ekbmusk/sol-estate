@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::errors::SolEstateError;
+use crate::events::VoteCast;
 use crate::state::{InvestorRecord, PropertyAccount, Proposal, VoteRecord};
 
 #[derive(Accounts)]
@@ -66,6 +67,13 @@ pub fn handle_vote(ctx: Context<Vote>, approve: bool) -> Result<()> {
     vote_record.voter = ctx.accounts.voter.key();
     vote_record.proposal = ctx.accounts.proposal.key();
     vote_record.bump = ctx.bumps.vote_record;
+
+    emit!(VoteCast {
+        proposal_id: ctx.accounts.proposal.proposal_id,
+        voter: ctx.accounts.voter.key(),
+        approve,
+        weight,
+    });
 
     msg!("Vote recorded: approve={}, weight={}", approve, weight);
     Ok(())

@@ -4,6 +4,7 @@ use anchor_spl::{
     token::{Mint, Token, TokenAccount},
 };
 
+use crate::events::PropertyInitialized;
 use crate::state::{PropertyAccount, PropertyStatus, VaultAccount};
 
 #[derive(Accounts)]
@@ -85,6 +86,13 @@ pub fn handle_initialize_property(
     vault.total_deposited = 0;
     vault.total_claimed = 0;
     vault.bump = ctx.bumps.vault;
+
+    emit!(PropertyInitialized {
+        property_id: ctx.accounts.property.property_id.clone(),
+        authority: ctx.accounts.authority.key(),
+        total_shares,
+        price_per_share,
+    });
 
     msg!("Property initialized: {}", ctx.accounts.property.key());
     Ok(())

@@ -5,6 +5,7 @@ use anchor_spl::{
 };
 
 use crate::errors::SolEstateError;
+use crate::events::SharesBought;
 use crate::state::{InvestorRecord, Listing, PropertyAccount, VaultAccount};
 
 #[derive(Accounts)]
@@ -159,6 +160,14 @@ pub fn handle_buy_shares(ctx: Context<BuyShares>) -> Result<()> {
     // Deactivate listing
     let listing = &mut ctx.accounts.listing;
     listing.active = false;
+
+    emit!(SharesBought {
+        property_id: ctx.accounts.property.property_id.clone(),
+        buyer: ctx.accounts.buyer.key(),
+        seller: ctx.accounts.seller.key(),
+        amount,
+        total_cost,
+    });
 
     msg!(
         "Bought {} shares for {} KZTE",

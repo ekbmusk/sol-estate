@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
 use crate::errors::SolEstateError;
+use crate::events::DividendsClaimed;
 use crate::state::{InvestorRecord, PropertyAccount, VaultAccount};
 
 #[derive(Accounts)]
@@ -32,6 +33,7 @@ pub struct ClaimDividends<'info> {
     #[account(
         mut,
         constraint = vault_token_account.mint == vault.kzte_mint,
+        constraint = vault_token_account.owner == vault.key(),
     )]
     pub vault_token_account: Account<'info, TokenAccount>,
 
@@ -61,6 +63,9 @@ pub fn handle_claim_dividends(ctx: Context<ClaimDividends>) -> Result<()> {
 
     require!(claimable > 0, SolEstateError::NothingToClaim);
 
+    let property_id_str = property.property_id.clone();
+    let investor_key = ctx.accounts.investor.key();
+
     // Transfer KZTE from vault to investor using vault PDA as signer
     let property_id = property.property_id.as_bytes();
     let vault_bump = ctx.accounts.vault.bump;
@@ -81,6 +86,12 @@ pub fn handle_claim_dividends(ctx: Context<ClaimDividends>) -> Result<()> {
     // Update investor record
     let record = &mut ctx.accounts.investor_record;
     record.last_claimed = property.total_dividends_per_share;
+
+    emit!(DividendsClaimed {
+        property_id: property_id_str,
+        investor: investor_key,
+        amount: claimable,
+    });
 
     msg!("Claimed {} KZTE in dividends", claimable);
     Ok(())
