@@ -57,4 +57,19 @@ pub mod sol_estate {
     pub fn buy_shares(ctx: Context<BuyShares>) -> Result<()> {
         instructions::buy_shares::handle_buy_shares(ctx)
     }
+
+    // ── Wave 3 ──────────────────────────────────────────────
+
+    pub fn create_proposal(
+        ctx: Context<CreateProposal>,
+        proposal_id: u64,
+        description: String,
+        duration_seconds: i64,
+    ) -> Result<()> {
+        instructions::create_proposal::handle_create_proposal(ctx, proposal_id, description, duration_seconds)
+    }
+
+    pub fn vote(ctx: Context<Vote>, approve: bool) -> Result<()> {
+        instructions::vote::handle_vote(ctx, approve)
+    }
 }

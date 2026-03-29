@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
+import { useRwaProgram } from "./useRwaProgram";
 import { PROGRAM_ID } from "@/lib/constants";
 
 interface InvestorRecord {
@@ -15,6 +16,7 @@ interface UseInvestorResult {
   investor: InvestorRecord | null;
   loading: boolean;
   error: string | null;
+  refetch: () => void;
 }
 
 /**
@@ -22,48 +24,61 @@ interface UseInvestorResult {
  */
 export function useInvestor(propertyId: string): UseInvestorResult {
   const { publicKey } = useWallet();
+  const program = useRwaProgram();
   const [investor, setInvestor] = useState<InvestorRecord | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!publicKey || !propertyId) {
+  const fetchInvestor = useCallback(async () => {
+    if (!publicKey || !propertyId || !program) {
       setInvestor(null);
       return;
     }
 
-    async function fetchInvestor() {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      try {
-        // Derive PDA for investor record
-        // TODO: Replace with actual PDA derivation once program is deployed
-        const [investorPda] = PublicKey.findProgramAddressSync(
-          [
-            Buffer.from("investor"),
-            publicKey!.toBuffer(),
-            Buffer.from(propertyId),
-          ],
-          PROGRAM_ID
-        );
+    try {
+      // Derive the property PDA first
+      const [propertyPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("property"), Buffer.from(propertyId)],
+        PROGRAM_ID
+      );
 
-        // TODO: Fetch from chain using the program
-        // const record = await program.account.investorRecord.fetch(investorPda);
+      // Derive the investor record PDA
+      const [investorPda] = PublicKey.findProgramAddressSync(
+        [
+          Buffer.from("investor"),
+          propertyPda.toBuffer(),
+          publicKey.toBuffer(),
+        ],
+        PROGRAM_ID
+      );
 
-        // For now, return null (no on-chain data yet)
+      const record = await (program.account as any).investorRecord.fetch(investorPda);
+
+      setInvestor({
+        sharesOwned: Number(record.sharesOwned),
+        kzteInvested: Number(record.kzteInvested),
+        lastClaimed: Number(record.lastClaimed),
+      });
+    } catch (err: any) {
+      // Account not found is not a real error — investor just hasn't invested yet
+      if (err?.message?.includes("Account does not exist")) {
         setInvestor(null);
-      } catch (err) {
+      } else {
         setError(
-          err instanceof Error ? err.message : "Ошибка загрузки данных инвестора"
+          err instanceof Error ? err.message : "Failed to load investor data"
         );
-      } finally {
-        setLoading(false);
       }
+    } finally {
+      setLoading(false);
     }
+  }, [publicKey, propertyId, program]);
 
+  useEffect(() => {
     fetchInvestor();
-  }, [publicKey, propertyId]);
+  }, [fetchInvestor]);
 
-  return { investor, loading, error };
+  return { investor, loading, error, refetch: fetchInvestor };
 }

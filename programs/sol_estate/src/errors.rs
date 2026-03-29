@@ -22,4 +22,6 @@ pub enum SolEstateError {
     ProposalExpired,
     #[msg("Already voted")]
     AlreadyVoted,
+    #[msg("Unauthorized")]
+    Unauthorized,
 }

@@ -1,13 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { mockPortfolio } from "@/lib/mockData";
 import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useRwaProgram } from "@/hooks/useRwaProgram";
+import { PublicKey } from "@solana/web3.js";
+import {
+  getAssociatedTokenAddress,
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
+import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
+import { toast } from "sonner";
 
 export default function PortfolioPage() {
-  const { publicKey } = useWallet();
+  const { publicKey, connected } = useWallet();
+  const program = useRwaProgram();
+  const [claimingId, setClaimingId] = useState<string | null>(null);
 
   const totalValue = mockPortfolio.reduce(
     (sum, item) => sum + item.sharesOwned * item.pricePerShare,
@@ -21,6 +33,87 @@ export default function PortfolioPage() {
     (sum, item) => sum + item.claimableDividends,
     0
   );
+
+  const handleClaim = async (propertyId: string) => {
+    if (!connected || !publicKey) {
+      toast.error("Подключите кошелек для получения дивидендов");
+      return;
+    }
+
+    if (!program) {
+      toast.error("Программа не инициализирована. Проверьте подключение кошелька.");
+      return;
+    }
+
+    setClaimingId(propertyId);
+
+    try {
+      // Derive PDAs
+      const [propertyPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("property"), Buffer.from(propertyId)],
+        PROGRAM_ID
+      );
+
+      const [vaultPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("vault"), Buffer.from(propertyId)],
+        PROGRAM_ID
+      );
+
+      const [investorRecordPda] = PublicKey.findProgramAddressSync(
+        [
+          Buffer.from("investor"),
+          propertyPda.toBuffer(),
+          publicKey.toBuffer(),
+        ],
+        PROGRAM_ID
+      );
+
+      // Get Associated Token Accounts
+      const vaultTokenAccount = await getAssociatedTokenAddress(
+        KZTE_MINT,
+        vaultPda,
+        true
+      );
+
+      const investorKzteAccount = await getAssociatedTokenAddress(
+        KZTE_MINT,
+        publicKey
+      );
+
+      // Call the claimDividends instruction
+      const sig = await program.methods
+        .claimDividends()
+        .accounts({
+          investor: publicKey,
+          property: propertyPda,
+          vault: vaultPda,
+          investorRecord: investorRecordPda,
+          vaultTokenAccount: vaultTokenAccount,
+          investorKzteAccount: investorKzteAccount,
+          kzteMint: KZTE_MINT,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          systemProgram: PublicKey.default,
+        })
+        .rpc();
+
+      const explorerUrl = `https://explorer.solana.com/tx/${sig}?cluster=custom&customUrl=http://localhost:8899`;
+
+      toast.success("Дивиденды получены!", {
+        action: {
+          label: "Explorer",
+          onClick: () => window.open(explorerUrl, "_blank"),
+        },
+      });
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Неизвестная ошибка транзакции";
+      toast.error("Ошибка получения дивидендов", { description: message });
+      console.error("Claim dividends error:", err);
+    } finally {
+      setClaimingId(null);
+    }
+  };
 
   if (!publicKey) {
     return (
@@ -125,8 +218,13 @@ export default function PortfolioPage() {
                     </p>
                   </div>
                 </div>
-                <Button variant="outline" size="sm">
-                  Получить
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={item.claimableDividends <= 0 || claimingId === item.propertyId}
+                  onClick={() => handleClaim(item.propertyId)}
+                >
+                  {claimingId === item.propertyId ? "Обработка..." : "Получить"}
                 </Button>
               </div>
             </CardContent>

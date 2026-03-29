@@ -1,22 +1,117 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useRwaProgram } from "@/hooks/useRwaProgram";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+import {
+  getAssociatedTokenAddress,
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
+import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
+import { toast } from "sonner";
 
 interface DividendWidgetProps {
+  propertyId: string;
   totalDividendsPerShare: number;
   claimableAmount: number;
   lastClaimed: number;
 }
 
 export default function DividendWidget({
+  propertyId,
   totalDividendsPerShare,
   claimableAmount,
   lastClaimed,
 }: DividendWidgetProps) {
+  const [loading, setLoading] = useState(false);
+
+  const program = useRwaProgram();
+  const { publicKey, connected } = useWallet();
+
   const handleClaim = async () => {
-    // TODO: Call program.methods.claimDividends() with the Anchor program
-    alert("Запрос дивидендов (TODO: подключить транзакцию)");
+    if (!connected || !publicKey) {
+      toast.error("Подключите кошелек для получения дивидендов");
+      return;
+    }
+
+    if (!program) {
+      toast.error("Программа не инициализирована. Проверьте подключение кошелька.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Derive PDAs
+      const [propertyPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("property"), Buffer.from(propertyId)],
+        PROGRAM_ID
+      );
+
+      const [vaultPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("vault"), Buffer.from(propertyId)],
+        PROGRAM_ID
+      );
+
+      const [investorRecordPda] = PublicKey.findProgramAddressSync(
+        [
+          Buffer.from("investor"),
+          propertyPda.toBuffer(),
+          publicKey.toBuffer(),
+        ],
+        PROGRAM_ID
+      );
+
+      // Get Associated Token Accounts
+      const vaultTokenAccount = await getAssociatedTokenAddress(
+        KZTE_MINT,
+        vaultPda,
+        true // allowOwnerOffCurve for PDA
+      );
+
+      const investorKzteAccount = await getAssociatedTokenAddress(
+        KZTE_MINT,
+        publicKey
+      );
+
+      // Call the claimDividends instruction
+      const sig = await program.methods
+        .claimDividends()
+        .accounts({
+          investor: publicKey,
+          property: propertyPda,
+          vault: vaultPda,
+          investorRecord: investorRecordPda,
+          vaultTokenAccount: vaultTokenAccount,
+          investorKzteAccount: investorKzteAccount,
+          kzteMint: KZTE_MINT,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          systemProgram: PublicKey.default,
+        })
+        .rpc();
+
+      const explorerUrl = `https://explorer.solana.com/tx/${sig}?cluster=custom&customUrl=http://localhost:8899`;
+
+      toast.success("Дивиденды получены!", {
+        description: `${claimableAmount.toLocaleString("ru-RU")} ₸ отправлено на ваш кошелек`,
+        action: {
+          label: "Explorer",
+          onClick: () => window.open(explorerUrl, "_blank"),
+        },
+      });
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Неизвестная ошибка транзакции";
+      toast.error("Ошибка получения дивидендов", { description: message });
+      console.error("Claim dividends error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,11 +146,13 @@ export default function DividendWidget({
           onClick={handleClaim}
           variant="outline"
           className="w-full"
-          disabled={claimableAmount <= 0}
+          disabled={claimableAmount <= 0 || loading}
         >
-          {claimableAmount > 0
-            ? `Получить ${claimableAmount.toLocaleString("ru-RU")} ₸`
-            : "Нет доступных дивидендов"}
+          {loading
+            ? "Обработка..."
+            : claimableAmount > 0
+              ? `Получить ${claimableAmount.toLocaleString("ru-RU")} ₸`
+              : "Нет доступных дивидендов"}
         </Button>
       </CardContent>
     </Card>

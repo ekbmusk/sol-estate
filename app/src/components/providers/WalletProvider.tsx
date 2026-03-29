@@ -16,12 +16,11 @@ import { clusterApiUrl } from "@solana/web3.js";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
 export default function WalletProvider({ children }: { children: ReactNode }) {
-  const network = WalletAdapterNetwork.Devnet;
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const endpoint = clusterApiUrl(WalletAdapterNetwork.Devnet);
 
   const wallets = useMemo(
-    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter({ network })],
-    [network]
+    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
+    []
   );
 
   return (

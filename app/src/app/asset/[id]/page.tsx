@@ -136,6 +136,7 @@ export default function AssetPage({
           </Card>
 
           <DividendWidget
+            propertyId={property.id}
             totalDividendsPerShare={250}
             claimableAmount={3750}
             lastClaimed={1700000000}

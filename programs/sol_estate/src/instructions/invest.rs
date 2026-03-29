@@ -39,7 +39,7 @@ pub struct Invest<'info> {
         constraint = investor_kzte_account.owner == investor.key(),
         constraint = investor_kzte_account.mint == vault.kzte_mint,
     )]
-    pub investor_kzte_account: Account<'info, TokenAccount>,
+    pub investor_kzte_account: Box<Account<'info, TokenAccount>>,
 
     /// Vault's KZTE token account (destination for payment)
     #[account(
@@ -47,7 +47,7 @@ pub struct Invest<'info> {
         associated_token::mint = kzte_mint,
         associated_token::authority = vault,
     )]
-    pub vault_token_account: Account<'info, TokenAccount>,
+    pub vault_token_account: Box<Account<'info, TokenAccount>>,
 
     /// Investor's share token account
     #[account(
@@ -56,7 +56,7 @@ pub struct Invest<'info> {
         associated_token::mint = share_mint,
         associated_token::authority = investor,
     )]
-    pub investor_share_account: Account<'info, TokenAccount>,
+    pub investor_share_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         init_if_needed,

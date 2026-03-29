@@ -69,6 +69,13 @@ pub fn handle_list_shares(ctx: Context<ListShares>, amount: u64, price_per_share
     );
     token::transfer(transfer_ctx, amount)?;
 
+    // Decrement seller's shares_owned to reflect escrowed shares
+    let record = &mut ctx.accounts.investor_record;
+    record.shares_owned = record
+        .shares_owned
+        .checked_sub(amount)
+        .ok_or(error!(SolEstateError::Overflow))?;
+
     // Create listing
     let listing = &mut ctx.accounts.listing;
     listing.seller = ctx.accounts.seller.key();

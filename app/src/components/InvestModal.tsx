@@ -11,28 +11,133 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useRwaProgram } from "@/hooks/useRwaProgram";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { BN } from "@coral-xyz/anchor";
+import { PublicKey } from "@solana/web3.js";
+import {
+  getAssociatedTokenAddress,
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
+import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
+import { toast } from "sonner";
 import type { Property } from "@/lib/mockData";
 
 export default function InvestModal({ property }: { property: Property }) {
   const [shares, setShares] = useState(1);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const program = useRwaProgram();
+  const { publicKey, connected } = useWallet();
 
   const totalCost = shares * property.pricePerShare;
   const remainingShares = property.totalShares - property.sharesSold;
 
   const handleInvest = async () => {
-    // TODO: Call program.methods.invest() with the Anchor program
-    // const tx = await program.methods
-    //   .invest(new BN(shares))
-    //   .accounts({ ... })
-    //   .rpc();
-    alert(`Инвестиция: ${shares} долей за ${totalCost.toLocaleString("ru-RU")} ₸ (TODO: подключить транзакцию)`);
-    setOpen(false);
+    if (!connected || !publicKey) {
+      toast.error("Подключите кошелек для инвестирования");
+      return;
+    }
+
+    if (!program) {
+      toast.error("Программа не инициализирована. Проверьте подключение кошелька.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Derive PDAs
+      const [propertyPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("property"), Buffer.from(property.id)],
+        PROGRAM_ID
+      );
+
+      const [vaultPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("vault"), Buffer.from(property.id)],
+        PROGRAM_ID
+      );
+
+      const [shareMintPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("share_mint"), Buffer.from(property.id)],
+        PROGRAM_ID
+      );
+
+      const [investorRecordPda] = PublicKey.findProgramAddressSync(
+        [
+          Buffer.from("investor"),
+          propertyPda.toBuffer(),
+          publicKey.toBuffer(),
+        ],
+        PROGRAM_ID
+      );
+
+      // Get Associated Token Accounts
+      const investorKzteAta = await getAssociatedTokenAddress(
+        KZTE_MINT,
+        publicKey
+      );
+
+      const vaultTokenAccount = await getAssociatedTokenAddress(
+        KZTE_MINT,
+        vaultPda,
+        true // allowOwnerOffCurve for PDA
+      );
+
+      const investorShareAccount = await getAssociatedTokenAddress(
+        shareMintPda,
+        publicKey
+      );
+
+      // Call the invest instruction
+      const sig = await program.methods
+        .invest(new BN(shares))
+        .accounts({
+          investor: publicKey,
+          property: propertyPda,
+          vault: vaultPda,
+          shareMint: shareMintPda,
+          investorRecord: investorRecordPda,
+          investorKzteAccount: investorKzteAta,
+          vaultTokenAccount: vaultTokenAccount,
+          investorShareAccount: investorShareAccount,
+          kzteMint: KZTE_MINT,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          systemProgram: PublicKey.default,
+        })
+        .rpc();
+
+      const explorerUrl = `https://explorer.solana.com/tx/${sig}?cluster=custom&customUrl=http://localhost:8899`;
+
+      toast.success("Инвестиция успешна!", {
+        description: `${shares} долей приобретено`,
+        action: {
+          label: "Explorer",
+          onClick: () => window.open(explorerUrl, "_blank"),
+        },
+      });
+
+      setOpen(false);
+      setShares(1);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Неизвестная ошибка транзакции";
+      toast.error("Ошибка инвестиции", { description: message });
+      console.error("Invest error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="lg" className="w-full" />}>
+      <DialogTrigger
+        className="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 cursor-pointer"
+      >
         Инвестировать
       </DialogTrigger>
       <DialogContent>
@@ -57,7 +162,8 @@ export default function InvestModal({ property }: { property: Property }) {
               onChange={(e) =>
                 setShares(Math.max(1, Math.min(remainingShares, Number(e.target.value))))
               }
-              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              disabled={loading}
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
             />
             <p className="text-xs text-muted-foreground">
               Доступно: {remainingShares.toLocaleString("ru-RU")} долей
@@ -73,8 +179,12 @@ export default function InvestModal({ property }: { property: Property }) {
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleInvest} className="w-full sm:w-auto">
-            Подтвердить инвестицию
+          <Button
+            onClick={handleInvest}
+            className="w-full sm:w-auto"
+            disabled={loading}
+          >
+            {loading ? "Обработка..." : "Подтвердить инвестицию"}
           </Button>
         </DialogFooter>
       </DialogContent>

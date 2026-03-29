@@ -1,11 +1,11 @@
 import { PublicKey } from "@solana/web3.js";
 
 export const PROGRAM_ID = new PublicKey(
-  "11111111111111111111111111111111" // TODO: Replace with actual program ID
+  "AtqkY8tyT9AwUe7JPDFnGuFoFtfXcj264AVEJWtMnL2u"
 );
 
 export const KZTE_MINT = new PublicKey(
-  "11111111111111111111111111111111" // TODO: Replace with actual KZTE mint address
+  "tFs7nHjQUAbqrVHH6gaMEsjMnfNJRDowxjzeKLfTNqE"
 );
 
 export const KZTE_DECIMALS = 6;

@@ -4,6 +4,7 @@ import "./globals.css";
 import WalletProvider from "@/components/providers/WalletProvider";
 import AnchorProvider from "@/components/providers/AnchorProvider";
 import Navbar from "@/components/Navbar";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
           <AnchorProvider>
             <Navbar />
             <main className="flex-1">{children}</main>
+            <Toaster richColors position="bottom-right" />
           </AnchorProvider>
         </WalletProvider>
       </body>

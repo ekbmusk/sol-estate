@@ -5,7 +5,7 @@ use anchor_spl::{
 };
 
 use crate::errors::SolEstateError;
-use crate::state::{InvestorRecord, Listing, PropertyAccount};
+use crate::state::{InvestorRecord, Listing, PropertyAccount, VaultAccount};
 
 #[derive(Accounts)]
 pub struct BuyShares<'info> {
@@ -23,6 +23,12 @@ pub struct BuyShares<'info> {
     pub property: Account<'info, PropertyAccount>,
 
     #[account(
+        seeds = [b"vault", property.property_id.as_bytes()],
+        bump = vault.bump,
+    )]
+    pub vault: Account<'info, VaultAccount>,
+
+    #[account(
         mut,
         seeds = [b"listing", property.key().as_ref(), seller.key().as_ref()],
         bump = listing.bump,
@@ -35,22 +41,24 @@ pub struct BuyShares<'info> {
     #[account(
         mut,
         constraint = buyer_kzte_account.owner == buyer.key(),
+        constraint = buyer_kzte_account.mint == vault.kzte_mint,
     )]
-    pub buyer_kzte_account: Account<'info, TokenAccount>,
+    pub buyer_kzte_account: Box<Account<'info, TokenAccount>>,
 
     /// Seller's KZTE token account (payment destination)
     #[account(
         mut,
         constraint = seller_kzte_account.owner == seller.key(),
+        constraint = seller_kzte_account.mint == vault.kzte_mint,
     )]
-    pub seller_kzte_account: Account<'info, TokenAccount>,
+    pub seller_kzte_account: Box<Account<'info, TokenAccount>>,
 
     /// Escrow share token account
     #[account(
         mut,
         constraint = escrow_share_account.mint == property.share_mint,
     )]
-    pub escrow_share_account: Account<'info, TokenAccount>,
+    pub escrow_share_account: Box<Account<'info, TokenAccount>>,
 
     /// Buyer's share token account
     #[account(
@@ -59,7 +67,7 @@ pub struct BuyShares<'info> {
         associated_token::mint = share_mint,
         associated_token::authority = buyer,
     )]
-    pub buyer_share_account: Account<'info, TokenAccount>,
+    pub buyer_share_account: Box<Account<'info, TokenAccount>>,
 
     /// The share mint
     #[account(
@@ -77,7 +85,6 @@ pub struct BuyShares<'info> {
     pub buyer_record: Account<'info, InvestorRecord>,
 
     #[account(
-        mut,
         seeds = [b"investor", property.key().as_ref(), seller.key().as_ref()],
         bump = seller_record.bump,
     )]
@@ -132,12 +139,7 @@ pub fn handle_buy_shares(ctx: Context<BuyShares>) -> Result<()> {
     );
     token::transfer(share_transfer_ctx, amount)?;
 
-    // Update seller record
-    let seller_record = &mut ctx.accounts.seller_record;
-    seller_record.shares_owned = seller_record
-        .shares_owned
-        .checked_sub(amount)
-        .ok_or(error!(SolEstateError::Overflow))?;
+    // Note: seller's shares_owned was already decremented in list_shares
 
     // Update buyer record
     let buyer_record = &mut ctx.accounts.buyer_record;

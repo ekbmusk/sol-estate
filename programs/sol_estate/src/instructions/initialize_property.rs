@@ -33,7 +33,7 @@ pub struct InitializeProperty<'info> {
     #[account(
         init,
         payer = authority,
-        mint::decimals = 6,
+        mint::decimals = 0,
         mint::authority = property,
         seeds = [b"share_mint", property_id.as_bytes()],
         bump,
