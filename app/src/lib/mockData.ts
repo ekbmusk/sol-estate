@@ -1,61 +1,94 @@
-export interface Property {
+export interface Project {
   id: string;
   name: string;
   location: string;
   description: string;
+  projectType: "solar" | "wind" | "forest" | "industrial" | "other";
+  totalCredits: number;
+  creditsRetired: number;
   totalShares: number;
   sharesSold: number;
   pricePerShare: number;
-  status: "active" | "funded" | "upcoming";
+  verified: boolean;
+  status: "active" | "funded" | "retired";
   imageUrl: string;
   documentHash: string;
 }
 
-export const mockProperties: Property[] = [
+export const mockProjects: Project[] = [
   {
-    id: "expo-city",
-    name: 'ЖК "Expo City"',
-    location: "Астана",
+    id: "solar-kapchagai",
+    name: "Солнечная ферма Капшагай",
+    location: "Алматинская область",
     description:
-      "Современный жилой комплекс премиум-класса в районе EXPO. 24 этажа, подземный паркинг, фитнес-центр и детская площадка. Рядом станция метро и торговый центр.",
-    totalShares: 10000,
-    sharesSold: 6500,
-    pricePerShare: 5000,
-    status: "active",
-    imageUrl: "/placeholder-expo.jpg",
-    documentHash: "QmExpoCity123abc456def789ghi",
-  },
-  {
-    id: "al-farabi",
-    name: 'БЦ "Аль-Фараби"',
-    location: "Алматы",
-    description:
-      "Бизнес-центр класса А на проспекте Аль-Фараби. 18 этажей офисных помещений, конференц-залы, ресторан на крыше. Арендаторы — крупные международные компании.",
+      "Солнечная электростанция мощностью 50 МВт. Ежегодное сокращение выбросов — 5 000 тонн CO₂. Верифицировано по стандарту Gold Standard.",
+    projectType: "solar",
+    totalCredits: 5000,
+    creditsRetired: 320,
     totalShares: 5000,
     sharesSold: 3200,
     pricePerShare: 10000,
+    verified: true,
     status: "active",
-    imageUrl: "/placeholder-alfarabi.jpg",
-    documentHash: "QmAlFarabi789xyz012abc345def",
+    imageUrl: "/placeholder-solar.jpg",
+    documentHash: "QmSolarKapchagai123abc456def",
   },
   {
-    id: "burabay-residence",
-    name: 'Курорт "Бурабай Резиденс"',
-    location: "Бурабай",
+    id: "wind-yereymentau",
+    name: "Ветропарк Ерейментау",
+    location: "Акмолинская область",
     description:
-      "Курортный комплекс на берегу озера Боровое. 50 коттеджей, SPA-центр, ресторан и конференц-зал. Круглогодичная эксплуатация с высокой заполняемостью.",
-    totalShares: 2000,
-    sharesSold: 800,
-    pricePerShare: 25000,
+      "Ветроэнергетический парк из 45 турбин. Ежегодное сокращение — 12 000 тонн CO₂. Крупнейший ветропарк в Центральной Азии.",
+    projectType: "wind",
+    totalCredits: 12000,
+    creditsRetired: 1500,
+    totalShares: 12000,
+    sharesSold: 8400,
+    pricePerShare: 5000,
+    verified: true,
     status: "active",
-    imageUrl: "/placeholder-burabay.jpg",
-    documentHash: "QmBurabay456mno789pqr012stu",
+    imageUrl: "/placeholder-wind.jpg",
+    documentHash: "QmWindYereymentau789xyz012",
+  },
+  {
+    id: "forest-burabay",
+    name: "Лесовосстановление Бурабай",
+    location: "Национальный парк Бурабай",
+    description:
+      "Посадка 500 000 деревьев на территории национального парка. Ежегодное поглощение — 3 000 тонн CO₂. Партнёрство с Жасыл Даму.",
+    projectType: "forest",
+    totalCredits: 3000,
+    creditsRetired: 0,
+    totalShares: 3000,
+    sharesSold: 900,
+    pricePerShare: 15000,
+    verified: true,
+    status: "active",
+    imageUrl: "/placeholder-forest.jpg",
+    documentHash: "QmForestBurabay456mno789pqr",
+  },
+  {
+    id: "arcelor-temirtau",
+    name: "ArcelorMittal Теміртау",
+    location: "Теміртау, Карагандинская область",
+    description:
+      "Модернизация доменных печей крупнейшего металлургического завода. Ежегодное сокращение — 8 000 тонн CO₂. Compliance market KZ ETS.",
+    projectType: "industrial",
+    totalCredits: 8000,
+    creditsRetired: 2100,
+    totalShares: 8000,
+    sharesSold: 5600,
+    pricePerShare: 8000,
+    verified: true,
+    status: "active",
+    imageUrl: "/placeholder-industrial.jpg",
+    documentHash: "QmArcelorTemirtau012stu345vwx",
   },
 ];
 
 export interface InvestorPortfolioItem {
-  propertyId: string;
-  propertyName: string;
+  projectId: string;
+  projectName: string;
   location: string;
   sharesOwned: number;
   pricePerShare: number;
@@ -66,23 +99,23 @@ export interface InvestorPortfolioItem {
 
 export const mockPortfolio: InvestorPortfolioItem[] = [
   {
-    propertyId: "expo-city",
-    propertyName: 'ЖК "Expo City"',
-    location: "Астана",
+    projectId: "solar-kapchagai",
+    projectName: "Солнечная ферма Капшагай",
+    location: "Алматинская область",
     sharesOwned: 50,
-    pricePerShare: 5000,
-    totalInvested: 250000,
-    dividendsClaimed: 12500,
-    claimableDividends: 3750,
+    pricePerShare: 10000,
+    totalInvested: 500000,
+    dividendsClaimed: 25000,
+    claimableDividends: 7500,
   },
   {
-    propertyId: "al-farabi",
-    propertyName: 'БЦ "Аль-Фараби"',
-    location: "Алматы",
-    sharesOwned: 20,
-    pricePerShare: 10000,
-    totalInvested: 200000,
-    dividendsClaimed: 18000,
-    claimableDividends: 5000,
+    projectId: "wind-yereymentau",
+    projectName: "Ветропарк Ерейментау",
+    location: "Акмолинская область",
+    sharesOwned: 100,
+    pricePerShare: 5000,
+    totalInvested: 500000,
+    dividendsClaimed: 45000,
+    claimableDividends: 12000,
   },
 ];

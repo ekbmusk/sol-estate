@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useRwaProgram } from "@/hooks/useRwaProgram";
+import { useCarbonProgram } from "@/hooks/useCarbonProgram";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { BN } from "@coral-xyz/anchor";
@@ -23,14 +23,14 @@ import {
 } from "@solana/spl-token";
 import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
 import { toast } from "sonner";
-import type { Property } from "@/lib/mockData";
+import type { Project } from "@/lib/mockData";
 
-export default function InvestModal({ property }: { property: Property }) {
+export default function InvestModal({ property }: { property: Project }) {
   const [shares, setShares] = useState(1);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const program = useRwaProgram();
+  const program = useCarbonProgram();
   const { publicKey, connected } = useWallet();
 
   const totalCost = shares * property.pricePerShare;
@@ -51,8 +51,8 @@ export default function InvestModal({ property }: { property: Property }) {
 
     try {
       // Derive PDAs
-      const [propertyPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from("property"), Buffer.from(property.id)],
+      const [projectPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("project"), Buffer.from(property.id)],
         PROGRAM_ID
       );
 
@@ -69,7 +69,7 @@ export default function InvestModal({ property }: { property: Property }) {
       const [investorRecordPda] = PublicKey.findProgramAddressSync(
         [
           Buffer.from("investor"),
-          propertyPda.toBuffer(),
+          projectPda.toBuffer(),
           publicKey.toBuffer(),
         ],
         PROGRAM_ID
@@ -97,7 +97,7 @@ export default function InvestModal({ property }: { property: Property }) {
         .invest(new BN(shares))
         .accounts({
           investor: publicKey,
-          property: propertyPda,
+          project: projectPda,
           vault: vaultPda,
           shareMint: shareMintPda,
           investorRecord: investorRecordPda,

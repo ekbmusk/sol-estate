@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SolEstate — Токенизация недвижимости",
+  title: "CarbonKZ — Маркетплейс углеродных кредитов",
   description:
-    "Инвестируйте в недвижимость Казахстана через токенизированные доли на блокчейне Solana",
+    "Инвестируйте в зелёные проекты Казахстана через токенизированные углеродные кредиты на Solana",
 };
 
 export default function RootLayout({

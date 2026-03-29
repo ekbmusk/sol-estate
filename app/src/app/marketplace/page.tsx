@@ -14,7 +14,7 @@ export default function MarketplacePage() {
             <p className="text-4xl">🔄</p>
             <h2 className="text-xl font-semibold">P2P торговля долями</h2>
             <p className="text-muted-foreground">
-              Вторичный рынок токенизированных долей недвижимости. Покупайте и
+              Вторичный рынок токенизированных долей углеродных кредитов. Покупайте и
               продавайте доли напрямую между инвесторами.
             </p>
             <p className="text-sm text-muted-foreground">

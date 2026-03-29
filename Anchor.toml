@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-sol_estate = "AtqkY8tyT9AwUe7JPDFnGuFoFtfXcj264AVEJWtMnL2u"
+carbon_kz = "AtqkY8tyT9AwUe7JPDFnGuFoFtfXcj264AVEJWtMnL2u"
 
 [registry]
 url = "https://api.apr.dev"

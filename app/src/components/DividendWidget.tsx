@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useRwaProgram } from "@/hooks/useRwaProgram";
+import { useCarbonProgram } from "@/hooks/useCarbonProgram";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import {
@@ -15,21 +15,21 @@ import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
 import { toast } from "sonner";
 
 interface DividendWidgetProps {
-  propertyId: string;
+  projectId: string;
   totalDividendsPerShare: number;
   claimableAmount: number;
   lastClaimed: number;
 }
 
 export default function DividendWidget({
-  propertyId,
+  projectId,
   totalDividendsPerShare,
   claimableAmount,
   lastClaimed,
 }: DividendWidgetProps) {
   const [loading, setLoading] = useState(false);
 
-  const program = useRwaProgram();
+  const program = useCarbonProgram();
   const { publicKey, connected } = useWallet();
 
   const handleClaim = async () => {
@@ -47,20 +47,20 @@ export default function DividendWidget({
 
     try {
       // Derive PDAs
-      const [propertyPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from("property"), Buffer.from(propertyId)],
+      const [projectPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("project"), Buffer.from(projectId)],
         PROGRAM_ID
       );
 
       const [vaultPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from("vault"), Buffer.from(propertyId)],
+        [Buffer.from("vault"), Buffer.from(projectId)],
         PROGRAM_ID
       );
 
       const [investorRecordPda] = PublicKey.findProgramAddressSync(
         [
           Buffer.from("investor"),
-          propertyPda.toBuffer(),
+          projectPda.toBuffer(),
           publicKey.toBuffer(),
         ],
         PROGRAM_ID
@@ -83,7 +83,7 @@ export default function DividendWidget({
         .claimDividends()
         .accounts({
           investor: publicKey,
-          property: propertyPda,
+          project: projectPda,
           vault: vaultPda,
           investorRecord: investorRecordPda,
           vaultTokenAccount: vaultTokenAccount,

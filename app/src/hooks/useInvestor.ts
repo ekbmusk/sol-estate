@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
-import { useRwaProgram } from "./useRwaProgram";
+import { useCarbonProgram } from "./useCarbonProgram";
 import { PROGRAM_ID } from "@/lib/constants";
 
 interface InvestorRecord {
@@ -19,18 +19,15 @@ interface UseInvestorResult {
   refetch: () => void;
 }
 
-/**
- * Fetches the InvestorRecord PDA for the current wallet + property
- */
-export function useInvestor(propertyId: string): UseInvestorResult {
+export function useInvestor(projectId: string): UseInvestorResult {
   const { publicKey } = useWallet();
-  const program = useRwaProgram();
+  const program = useCarbonProgram();
   const [investor, setInvestor] = useState<InvestorRecord | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchInvestor = useCallback(async () => {
-    if (!publicKey || !propertyId || !program) {
+    if (!publicKey || !projectId || !program) {
       setInvestor(null);
       return;
     }
@@ -39,17 +36,15 @@ export function useInvestor(propertyId: string): UseInvestorResult {
     setError(null);
 
     try {
-      // Derive the property PDA first
-      const [propertyPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from("property"), Buffer.from(propertyId)],
+      const [projectPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("project"), Buffer.from(projectId)],
         PROGRAM_ID
       );
 
-      // Derive the investor record PDA
       const [investorPda] = PublicKey.findProgramAddressSync(
         [
           Buffer.from("investor"),
-          propertyPda.toBuffer(),
+          projectPda.toBuffer(),
           publicKey.toBuffer(),
         ],
         PROGRAM_ID
@@ -63,7 +58,6 @@ export function useInvestor(propertyId: string): UseInvestorResult {
         lastClaimed: Number(record.lastClaimed),
       });
     } catch (err: any) {
-      // Account not found is not a real error — investor just hasn't invested yet
       if (err?.message?.includes("Account does not exist")) {
         setInvestor(null);
       } else {
@@ -74,7 +68,7 @@ export function useInvestor(propertyId: string): UseInvestorResult {
     } finally {
       setLoading(false);
     }
-  }, [publicKey, propertyId, program]);
+  }, [publicKey, projectId, program]);
 
   useEffect(() => {
     fetchInvestor();

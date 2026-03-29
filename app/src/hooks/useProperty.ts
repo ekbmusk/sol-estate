@@ -2,13 +2,17 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { PublicKey } from "@solana/web3.js";
-import { useRwaProgram } from "./useRwaProgram";
+import { useCarbonProgram } from "./useCarbonProgram";
 import { PROGRAM_ID } from "@/lib/constants";
 
-interface PropertyData {
+interface ProjectData {
   authority: PublicKey;
-  propertyId: string;
+  projectId: string;
   name: string;
+  projectType: Record<string, object>;
+  carbonMint: PublicKey;
+  totalCredits: number;
+  creditsRetired: number;
   totalShares: number;
   sharesSold: number;
   pricePerShare: number;
@@ -16,41 +20,38 @@ interface PropertyData {
   vault: PublicKey;
   totalDividendsPerShare: number;
   documentHash: number[];
+  verified: boolean;
   status: Record<string, object>;
   bump: number;
 }
 
-interface UsePropertyResult {
-  property: PropertyData | null;
-  propertyPda: PublicKey | null;
+interface UseProjectResult {
+  project: ProjectData | null;
+  projectPda: PublicKey | null;
   loading: boolean;
   error: string | null;
   refetch: () => void;
 }
 
-/**
- * Fetches a PropertyAccount by PDA or propertyId string.
- * If a string is passed, the PDA is derived from ["property", Buffer.from(propertyId)].
- */
-export function useProperty(
-  propertyIdOrPda: string | PublicKey
-): UsePropertyResult {
-  const program = useRwaProgram();
-  const [property, setProperty] = useState<PropertyData | null>(null);
+export function useProject(
+  projectIdOrPda: string | PublicKey
+): UseProjectResult {
+  const program = useCarbonProgram();
+  const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const pda =
-    typeof propertyIdOrPda === "string"
+    typeof projectIdOrPda === "string"
       ? PublicKey.findProgramAddressSync(
-          [Buffer.from("property"), Buffer.from(propertyIdOrPda)],
+          [Buffer.from("project"), Buffer.from(projectIdOrPda)],
           PROGRAM_ID
         )[0]
-      : propertyIdOrPda;
+      : projectIdOrPda;
 
-  const fetchProperty = useCallback(async () => {
+  const fetchProject = useCallback(async () => {
     if (!program || !pda) {
-      setProperty(null);
+      setProject(null);
       return;
     }
 
@@ -58,12 +59,16 @@ export function useProperty(
     setError(null);
 
     try {
-      const account = await (program.account as any).propertyAccount.fetch(pda);
+      const account = await (program.account as any).carbonProject.fetch(pda);
 
-      setProperty({
+      setProject({
         authority: account.authority,
-        propertyId: account.propertyId,
+        projectId: account.projectId,
         name: account.name,
+        projectType: account.projectType,
+        carbonMint: account.carbonMint,
+        totalCredits: Number(account.totalCredits),
+        creditsRetired: Number(account.creditsRetired),
         totalShares: Number(account.totalShares),
         sharesSold: Number(account.sharesSold),
         pricePerShare: Number(account.pricePerShare),
@@ -71,15 +76,16 @@ export function useProperty(
         vault: account.vault,
         totalDividendsPerShare: Number(account.totalDividendsPerShare),
         documentHash: Array.from(account.documentHash),
+        verified: account.verified,
         status: account.status,
         bump: account.bump,
       });
     } catch (err: any) {
       if (err?.message?.includes("Account does not exist")) {
-        setProperty(null);
+        setProject(null);
       } else {
         setError(
-          err instanceof Error ? err.message : "Failed to load property data"
+          err instanceof Error ? err.message : "Failed to load project data"
         );
       }
     } finally {
@@ -88,8 +94,8 @@ export function useProperty(
   }, [program, pda?.toBase58()]);
 
   useEffect(() => {
-    fetchProperty();
-  }, [fetchProperty]);
+    fetchProject();
+  }, [fetchProject]);
 
-  return { property, propertyPda: pda, loading, error, refetch: fetchProperty };
+  return { project, projectPda: pda, loading, error, refetch: fetchProject };
 }

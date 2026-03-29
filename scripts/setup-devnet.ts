@@ -1,6 +1,6 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program, BN } from "@coral-xyz/anchor";
-import { SolEstate } from "../target/types/sol_estate";
+import { CarbonKz } from "../target/types/carbon_kz";
 import {
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -13,55 +13,82 @@ async function main() {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  const program = anchor.workspace.solEstate as Program<SolEstate>;
+  const program = anchor.workspace.carbonKz as Program<CarbonKz>;
   const authority = provider.wallet;
 
-  const properties = [
+  const projects = [
     {
-      id: "expo-city",
-      name: 'ЖК "Expo City"',
-      totalShares: new BN(10000),
-      pricePerShare: new BN(5000_000000), // 5000 KZTE
-    },
-    {
-      id: "al-farabi",
-      name: 'БЦ "Аль-Фараби"',
+      id: "solar-kapchagai",
+      name: "Солнечная ферма Капшагай",
+      projectType: { solar: {} },
+      totalCredits: new BN(5000),
       totalShares: new BN(5000),
-      pricePerShare: new BN(10000_000000), // 10000 KZTE
+      pricePerShare: new BN(10000_000000), // 10,000 KZTE
     },
     {
-      id: "burabay-residence",
-      name: 'Курорт "Бурабай Резиденс"',
-      totalShares: new BN(2000),
-      pricePerShare: new BN(25000_000000), // 25000 KZTE
+      id: "wind-yereymentau",
+      name: "Ветропарк Ерейментау",
+      projectType: { wind: {} },
+      totalCredits: new BN(12000),
+      totalShares: new BN(12000),
+      pricePerShare: new BN(5000_000000), // 5,000 KZTE
+    },
+    {
+      id: "forest-burabay",
+      name: "Лесовосстановление Бурабай",
+      projectType: { forest: {} },
+      totalCredits: new BN(3000),
+      totalShares: new BN(3000),
+      pricePerShare: new BN(15000_000000), // 15,000 KZTE
+    },
+    {
+      id: "arcelor-temirtau",
+      name: "ArcelorMittal Теміртау",
+      projectType: { industrial: {} },
+      totalCredits: new BN(8000),
+      totalShares: new BN(8000),
+      pricePerShare: new BN(8000_000000), // 8,000 KZTE
     },
   ];
 
   const documentHash = Array(32).fill(1);
 
-  for (const prop of properties) {
-    const [propertyPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("property"), Buffer.from(prop.id)],
+  for (const proj of projects) {
+    const [projectPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("project"), Buffer.from(proj.id)],
       program.programId
     );
     const [vaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("vault"), Buffer.from(prop.id)],
+      [Buffer.from("vault"), Buffer.from(proj.id)],
       program.programId
     );
     const [shareMintPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("share_mint"), Buffer.from(prop.id)],
+      [Buffer.from("share_mint"), Buffer.from(proj.id)],
+      program.programId
+    );
+    const [carbonMintPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("carbon_mint"), Buffer.from(proj.id)],
       program.programId
     );
     const vaultTokenAccount = await getAssociatedTokenAddress(KZTE_MINT, vaultPda, true);
 
     try {
       const tx = await program.methods
-        .initializeProperty(prop.id, prop.name, prop.totalShares, prop.pricePerShare, documentHash)
+        .initializeProject(
+          proj.id,
+          proj.name,
+          proj.projectType as any,
+          proj.totalCredits,
+          proj.totalShares,
+          proj.pricePerShare,
+          documentHash
+        )
         .accounts({
           authority: authority.publicKey,
-          property: propertyPda,
+          project: projectPda,
           vault: vaultPda,
           shareMint: shareMintPda,
+          carbonMint: carbonMintPda,
           kzteMint: KZTE_MINT,
           vaultTokenAccount: vaultTokenAccount,
           systemProgram: anchor.web3.SystemProgram.programId,
@@ -71,17 +98,17 @@ async function main() {
         })
         .rpc();
 
-      console.log(`✓ ${prop.name} initialized: ${tx}`);
+      console.log(`✓ ${proj.name} initialized: ${tx}`);
     } catch (err: any) {
       if (err.message?.includes("already in use")) {
-        console.log(`⊘ ${prop.name} already exists, skipping`);
+        console.log(`⊘ ${proj.name} already exists, skipping`);
       } else {
-        console.error(`✗ ${prop.name} failed:`, err.message);
+        console.error(`✗ ${proj.name} failed:`, err.message);
       }
     }
   }
 
-  console.log("\nDone! Properties initialized on devnet.");
+  console.log("\nDone! Projects initialized on devnet.");
   console.log("Program ID:", program.programId.toString());
   console.log("KZTE Mint:", KZTE_MINT.toString());
 }

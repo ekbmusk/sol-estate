@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { mockPortfolio } from "@/lib/mockData";
 import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useRwaProgram } from "@/hooks/useRwaProgram";
+import { useCarbonProgram } from "@/hooks/useCarbonProgram";
 import { PublicKey } from "@solana/web3.js";
 import {
   getAssociatedTokenAddress,
@@ -18,7 +18,7 @@ import { toast } from "sonner";
 
 export default function PortfolioPage() {
   const { publicKey, connected } = useWallet();
-  const program = useRwaProgram();
+  const program = useCarbonProgram();
   const [claimingId, setClaimingId] = useState<string | null>(null);
 
   const totalValue = mockPortfolio.reduce(
@@ -34,7 +34,7 @@ export default function PortfolioPage() {
     0
   );
 
-  const handleClaim = async (propertyId: string) => {
+  const handleClaim = async (projectId: string) => {
     if (!connected || !publicKey) {
       toast.error("Подключите кошелек для получения дивидендов");
       return;
@@ -45,24 +45,24 @@ export default function PortfolioPage() {
       return;
     }
 
-    setClaimingId(propertyId);
+    setClaimingId(projectId);
 
     try {
       // Derive PDAs
-      const [propertyPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from("property"), Buffer.from(propertyId)],
+      const [projectPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("project"), Buffer.from(projectId)],
         PROGRAM_ID
       );
 
       const [vaultPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from("vault"), Buffer.from(propertyId)],
+        [Buffer.from("vault"), Buffer.from(projectId)],
         PROGRAM_ID
       );
 
       const [investorRecordPda] = PublicKey.findProgramAddressSync(
         [
           Buffer.from("investor"),
-          propertyPda.toBuffer(),
+          projectPda.toBuffer(),
           publicKey.toBuffer(),
         ],
         PROGRAM_ID
@@ -85,7 +85,7 @@ export default function PortfolioPage() {
         .claimDividends()
         .accounts({
           investor: publicKey,
-          property: propertyPda,
+          project: projectPda,
           vault: vaultPda,
           investorRecord: investorRecordPda,
           vaultTokenAccount: vaultTokenAccount,
@@ -177,15 +177,15 @@ export default function PortfolioPage() {
       {/* Investments */}
       <div className="space-y-4">
         {mockPortfolio.map((item) => (
-          <Card key={item.propertyId}>
+          <Card key={item.projectId}>
             <CardContent className="py-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <Link
-                    href={`/asset/${item.propertyId}`}
+                    href={`/project/${item.projectId}`}
                     className="font-semibold hover:underline"
                   >
-                    {item.propertyName}
+                    {item.projectName}
                   </Link>
                   <p className="text-sm text-muted-foreground">
                     {item.location}
@@ -221,10 +221,10 @@ export default function PortfolioPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  disabled={item.claimableDividends <= 0 || claimingId === item.propertyId}
-                  onClick={() => handleClaim(item.propertyId)}
+                  disabled={item.claimableDividends <= 0 || claimingId === item.projectId}
+                  onClick={() => handleClaim(item.projectId)}
                 >
-                  {claimingId === item.propertyId ? "Обработка..." : "Получить"}
+                  {claimingId === item.projectId ? "Обработка..." : "Получить"}
                 </Button>
               </div>
             </CardContent>

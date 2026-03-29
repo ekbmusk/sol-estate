@@ -12,10 +12,10 @@ const WalletMultiButton = dynamic(
 );
 
 const navLinks = [
-  { href: "/", label: "Каталог" },
+  { href: "/", label: "Проекты" },
   { href: "/portfolio", label: "Портфолио" },
   { href: "/marketplace", label: "Маркетплейс" },
-  { href: "/governance", label: "Голосование" },
+  { href: "/retire", label: "Гашение" },
 ];
 
 export default function Navbar() {
@@ -24,7 +24,7 @@ export default function Navbar() {
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-            <span className="text-primary">SolEstate</span>
+            <span className="text-primary">CarbonKZ</span>
           </Link>
           <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
