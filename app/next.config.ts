@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  turbopack: {
+    resolveAlias: {
+      // Solana SDK needs Buffer polyfill in browser
+      buffer: "buffer",
+    },
+  },
 };
 
 export default nextConfig;
