@@ -8,6 +8,9 @@ skip-lint = false
 [programs.localnet]
 carbon_kz = "AtqkY8tyT9AwUe7JPDFnGuFoFtfXcj264AVEJWtMnL2u"
 
+[programs.devnet]
+carbon_kz = "AtqkY8tyT9AwUe7JPDFnGuFoFtfXcj264AVEJWtMnL2u"
+
 [registry]
 url = "https://api.apr.dev"
 

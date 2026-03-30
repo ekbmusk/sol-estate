@@ -471,6 +471,78 @@ describe("carbon_kz", () => {
     }
   });
 
+  // ── Mint Carbon Tokens + Retire (Happy Path) ───────────
+
+  it("Authority mints carbon tokens", async () => {
+    const polluterCarbonAta = await getOrCreateAssociatedTokenAccount(
+      provider.connection,
+      payer,
+      carbonMintPda,
+      polluter.publicKey
+    );
+
+    await program.methods
+      .mintCarbonTokens(new BN(500))
+      .accounts({
+        authority: authority.publicKey,
+        project: projectPda,
+        carbonMint: carbonMintPda,
+        recipientTokenAccount: polluterCarbonAta.address,
+        recipient: polluter.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      })
+      .rpc();
+
+    const tokenBalance = (await getAccount(provider.connection, polluterCarbonAta.address)).amount;
+    assert.equal(tokenBalance, BigInt(500));
+  });
+
+  it("Polluter retires carbon credits (happy path)", async () => {
+    const polluterCarbonAta = await getAssociatedTokenAddress(carbonMintPda, polluter.publicKey);
+
+    const retireId = Buffer.alloc(16);
+    retireId.writeUInt32LE(42, 0);
+
+    const [retireRecordPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("retire"), projectPda.toBuffer(), polluter.publicKey.toBuffer(), retireId],
+      program.programId
+    );
+
+    const carbonBefore = (await getAccount(provider.connection, polluterCarbonAta)).amount;
+
+    await program.methods
+      .retireCredits(Array.from(retireId), new BN(200), "КазМунайГаз ESG offset Q1 2026")
+      .accounts({
+        buyer: polluter.publicKey,
+        project: projectPda,
+        carbonMint: carbonMintPda,
+        buyerCarbonAccount: polluterCarbonAta,
+        retireRecord: retireRecordPda,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([polluter])
+      .rpc();
+
+    // Verify tokens burned
+    const carbonAfter = (await getAccount(provider.connection, polluterCarbonAta)).amount;
+    assert.equal(carbonBefore - carbonAfter, BigInt(200));
+
+    // Verify RetireRecord
+    const record = await program.account.retireRecord.fetch(retireRecordPda);
+    assert.ok(record.buyer.equals(polluter.publicKey));
+    assert.ok(record.project.equals(projectPda));
+    assert.equal(record.amountRetired.toNumber(), 200);
+    assert.equal(record.purpose, "КазМунайГаз ESG offset Q1 2026");
+    assert.ok(record.timestamp.toNumber() > 0);
+
+    // Verify project credits_retired updated
+    const project = await program.account.carbonProject.fetch(projectPda);
+    assert.equal(project.creditsRetired.toNumber(), 200);
+  });
+
   // ── Wave 2 ──────────────────────────────────────────────
 
   it("Investor lists shares for sale", async () => {
