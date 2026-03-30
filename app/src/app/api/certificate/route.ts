@@ -16,103 +16,140 @@ function generateSVG(params: {
   pda: string;
 }): string {
   const { buyer, project, amount, purpose, date, pda } = params;
-  const shortBuyer = `${buyer.slice(0, 6)}...${buyer.slice(-4)}`;
-  const formattedDate = new Date(parseInt(date) * 1000).toLocaleDateString("ru-RU", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const shortBuyer = buyer ? `${buyer.slice(0, 8)}...${buyer.slice(-6)}` : "";
+  const formattedDate = date && date !== "0"
+    ? new Date(parseInt(date) * 1000).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+    : "";
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
+  // A4 landscape: 1190 x 842 (297mm x 210mm at 96dpi)
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1190" height="842" viewBox="0 0 1190 842">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">
       <stop offset="0%" stop-color="#060A08"/>
-      <stop offset="100%" stop-color="#0C1612"/>
+      <stop offset="50%" stop-color="#0A1210"/>
+      <stop offset="100%" stop-color="#06100C"/>
     </linearGradient>
     <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#34D399"/>
       <stop offset="100%" stop-color="#10B981"/>
     </linearGradient>
-    <linearGradient id="burn" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="burn" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#F97316"/>
-      <stop offset="100%" stop-color="#EF4444"/>
+      <stop offset="100%" stop-color="#DC2626"/>
     </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.4" r="0.5">
+      <stop offset="0%" stop-color="#34D399" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
   </defs>
 
   <!-- Background -->
-  <rect width="800" height="1000" fill="url(#bg)" rx="24"/>
-  <rect x="1" y="1" width="798" height="998" fill="none" stroke="#1E2B26" stroke-width="1" rx="24"/>
+  <rect width="1190" height="842" fill="url(#bg)" rx="0"/>
+  <rect width="1190" height="842" fill="url(#glow)"/>
 
-  <!-- Inner border -->
-  <rect x="32" y="32" width="736" height="936" fill="none" stroke="#1E2B26" stroke-width="0.5" rx="16" stroke-dasharray="4 4"/>
+  <!-- Border -->
+  <rect x="28" y="28" width="1134" height="786" fill="none" stroke="#1E2B26" stroke-width="0.5" rx="12"/>
+  <rect x="32" y="32" width="1126" height="778" fill="none" stroke="#243028" stroke-width="0.5" rx="10" stroke-dasharray="6 4"/>
 
-  <!-- Top accent line -->
-  <rect x="32" y="32" width="736" height="4" fill="url(#accent)" rx="2"/>
+  <!-- Top accent bar -->
+  <rect x="28" y="28" width="1134" height="3" fill="url(#accent)" rx="1.5"/>
 
-  <!-- Logo area -->
-  <text x="64" y="88" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#F0F5F3">
+  <!-- Header row -->
+  <text x="64" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="700" fill="#F0F5F3">
     Carbon<tspan fill="#34D399">KZ</tspan>
   </text>
-  <text x="736" y="88" font-family="system-ui, sans-serif" font-size="12" fill="#5A6D65" text-anchor="end" letter-spacing="0.1em">
+  <text x="1126" y="72" font-family="system-ui, sans-serif" font-size="11" fill="#5A6D65" text-anchor="end" letter-spacing="0.18em">
     CARBON RETIREMENT CERTIFICATE
   </text>
-
-  <!-- Divider -->
-  <line x1="64" y1="110" x2="736" y2="110" stroke="#1E2B26" stroke-width="0.5"/>
-
-  <!-- Main heading -->
-  <text x="400" y="195" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#5A6D65" text-anchor="middle" letter-spacing="0.15em">
-    ПОДТВЕРЖДЕНИЕ ГАШЕНИЯ
-  </text>
-  <text x="400" y="240" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#5A6D65" text-anchor="middle" letter-spacing="0.08em">
-    УГЛЕРОДНЫХ КРЕДИТОВ
+  <text x="1126" y="88" font-family="monospace" font-size="10" fill="#3D5048" text-anchor="end">
+    NO. ${pda ? pda.slice(0, 12) : "000000000000"}
   </text>
 
-  <!-- Amount - big number -->
-  <text x="400" y="360" font-family="system-ui, -apple-system, sans-serif" font-size="96" font-weight="800" fill="url(#burn)" text-anchor="middle">
+  <line x1="64" y1="104" x2="1126" y2="104" stroke="#1E2B26" stroke-width="0.5"/>
+
+  <!-- Left column: Certificate content -->
+
+  <!-- Title -->
+  <text x="64" y="160" font-family="system-ui, sans-serif" font-size="13" fill="#5A6D65" letter-spacing="0.2em">
+    CERTIFICATE OF CARBON CREDIT RETIREMENT
+  </text>
+
+  <text x="64" y="210" font-family="system-ui, -apple-system, sans-serif" font-size="22" fill="#B0BDB7" font-weight="400">
+    This certifies that the holder has permanently retired
+  </text>
+
+  <!-- Big number -->
+  <text x="64" y="310" font-family="system-ui, -apple-system, sans-serif" font-size="120" font-weight="800" fill="url(#burn)">
     ${amount}
   </text>
-  <text x="400" y="400" font-family="system-ui, sans-serif" font-size="20" fill="#8A9B94" text-anchor="middle">
-    тонн CO₂ погашено навсегда
+  <text x="${64 + (amount.length * 72)}" y="310" font-family="system-ui, sans-serif" font-size="32" fill="#8A9B94" dy="0">
+    tonnes CO&#x2082;
   </text>
 
-  <!-- Fire icon (simple) -->
-  <circle cx="400" cy="450" r="20" fill="#F97316" opacity="0.1"/>
-  <text x="400" y="458" font-size="24" text-anchor="middle">🔥</text>
-
-  <!-- Details -->
-  <rect x="64" y="500" width="672" height="1" fill="#1E2B26"/>
-
-  <text x="64" y="545" font-family="system-ui, sans-serif" font-size="11" fill="#5A6D65" letter-spacing="0.08em">ПРОЕКТ</text>
-  <text x="64" y="570" font-family="system-ui, sans-serif" font-size="18" fill="#F0F5F3" font-weight="600">${escapeXml(project)}</text>
-
-  <text x="64" y="615" font-family="system-ui, sans-serif" font-size="11" fill="#5A6D65" letter-spacing="0.08em">ЦЕЛЬ ГАШЕНИЯ</text>
-  <text x="64" y="640" font-family="system-ui, sans-serif" font-size="16" fill="#B0BDB7">${escapeXml(purpose)}</text>
-
-  <text x="64" y="685" font-family="system-ui, sans-serif" font-size="11" fill="#5A6D65" letter-spacing="0.08em">ДАТА</text>
-  <text x="64" y="710" font-family="system-ui, sans-serif" font-size="16" fill="#B0BDB7">${formattedDate}</text>
-
-  <text x="64" y="755" font-family="system-ui, sans-serif" font-size="11" fill="#5A6D65" letter-spacing="0.08em">КОШЕЛЁК</text>
-  <text x="64" y="780" font-family="monospace" font-size="14" fill="#8A9B94">${shortBuyer}</text>
-
-  <!-- Divider -->
-  <rect x="64" y="810" width="672" height="1" fill="#1E2B26"/>
-
-  <!-- Verification badge -->
-  <rect x="64" y="840" width="672" height="64" fill="#34D399" fill-opacity="0.06" rx="12"/>
-  <rect x="64" y="840" width="672" height="64" fill="none" stroke="#34D399" stroke-opacity="0.2" rx="12"/>
-  <circle cx="96" cy="872" r="10" fill="#34D399" opacity="0.2"/>
-  <text x="96" y="877" font-size="14" text-anchor="middle">✓</text>
-  <text x="120" y="868" font-family="system-ui, sans-serif" font-size="13" fill="#34D399" font-weight="600">
-    Верифицировано на блокчейне Solana
-  </text>
-  <text x="120" y="888" font-family="monospace" font-size="11" fill="#5A6D65">
-    ${pda.slice(0, 20)}...
+  <text x="64" y="350" font-family="system-ui, sans-serif" font-size="18" fill="#8A9B94">
+    from the global carbon supply, permanently and irrevocably.
   </text>
 
-  <!-- Footer -->
-  <text x="400" y="955" font-family="system-ui, sans-serif" font-size="11" fill="#3D5048" text-anchor="middle">
-    Solana Devnet · CarbonKZ · Decentrathon 5.0
+  <!-- Details grid -->
+  <line x1="64" y1="390" x2="750" y2="390" stroke="#1E2B26" stroke-width="0.5"/>
+
+  <text x="64" y="430" font-family="system-ui, sans-serif" font-size="11" fill="#5A6D65" letter-spacing="0.1em">PROJECT</text>
+  <text x="64" y="455" font-family="system-ui, sans-serif" font-size="20" fill="#F0F5F3" font-weight="600">${escapeXml(project)}</text>
+
+  <text x="450" y="430" font-family="system-ui, sans-serif" font-size="11" fill="#5A6D65" letter-spacing="0.1em">DATE</text>
+  <text x="450" y="455" font-family="system-ui, sans-serif" font-size="20" fill="#F0F5F3">${formattedDate}</text>
+
+  <text x="64" y="505" font-family="system-ui, sans-serif" font-size="11" fill="#5A6D65" letter-spacing="0.1em">PURPOSE</text>
+  <text x="64" y="530" font-family="system-ui, sans-serif" font-size="18" fill="#B0BDB7">${escapeXml(purpose)}</text>
+
+  <text x="64" y="580" font-family="system-ui, sans-serif" font-size="11" fill="#5A6D65" letter-spacing="0.1em">RETIRED BY</text>
+  <text x="64" y="605" font-family="monospace" font-size="16" fill="#8A9B94">${shortBuyer}</text>
+
+  <!-- Right column: Verification -->
+  <rect x="800" y="130" width="296" height="480" fill="#0C1612" rx="12"/>
+  <rect x="800" y="130" width="296" height="480" fill="none" stroke="#1E2B26" rx="12"/>
+
+  <text x="948" y="180" font-family="system-ui, sans-serif" font-size="11" fill="#5A6D65" text-anchor="middle" letter-spacing="0.15em">
+    VERIFICATION
+  </text>
+
+  <!-- Checkmark circle -->
+  <circle cx="948" cy="260" r="40" fill="#34D399" opacity="0.08"/>
+  <circle cx="948" cy="260" r="40" fill="none" stroke="#34D399" stroke-opacity="0.3" stroke-width="1.5"/>
+  <path d="M930 260 L944 274 L968 246" fill="none" stroke="#34D399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <text x="948" y="330" font-family="system-ui, sans-serif" font-size="14" fill="#34D399" text-anchor="middle" font-weight="600">
+    Verified on Solana
+  </text>
+  <text x="948" y="350" font-family="system-ui, sans-serif" font-size="12" fill="#5A6D65" text-anchor="middle">
+    Blockchain
+  </text>
+
+  <line x1="832" y1="380" x2="1064" y2="380" stroke="#1E2B26" stroke-width="0.5"/>
+
+  <text x="832" y="410" font-family="system-ui, sans-serif" font-size="10" fill="#5A6D65" letter-spacing="0.1em">NETWORK</text>
+  <text x="832" y="430" font-family="system-ui, sans-serif" font-size="14" fill="#B0BDB7">Solana Devnet</text>
+
+  <text x="832" y="465" font-family="system-ui, sans-serif" font-size="10" fill="#5A6D65" letter-spacing="0.1em">PROOF TYPE</text>
+  <text x="832" y="485" font-family="system-ui, sans-serif" font-size="14" fill="#B0BDB7">SPL Token Burn + PDA Record</text>
+
+  <text x="832" y="520" font-family="system-ui, sans-serif" font-size="10" fill="#5A6D65" letter-spacing="0.1em">RECORD</text>
+  <text x="832" y="540" font-family="monospace" font-size="11" fill="#8A9B94">${pda ? pda.slice(0, 22) : ""}</text>
+  <text x="832" y="556" font-family="monospace" font-size="11" fill="#8A9B94">${pda ? pda.slice(22) : ""}</text>
+
+  <text x="948" y="595" font-family="system-ui, sans-serif" font-size="11" fill="#34D399" text-anchor="middle">
+    Immutable · Permanent · Auditable
+  </text>
+
+  <!-- Bottom bar -->
+  <line x1="0" y1="750" x2="1190" y2="750" stroke="#1E2B26" stroke-width="0.5"/>
+
+  <text x="64" y="785" font-family="system-ui, sans-serif" font-size="13" fill="#3D5048" letter-spacing="0.06em">
+    Tokens burned are permanently removed from circulation. Double counting is impossible.
+  </text>
+
+  <text x="595" y="820" font-family="system-ui, sans-serif" font-size="11" fill="#2A3832" text-anchor="middle" letter-spacing="0.25em">
+    SOLANA  ·  SUPERTEAM KZ  ·  ZERDE  ·  DECENTRATHON 5.0
   </text>
 </svg>`;
 }
