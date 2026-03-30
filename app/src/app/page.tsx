@@ -75,32 +75,7 @@ function StatItem({ target, suffix, label }: { target: number; suffix: string; l
   );
 }
 
-const steps = [
-  {
-    icon: ShieldCheck,
-    num: "01",
-    title: "Верификация проекта",
-    desc: "Зелёный проект проходит независимую проверку. SHA-256 хеш сертификата фиксируется on-chain навсегда — подделка невозможна. Верификатор подтверждает объём сокращения CO₂.",
-  },
-  {
-    icon: CircleDollarSign,
-    num: "02",
-    title: "Инвестирование за KZTE",
-    desc: "Покупайте доли проекта за KZTE (стейблкоин 1:1 к тенге). Оплата уходит в vault, а share-токены автоматически минтятся на ваш кошелёк. Каждая доля — это право на часть дохода от продажи кредитов.",
-  },
-  {
-    icon: TrendingUp,
-    num: "03",
-    title: "Дивиденды",
-    desc: "Загрязнители покупают углеродные кредиты — выручка поступает в vault проекта. Доход распределяется пропорционально вашим долям. Вы забираете дивиденды в KZTE одним нажатием.",
-  },
-  {
-    icon: Flame,
-    num: "04",
-    title: "Гашение (Retire)",
-    desc: "Загрязнитель сжигает углеродные токены навсегда — SPL Token burn. На блокчейне создаётся RetireRecord: кто, сколько тонн, когда, зачем. Double counting невозможен — сожжённый токен не существует.",
-  },
-];
+// removed — replaced with inline sections in how-it-works
 
 export default function LandingPage() {
   const [activeType, setActiveType] = useState("all");
@@ -259,35 +234,135 @@ export default function LandingPage() {
       {/* ═══ HOW IT WORKS ═══ */}
       <section id="how-it-works" className="py-20 border-t border-[#1E2B26] relative overflow-hidden">
         <div className="dot-grid dot-grid-fade absolute inset-0 opacity-60 pointer-events-none" />
-        <div className="mx-auto max-w-[1280px] px-6">
-          <div className="mb-14">
-            <h2 className="font-heading text-[28px] sm:text-[32px] font-bold tracking-[-0.02em]">
-              Как это работает
+        <div className="mx-auto max-w-[1280px] px-6 space-y-20">
+
+          {/* --- Проблема --- */}
+          <div className="max-w-[720px]">
+            <p className="label-upper mb-4 text-[#F97316]">Проблема</p>
+            <h2 className="font-heading text-[28px] sm:text-[32px] font-bold tracking-[-0.02em] mb-6">
+              Казахстан — 4-е место в мире по выбросам CO₂ на единицу ВВП
             </h2>
-            <p className="mt-2 text-[15px] text-[#8A9B94] max-w-[480px]">
-              От верификации до гашения — полный цикл на Solana
+            <p className="text-[15px] text-[#8A9B94] leading-[1.7] mb-4">
+              349 млн тонн CO₂ в год. 17.5 тонн на человека — в 3 раза выше среднего по ОЭСР.
+              Рынок углеродных кредитов существует с 2013 года, но фактически мёртв:
+              цена $1 за тонну, всего 135 участников, торги только на бирже Caspy.
+            </p>
+            <p className="text-[15px] text-[#8A9B94] leading-[1.7]">
+              При этом правительство ставит цель — $50 за тонну к 2030 году.
+              World Bank вложил $4.8 млн в развитие рынка. Но инструментов для обычных инвесторов нет.
+              Банки не допущены к торгам. Прозрачность нулевая. Двойной учёт кредитов — норма.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {steps.map((step, i) => (
-              <div
-                key={step.num}
-                className="group rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6 transition-all duration-200 hover:border-[#2A3832] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
-              >
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-9 h-9 rounded-lg bg-[rgba(16,185,129,0.08)] flex items-center justify-center">
-                    <step.icon size={18} strokeWidth={1.5} className="text-[#34D399]" />
-                  </div>
-                  <span className="text-[11px] font-medium text-[#5A6D65] tracking-widest">{step.num}</span>
+          {/* --- Для кого --- */}
+          <div>
+            <p className="label-upper mb-6 text-[#34D399]">Для кого</p>
+            <div className="grid sm:grid-cols-3 gap-5">
+              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6">
+                <div className="w-10 h-10 rounded-lg bg-[#34D399]/10 border border-[#34D399]/20 flex items-center justify-center mb-4">
+                  <CircleDollarSign size={20} strokeWidth={1.5} className="text-[#34D399]" />
                 </div>
-                <h3 className="font-heading text-[15px] font-semibold tracking-[-0.01em] mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-[13px] text-[#8A9B94] leading-[1.6]">{step.desc}</p>
+                <h3 className="font-heading text-[16px] font-semibold mb-2">Инвесторы</h3>
+                <p className="text-[13px] text-[#8A9B94] leading-[1.6]">
+                  Покупайте доли зелёных проектов за тенге. Получайте доход от продажи углеродных кредитов.
+                  Цена кредита $1 сегодня → $50 к 2030 году. Потенциал x50.
+                </p>
               </div>
-            ))}
+              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6">
+                <div className="w-10 h-10 rounded-lg bg-[#F97316]/10 border border-[#F97316]/20 flex items-center justify-center mb-4">
+                  <Flame size={20} strokeWidth={1.5} className="text-[#F97316]" />
+                </div>
+                <h3 className="font-heading text-[16px] font-semibold mb-2">Компании-загрязнители</h3>
+                <p className="text-[13px] text-[#8A9B94] leading-[1.6]">
+                  КазМунайГаз, ArcelorMittal, угольные ТЭЦ — 135 предприятий обязаны по закону
+                  компенсировать выбросы. CarbonKZ даёт прозрачный способ купить и погасить кредиты
+                  с доказательством на блокчейне.
+                </p>
+              </div>
+              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6">
+                <div className="w-10 h-10 rounded-lg bg-[#60A5FA]/10 border border-[#60A5FA]/20 flex items-center justify-center mb-4">
+                  <ShieldCheck size={20} strokeWidth={1.5} className="text-[#60A5FA]" />
+                </div>
+                <h3 className="font-heading text-[16px] font-semibold mb-2">Зелёные проекты</h3>
+                <p className="text-[13px] text-[#8A9B94] leading-[1.6]">
+                  Солнечные станции, ветропарки, лесовосстановление — получают финансирование
+                  от инвесторов. Верификация и все транзакции прозрачны. Вывод средств в тенге.
+                </p>
+              </div>
+            </div>
           </div>
+
+          {/* --- Как работает --- */}
+          <div>
+            <p className="label-upper mb-6">Как это работает</p>
+            <div className="grid sm:grid-cols-2 gap-5">
+              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-7 space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-full bg-[#34D399] text-[#060A08] flex items-center justify-center text-[13px] font-bold">1</span>
+                  <h3 className="font-heading text-[16px] font-semibold">Проект проходит проверку</h3>
+                </div>
+                <p className="text-[14px] text-[#8A9B94] leading-[1.7]">
+                  Владелец солнечной станции или ветропарка загружает документы.
+                  Хеш сертификата записывается на блокчейн — его нельзя подделать или изменить.
+                  Независимый верификатор подтверждает проект.
+                </p>
+              </div>
+              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-7 space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-full bg-[#34D399] text-[#060A08] flex items-center justify-center text-[13px] font-bold">2</span>
+                  <h3 className="font-heading text-[16px] font-semibold">Инвестор покупает доли</h3>
+                </div>
+                <p className="text-[14px] text-[#8A9B94] leading-[1.7]">
+                  Вы выбираете проект и покупаете доли за KZTE (1 KZTE = 1 тенге).
+                  Деньги уходят в защищённое хранилище проекта. Вам на кошелёк приходят
+                  токены-доли — подтверждение вашей инвестиции.
+                </p>
+              </div>
+              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-7 space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-full bg-[#34D399] text-[#060A08] flex items-center justify-center text-[13px] font-bold">3</span>
+                  <h3 className="font-heading text-[16px] font-semibold">Загрязнители платят — вы получаете</h3>
+                </div>
+                <p className="text-[14px] text-[#8A9B94] leading-[1.7]">
+                  Заводы и ТЭЦ покупают углеродные кредиты у проекта.
+                  Выручка автоматически распределяется между всеми инвесторами
+                  пропорционально долям. Забираете доход одной кнопкой.
+                </p>
+              </div>
+              <div className="rounded-xl border border-[#F97316]/30 bg-[#F97316]/5 p-7 space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-full bg-[#F97316] text-[#060A08] flex items-center justify-center text-[13px] font-bold">4</span>
+                  <h3 className="font-heading text-[16px] font-semibold text-[#F97316]">Гашение — доказательство навсегда</h3>
+                </div>
+                <p className="text-[14px] text-[#8A9B94] leading-[1.7]">
+                  Когда компания компенсирует свои выбросы, углеродные токены сжигаются навсегда.
+                  На блокчейне остаётся запись: кто погасил, сколько тонн, когда и зачем.
+                  Использовать один кредит дважды невозможно — его просто больше не существует.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* --- Почему блокчейн --- */}
+          <div className="max-w-[720px]">
+            <p className="label-upper mb-4 text-[#A78BFA]">Почему Solana</p>
+            <div className="space-y-4">
+              {[
+                ["Прозрачность", "Все операции видны на блокчейне. Любой может проверить: сколько кредитов выпущено, кто купил, кто погасил."],
+                ["Скорость и стоимость", "Транзакция на Solana занимает 0.4 секунды и стоит меньше 1 тенге. Для сравнения — Ethereum: минуты и тысячи тенге."],
+                ["Невозможность подделки", "Хеш документа, гашение кредитов, дивиденды — всё записано навечно. Изменить задним числом нельзя."],
+              ].map(([title, desc]) => (
+                <div key={title} className="flex gap-4">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#A78BFA] mt-2.5 shrink-0" />
+                  <div>
+                    <p className="text-[14px] font-medium text-[#F0F5F3]">{title}</p>
+                    <p className="text-[13px] text-[#8A9B94] leading-[1.6] mt-0.5">{desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </section>
 
