@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
+import { useKzte } from "@/hooks/useKzte";
 
 const WalletMultiButton = dynamic(
   () =>
@@ -21,6 +22,7 @@ const navLinks = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { balance: kzteBalance } = useKzte();
 
   return (
     <header className="sticky top-0 z-50 w-full h-16 border-b border-[#1E2B26] bg-[#060A08]/95 backdrop-blur-xl">
@@ -60,6 +62,14 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* KZTE balance */}
+          {kzteBalance !== null && kzteBalance > 0 && (
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#34D399]/10 border border-[#34D399]/20">
+              <span className="font-mono-data text-[11px] font-medium text-[#34D399] tracking-wide">
+                {kzteBalance.toLocaleString("ru-RU")} &#x20B8;
+              </span>
+            </div>
+          )}
           {/* Network badge */}
           <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FBBF24]/10 border border-[#FBBF24]/20">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24]" />

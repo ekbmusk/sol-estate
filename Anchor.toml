@@ -6,10 +6,10 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-carbon_kz = "AtqkY8tyT9AwUe7JPDFnGuFoFtfXcj264AVEJWtMnL2u"
+carbon_kz = "3nLd8C3s2SAMVWXHy1vb7719zVPKPJWKrgxDDJ9pRRkg"
 
 [programs.devnet]
-carbon_kz = "AtqkY8tyT9AwUe7JPDFnGuFoFtfXcj264AVEJWtMnL2u"
+carbon_kz = "3nLd8C3s2SAMVWXHy1vb7719zVPKPJWKrgxDDJ9pRRkg"
 
 [registry]
 url = "https://api.apr.dev"

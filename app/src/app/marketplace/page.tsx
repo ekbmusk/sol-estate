@@ -1,4 +1,21 @@
-import { ArrowLeftRight, BookOpen, BarChart3, Lock } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { ArrowLeftRight, BookOpen, BarChart3 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useListings } from "@/hooks/useListings";
+import { useProjects } from "@/hooks/useProjects";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useCarbonProgram } from "@/hooks/useCarbonProgram";
+import { BN } from "@coral-xyz/anchor";
+import { PublicKey } from "@solana/web3.js";
+import {
+  getAssociatedTokenAddress,
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
+import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
+import { toast } from "sonner";
 
 const features = [
   {
@@ -19,10 +36,110 @@ const features = [
 ];
 
 export default function MarketplacePage() {
+  const { publicKey, connected } = useWallet();
+  const program = useCarbonProgram();
+  const { listings, loading: listingsLoading, refetch: refetchListings } = useListings();
+  const { projects } = useProjects();
+  const [buyingPda, setBuyingPda] = useState<string | null>(null);
+
+  const getProjectName = (projectPda: string) => {
+    const p = projects.find((pr) => pr.pda === projectPda);
+    return p?.name ?? projectPda.slice(0, 8) + "...";
+  };
+
+  const getProjectId = (projectPda: string) => {
+    return projects.find((pr) => pr.pda === projectPda)?.id ?? null;
+  };
+
+  const handleBuy = async (listing: (typeof listings)[0]) => {
+    if (!connected || !publicKey || !program) {
+      toast.error("Подключите кошелек");
+      return;
+    }
+
+    const projectId = getProjectId(listing.project);
+    if (!projectId) {
+      toast.error("Проект не найден");
+      return;
+    }
+
+    setBuyingPda(listing.pda);
+    try {
+      const [projectPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("project"), Buffer.from(projectId)],
+        PROGRAM_ID
+      );
+      const [vaultPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("vault"), Buffer.from(projectId)],
+        PROGRAM_ID
+      );
+      const [shareMintPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("share_mint"), Buffer.from(projectId)],
+        PROGRAM_ID
+      );
+
+      const sellerPubkey = new PublicKey(listing.seller);
+      const listingPda = new PublicKey(listing.pda);
+
+      const buyerKzteAta = await getAssociatedTokenAddress(KZTE_MINT, publicKey);
+      const sellerKzteAta = await getAssociatedTokenAddress(KZTE_MINT, sellerPubkey);
+      const escrowShareAta = await getAssociatedTokenAddress(shareMintPda, listingPda, true);
+      const buyerShareAta = await getAssociatedTokenAddress(shareMintPda, publicKey);
+
+      const [buyerRecordPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("investor"), projectPda.toBuffer(), publicKey.toBuffer()],
+        PROGRAM_ID
+      );
+      const [sellerRecordPda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("investor"), projectPda.toBuffer(), sellerPubkey.toBuffer()],
+        PROGRAM_ID
+      );
+
+      const sig = await program.methods
+        .buyShares()
+        .accounts({
+          buyer: publicKey,
+          seller: sellerPubkey,
+          project: projectPda,
+          vault: vaultPda,
+          listing: listingPda,
+          buyerKzteAccount: buyerKzteAta,
+          sellerKzteAccount: sellerKzteAta,
+          escrowShareAccount: escrowShareAta,
+          buyerShareAccount: buyerShareAta,
+          shareMint: shareMintPda,
+          buyerRecord: buyerRecordPda,
+          sellerRecord: sellerRecordPda,
+          systemProgram: PublicKey.default,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        })
+        .rpc();
+
+      toast.success("Доли куплены!", {
+        description: `${listing.amount} долей приобретено`,
+        action: {
+          label: "Explorer",
+          onClick: () =>
+            window.open(`https://explorer.solana.com/tx/${sig}?cluster=devnet`, "_blank"),
+        },
+      });
+      refetchListings();
+    } catch (err) {
+      toast.error("Ошибка покупки", {
+        description: err instanceof Error ? err.message : "Неизвестная ошибка",
+      });
+    } finally {
+      setBuyingPda(null);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-[1280px] px-6 py-16 relative overflow-hidden">
       <div className="dot-grid dot-grid-fade absolute inset-0 opacity-50 pointer-events-none" />
-      <div className="max-w-[640px] mx-auto text-center mb-14">
+
+      {/* Header */}
+      <div className="relative max-w-[640px] mx-auto text-center mb-14">
         <h1 className="font-heading text-[32px] font-bold tracking-[-0.02em] mb-3">
           Маркетплейс
         </h1>
@@ -31,26 +148,97 @@ export default function MarketplacePage() {
         </p>
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-5 max-w-[900px] mx-auto mb-12">
+      {/* Features */}
+      <div className="relative grid sm:grid-cols-3 gap-5 max-w-[900px] mx-auto mb-12">
         {features.map((f) => (
-          <div
-            key={f.title}
-            className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6"
-          >
+          <div key={f.title} className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6">
             <div className="w-9 h-9 rounded-lg bg-[rgba(52,211,153,0.08)] flex items-center justify-center mb-4">
               <f.icon size={18} strokeWidth={1.5} className="text-[#34D399]" />
             </div>
-            <h3 className="font-heading text-[14px] font-semibold tracking-[-0.01em] mb-2">
-              {f.title}
-            </h3>
+            <h3 className="font-heading text-[14px] font-semibold tracking-[-0.01em] mb-2">{f.title}</h3>
             <p className="text-[13px] text-[#8A9B94] leading-[1.6]">{f.desc}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center justify-center gap-2">
-        <Lock size={14} strokeWidth={1.5} className="text-[#5A6D65]" />
-        <span className="text-[12px] font-medium text-[#5A6D65] tracking-wide">Скоро — Q3 2026</span>
+      {/* Active listings */}
+      <div className="relative max-w-[900px] mx-auto">
+        <h2 className="font-heading text-xl font-bold tracking-[-0.01em] mb-6">
+          Активные листинги
+        </h2>
+
+        {listingsLoading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-20 rounded-xl skeleton" />
+            ))}
+          </div>
+        ) : listings.length === 0 ? (
+          <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-10 text-center">
+            <ArrowLeftRight size={32} className="text-[#2A3832] mx-auto mb-4" />
+            <p className="text-[14px] text-[#5A6D65] mb-1">Нет активных листингов</p>
+            <p className="text-[12px] text-[#3D5048]">
+              {publicKey
+                ? "Листинги появятся когда инвесторы выставят свои доли на продажу"
+                : "Подключите кошелек для просмотра листингов"}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {/* Table header */}
+            <div className="grid grid-cols-5 gap-4 px-5 py-2">
+              <span className="label-upper">Проект</span>
+              <span className="label-upper">Продавец</span>
+              <span className="label-upper text-right">Кол-во</span>
+              <span className="label-upper text-right">Цена/доля</span>
+              <span className="label-upper text-right">Итого</span>
+            </div>
+
+            {listings.map((listing) => {
+              const total = listing.amount * listing.pricePerShare;
+              const isSelf = publicKey?.toString() === listing.seller;
+
+              return (
+                <div
+                  key={listing.pda}
+                  className="grid grid-cols-5 gap-4 items-center rounded-xl border border-[#1E2B26] bg-[#0C1210] px-5 py-4"
+                >
+                  <div>
+                    <p className="text-[13px] font-medium truncate">{getProjectName(listing.project)}</p>
+                  </div>
+                  <div>
+                    <p className="font-mono-data text-[12px] text-[#5A6D65]">
+                      {listing.seller.slice(0, 4)}...{listing.seller.slice(-4)}
+                      {isSelf && <span className="text-[#34D399] ml-1">(вы)</span>}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-mono-data text-[13px]">{listing.amount.toLocaleString("ru-RU")}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-mono-data text-[13px]">{listing.pricePerShare.toLocaleString("ru-RU")} &#x20B8;</p>
+                  </div>
+                  <div className="text-right flex items-center justify-end gap-3">
+                    <p className="font-mono-data text-[13px] font-medium text-[#34D399]">
+                      {total.toLocaleString("ru-RU")} &#x20B8;
+                    </p>
+                    {!isSelf && connected && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-[#34D399]/30 text-[#34D399] hover:bg-[#34D399]/10 text-[11px] h-7 px-3 cursor-pointer"
+                        disabled={buyingPda === listing.pda}
+                        onClick={() => handleBuy(listing)}
+                      >
+                        {buyingPda === listing.pda ? "..." : "Купить"}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -111,7 +111,7 @@ export default function InvestModal({ property }: { property: Project }) {
         })
         .rpc();
 
-      const explorerUrl = `https://explorer.solana.com/tx/${sig}?cluster=custom&customUrl=http://localhost:8899`;
+      const explorerUrl = `https://explorer.solana.com/tx/${sig}?cluster=devnet`;
 
       toast.success("Инвестиция успешна!", {
         description: `${shares} долей приобретено`,

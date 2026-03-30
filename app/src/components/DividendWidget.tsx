@@ -9,7 +9,6 @@ import { PublicKey } from "@solana/web3.js";
 import {
   getAssociatedTokenAddress,
   TOKEN_PROGRAM_ID,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
 import { toast } from "sonner";
@@ -88,14 +87,11 @@ export default function DividendWidget({
           investorRecord: investorRecordPda,
           vaultTokenAccount: vaultTokenAccount,
           investorKzteAccount: investorKzteAccount,
-          kzteMint: KZTE_MINT,
           tokenProgram: TOKEN_PROGRAM_ID,
-          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-          systemProgram: PublicKey.default,
         })
         .rpc();
 
-      const explorerUrl = `https://explorer.solana.com/tx/${sig}?cluster=custom&customUrl=http://localhost:8899`;
+      const explorerUrl = `https://explorer.solana.com/tx/${sig}?cluster=devnet`;
 
       toast.success("Дивиденды получены!", {
         description: `${claimableAmount.toLocaleString("ru-RU")} ₸ отправлено на ваш кошелек`,

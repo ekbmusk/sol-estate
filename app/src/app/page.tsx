@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, TrendingUp, Flame, CircleDollarSign } from "lucide-react";
 import ProjectCard from "@/components/ProjectCard";
-import { mockProjects } from "@/lib/mockData";
+import CarbonCounter from "@/components/CarbonCounter";
+import { mockProjects, type Project } from "@/lib/mockData";
+import { useProjects } from "@/hooks/useProjects";
+import { KZTE_DECIMALS } from "@/lib/constants";
 
 const projectTypes = [
   { key: "all", label: "Все" },
@@ -94,10 +97,47 @@ const steps = [
 
 export default function LandingPage() {
   const [activeType, setActiveType] = useState("all");
+  const { projects: onChainProjects, loading: projectsLoading } = useProjects();
+
+  // Map on-chain projects to the Project type used by ProjectCard, fallback to mock
+  const displayProjects: Project[] = useMemo(() => {
+    if (onChainProjects.length === 0) return mockProjects;
+    return onChainProjects.map((p) => {
+      // Try to find matching mock for location/description/image
+      const mock = mockProjects.find((m) => m.id === p.id);
+      return {
+        id: p.id,
+        name: p.name,
+        location: mock?.location ?? "",
+        description: mock?.description ?? "",
+        projectType: p.projectType as Project["projectType"],
+        totalCredits: p.totalCredits,
+        creditsRetired: p.creditsRetired,
+        totalShares: p.totalShares,
+        sharesSold: p.sharesSold,
+        pricePerShare: p.pricePerShare,
+        verified: p.verified,
+        status: p.status as Project["status"],
+        imageUrl: mock?.imageUrl ?? "",
+        documentHash: mock?.documentHash ?? "",
+      };
+    });
+  }, [onChainProjects]);
+
+  const totalCredits = displayProjects.reduce((s, p) => s + p.totalCredits, 0);
+  const totalRetired = displayProjects.reduce((s, p) => s + p.creditsRetired, 0);
+  const totalInvested = displayProjects.reduce((s, p) => s + p.sharesSold * p.pricePerShare, 0);
+
+  const liveStats = [
+    { value: totalCredits, suffix: " tCO\u2082", label: "\u0412\u0441\u0435\u0433\u043E \u043A\u0440\u0435\u0434\u0438\u0442\u043E\u0432" },
+    { value: totalRetired, suffix: " tCO\u2082", label: "\u041F\u043E\u0433\u0430\u0448\u0435\u043D\u043E" },
+    { value: displayProjects.length, suffix: "", label: "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0445 \u043F\u0440\u043E\u0435\u043A\u0442\u043E\u0432" },
+    { value: Math.round(totalInvested / 1_000_000), suffix: "M \u20B8", label: "\u0418\u043D\u0432\u0435\u0441\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u043E" },
+  ];
 
   const filtered = activeType === "all"
-    ? mockProjects
-    : mockProjects.filter((p) => p.projectType === activeType);
+    ? displayProjects
+    : displayProjects.filter((p) => p.projectType === activeType);
 
   return (
     <div>
@@ -148,10 +188,10 @@ export default function LandingPage() {
                   </span>
                 </div>
                 {[
-                  { label: "Всего кредитов", value: "28,000 tCO\u2082", change: "+12%" },
-                  { label: "Погашено", value: "3,920 tCO\u2082", change: "+8%" },
-                  { label: "Активных проектов", value: "4", change: "" },
-                  { label: "Инвестировано", value: "224M \u20B8", change: "+23%" },
+                  { label: "Всего кредитов", value: `${totalCredits.toLocaleString("ru-RU")} tCO\u2082`, change: "" },
+                  { label: "Погашено", value: `${totalRetired.toLocaleString("ru-RU")} tCO\u2082`, change: "" },
+                  { label: "Активных проектов", value: `${displayProjects.length}`, change: "" },
+                  { label: "Инвестировано", value: `${Math.round(totalInvested / 1_000_000)}M \u20B8`, change: "" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center justify-between py-2.5 border-t border-[#1E2B26]">
                     <span className="text-[13px] text-[#8A9B94]">{item.label}</span>
@@ -173,7 +213,7 @@ export default function LandingPage() {
       <section className="border-y border-[#1E2B26] bg-[#0C1210]">
         <div className="mx-auto max-w-[1280px] px-6">
           <div className="grid grid-cols-2 lg:grid-cols-4">
-            {platformStats.map((stat, i) => (
+            {liveStats.map((stat, i) => (
               <div key={stat.label} className={`${i > 0 ? "border-l border-[#1E2B26]" : ""}`}>
                 <StatItem target={stat.value} suffix={stat.suffix} label={stat.label} />
               </div>

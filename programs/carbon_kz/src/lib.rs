@@ -8,7 +8,7 @@ pub mod state;
 use instructions::*;
 use state::ProjectType;
 
-declare_id!("AtqkY8tyT9AwUe7JPDFnGuFoFtfXcj264AVEJWtMnL2u");
+declare_id!("3nLd8C3s2SAMVWXHy1vb7719zVPKPJWKrgxDDJ9pRRkg");
 
 #[program]
 pub mod carbon_kz {

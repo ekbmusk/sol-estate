@@ -18,11 +18,11 @@ async function main() {
 
   const projects = [
     {
-      id: "solar-kapchagai",
-      name: "Солнечная ферма Капшагай",
+      id: "ses-yasavi",
+      name: "СЭС Университета Ахмеда Ясави",
       projectType: { solar: {} },
-      totalCredits: new BN(5000),
-      totalShares: new BN(5000),
+      totalCredits: new BN(36),
+      totalShares: new BN(360),
       pricePerShare: new BN(10000_000000), // 10,000 KZTE
     },
     {
@@ -62,14 +62,6 @@ async function main() {
       [Buffer.from("vault"), Buffer.from(proj.id)],
       program.programId
     );
-    const [shareMintPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("share_mint"), Buffer.from(proj.id)],
-      program.programId
-    );
-    const [carbonMintPda] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("carbon_mint"), Buffer.from(proj.id)],
-      program.programId
-    );
     const vaultTokenAccount = await getAssociatedTokenAddress(KZTE_MINT, vaultPda, true);
 
     try {
@@ -85,30 +77,33 @@ async function main() {
         )
         .accounts({
           authority: authority.publicKey,
-          project: projectPda,
-          vault: vaultPda,
-          shareMint: shareMintPda,
-          carbonMint: carbonMintPda,
           kzteMint: KZTE_MINT,
           vaultTokenAccount: vaultTokenAccount,
-          systemProgram: anchor.web3.SystemProgram.programId,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-          rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        })
+        } as any)
         .rpc();
 
       console.log(`✓ ${proj.name} initialized: ${tx}`);
+
+      // Verify the project
+      const verifyTx = await program.methods
+        .verifyProject(documentHash)
+        .accounts({
+          verifier: authority.publicKey,
+          project: projectPda,
+        } as any)
+        .rpc();
+
+      console.log(`  ✓ Verified: ${verifyTx}`);
     } catch (err: any) {
       if (err.message?.includes("already in use")) {
         console.log(`⊘ ${proj.name} already exists, skipping`);
       } else {
-        console.error(`✗ ${proj.name} failed:`, err.message);
+        console.error(`✗ ${proj.name} failed:`, err.message?.slice(0, 200));
       }
     }
   }
 
-  console.log("\nDone! Projects initialized on devnet.");
+  console.log("\nDone! Projects initialized and verified on devnet.");
   console.log("Program ID:", program.programId.toString());
   console.log("KZTE Mint:", KZTE_MINT.toString());
 }
