@@ -142,14 +142,15 @@ function generateSVG(params: {
   </text>
 
   <!-- Bottom bar -->
-  <line x1="0" y1="750" x2="1190" y2="750" stroke="#1E2B26" stroke-width="0.5"/>
+  <rect x="0" y="742" width="1190" height="100" fill="#080E0B"/>
+  <line x1="0" y1="742" x2="1190" y2="742" stroke="#1E2B26" stroke-width="0.5"/>
 
-  <text x="64" y="785" font-family="system-ui, sans-serif" font-size="13" fill="#3D5048" letter-spacing="0.06em">
+  <text x="595" y="782" font-family="system-ui, sans-serif" font-size="14" fill="#5A6D65" text-anchor="middle" letter-spacing="0.04em">
     Tokens burned are permanently removed from circulation. Double counting is impossible.
   </text>
 
-  <text x="595" y="820" font-family="system-ui, sans-serif" font-size="11" fill="#2A3832" text-anchor="middle" letter-spacing="0.25em">
-    SOLANA  ·  SUPERTEAM KZ  ·  ZERDE  ·  DECENTRATHON 5.0
+  <text x="595" y="816" font-family="system-ui, sans-serif" font-size="13" fill="#8A9B94" text-anchor="middle" letter-spacing="0.3em" font-weight="500">
+    SOLANA &#xA0;&#xA0; SUPERTEAM KZ &#xA0;&#xA0; ZERDE &#xA0;&#xA0; DECENTRATHON 5.0
   </text>
 </svg>`;
 }
