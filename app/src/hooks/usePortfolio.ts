@@ -56,7 +56,8 @@ export function usePortfolio() {
           const sharesOwned = BigInt(record.sharesOwned.toString());
 
           const unclaimedPerShare = totalDPS - lastClaimed;
-          const claimableRaw = (unclaimedPerShare * sharesOwned) / PRECISION;
+          // Divide before multiply to match contract (prevent overflow)
+          const claimableRaw = (unclaimedPerShare / PRECISION) * sharesOwned;
           const claimable = Number(claimableRaw) / 10 ** KZTE_DECIMALS;
 
           portfolioItems.push({

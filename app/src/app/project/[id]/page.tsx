@@ -75,7 +75,8 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
     const lastClaimed = BigInt(investor.lastClaimed);
     const sharesOwned = BigInt(investor.sharesOwned);
     const unclaimedPerShare = totalDPS - lastClaimed;
-    const claimableRaw = (unclaimedPerShare * sharesOwned) / PRECISION;
+    // Divide before multiply to match contract (prevent overflow)
+    const claimableRaw = (unclaimedPerShare / PRECISION) * sharesOwned;
     claimableAmount = Number(claimableRaw) / 10 ** KZTE_DECIMALS;
     totalDividendsPerShareDisplay = Number(totalDPS / PRECISION) / 10 ** KZTE_DECIMALS;
   }

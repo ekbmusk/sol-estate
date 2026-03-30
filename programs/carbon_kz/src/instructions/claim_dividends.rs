@@ -60,10 +60,11 @@ pub fn handle_claim_dividends(ctx: Context<ClaimDividends>) -> Result<()> {
         .checked_sub(record.last_claimed)
         .ok_or(error!(CarbonKZError::Overflow))?;
 
+    // Divide before multiply to prevent u128 overflow with large values
     let claimable = unclaimed_per_share
-        .checked_mul(record.shares_owned as u128)
-        .ok_or(error!(CarbonKZError::Overflow))?
         .checked_div(PRECISION)
+        .ok_or(error!(CarbonKZError::Overflow))?
+        .checked_mul(record.shares_owned as u128)
         .ok_or(error!(CarbonKZError::Overflow))? as u64;
 
     require!(claimable > 0, CarbonKZError::NothingToClaim);
