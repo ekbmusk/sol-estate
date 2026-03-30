@@ -232,22 +232,26 @@ export default function LandingPage() {
       </section>
 
       {/* ═══ HOW IT WORKS ═══ */}
-      <section id="how-it-works" className="py-20 border-t border-[#1E2B26] relative overflow-hidden">
-        <div className="dot-grid dot-grid-fade absolute inset-0 opacity-60 pointer-events-none" />
-        <div className="mx-auto max-w-[1280px] px-6 space-y-20">
+      <section id="how-it-works" className="py-24 border-t border-[#1E2B26] relative overflow-hidden">
+        {/* Subtle radial glow instead of dot grid */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: "radial-gradient(ellipse 60% 50% at 30% 30%, rgba(16,185,129,0.04) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 80% 70%, rgba(249,115,22,0.03) 0%, transparent 70%)"
+        }} />
+
+        <div className="relative mx-auto max-w-[1280px] px-6 space-y-24">
 
           {/* --- Проблема --- */}
-          <div className="max-w-[720px]">
-            <p className="label-upper mb-4 text-[#F97316]">Проблема</p>
-            <h2 className="font-heading text-[28px] sm:text-[32px] font-bold tracking-[-0.02em] mb-6">
+          <div className="max-w-[800px]">
+            <p className="label-upper mb-5 text-[#F97316]">Проблема</p>
+            <h2 className="font-heading text-[32px] sm:text-[40px] font-bold tracking-[-0.02em] leading-[1.15] mb-8">
               Казахстан — 4-е место в мире по выбросам CO₂ на единицу ВВП
             </h2>
-            <p className="text-[15px] text-[#8A9B94] leading-[1.7] mb-4">
+            <p className="text-[17px] text-[#B0BDB7] leading-[1.8] mb-5">
               349 млн тонн CO₂ в год. 17.5 тонн на человека — в 3 раза выше среднего по ОЭСР.
               Рынок углеродных кредитов существует с 2013 года, но фактически мёртв:
               цена $1 за тонну, всего 135 участников, торги только на бирже Caspy.
             </p>
-            <p className="text-[15px] text-[#8A9B94] leading-[1.7]">
+            <p className="text-[17px] text-[#B0BDB7] leading-[1.8]">
               При этом правительство ставит цель — $50 за тонну к 2030 году.
               World Bank вложил $4.8 млн в развитие рынка. Но инструментов для обычных инвесторов нет.
               Банки не допущены к торгам. Прозрачность нулевая. Двойной учёт кредитов — норма.
@@ -256,37 +260,36 @@ export default function LandingPage() {
 
           {/* --- Для кого --- */}
           <div>
-            <p className="label-upper mb-6 text-[#34D399]">Для кого</p>
-            <div className="grid sm:grid-cols-3 gap-5">
-              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6">
-                <div className="w-10 h-10 rounded-lg bg-[#34D399]/10 border border-[#34D399]/20 flex items-center justify-center mb-4">
-                  <CircleDollarSign size={20} strokeWidth={1.5} className="text-[#34D399]" />
+            <p className="label-upper mb-8 text-[#34D399]">Для кого</p>
+            <div className="grid sm:grid-cols-3 gap-6">
+              <div className="rounded-2xl border border-[#243028] bg-[#0E1513] p-8">
+                <div className="w-12 h-12 rounded-xl bg-[#34D399]/10 border border-[#34D399]/20 flex items-center justify-center mb-5">
+                  <CircleDollarSign size={24} strokeWidth={1.5} className="text-[#34D399]" />
                 </div>
-                <h3 className="font-heading text-[16px] font-semibold mb-2">Инвесторы</h3>
-                <p className="text-[13px] text-[#8A9B94] leading-[1.6]">
+                <h3 className="font-heading text-[20px] font-semibold mb-3">Инвесторы</h3>
+                <p className="text-[15px] text-[#B0BDB7] leading-[1.7]">
                   Покупайте доли зелёных проектов за тенге. Получайте доход от продажи углеродных кредитов.
-                  Цена кредита $1 сегодня → $50 к 2030 году. Потенциал x50.
+                  Цена кредита $1 сегодня, цель — $50 к 2030 году.
                 </p>
               </div>
-              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6">
-                <div className="w-10 h-10 rounded-lg bg-[#F97316]/10 border border-[#F97316]/20 flex items-center justify-center mb-4">
-                  <Flame size={20} strokeWidth={1.5} className="text-[#F97316]" />
+              <div className="rounded-2xl border border-[#243028] bg-[#0E1513] p-8">
+                <div className="w-12 h-12 rounded-xl bg-[#F97316]/10 border border-[#F97316]/20 flex items-center justify-center mb-5">
+                  <Flame size={24} strokeWidth={1.5} className="text-[#F97316]" />
                 </div>
-                <h3 className="font-heading text-[16px] font-semibold mb-2">Компании-загрязнители</h3>
-                <p className="text-[13px] text-[#8A9B94] leading-[1.6]">
-                  КазМунайГаз, ArcelorMittal, угольные ТЭЦ — 135 предприятий обязаны по закону
-                  компенсировать выбросы. CarbonKZ даёт прозрачный способ купить и погасить кредиты
-                  с доказательством на блокчейне.
+                <h3 className="font-heading text-[20px] font-semibold mb-3">Компании-загрязнители</h3>
+                <p className="text-[15px] text-[#B0BDB7] leading-[1.7]">
+                  КазМунайГаз, ArcelorMittal, угольные ТЭЦ — 135 предприятий обязаны
+                  компенсировать выбросы. Прозрачная покупка и гашение кредитов с доказательством на блокчейне.
                 </p>
               </div>
-              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6">
-                <div className="w-10 h-10 rounded-lg bg-[#60A5FA]/10 border border-[#60A5FA]/20 flex items-center justify-center mb-4">
-                  <ShieldCheck size={20} strokeWidth={1.5} className="text-[#60A5FA]" />
+              <div className="rounded-2xl border border-[#243028] bg-[#0E1513] p-8">
+                <div className="w-12 h-12 rounded-xl bg-[#60A5FA]/10 border border-[#60A5FA]/20 flex items-center justify-center mb-5">
+                  <ShieldCheck size={24} strokeWidth={1.5} className="text-[#60A5FA]" />
                 </div>
-                <h3 className="font-heading text-[16px] font-semibold mb-2">Зелёные проекты</h3>
-                <p className="text-[13px] text-[#8A9B94] leading-[1.6]">
+                <h3 className="font-heading text-[20px] font-semibold mb-3">Зелёные проекты</h3>
+                <p className="text-[15px] text-[#B0BDB7] leading-[1.7]">
                   Солнечные станции, ветропарки, лесовосстановление — получают финансирование
-                  от инвесторов. Верификация и все транзакции прозрачны. Вывод средств в тенге.
+                  напрямую от инвесторов. Верификация и все расчёты прозрачны.
                 </p>
               </div>
             </div>
@@ -294,47 +297,47 @@ export default function LandingPage() {
 
           {/* --- Как работает --- */}
           <div>
-            <p className="label-upper mb-6">Как это работает</p>
-            <div className="grid sm:grid-cols-2 gap-5">
-              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-7 space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-[#34D399] text-[#060A08] flex items-center justify-center text-[13px] font-bold">1</span>
-                  <h3 className="font-heading text-[16px] font-semibold">Проект проходит проверку</h3>
+            <p className="label-upper mb-8">Как это работает</p>
+            <div className="grid sm:grid-cols-2 gap-6">
+              <div className="rounded-2xl border border-[#243028] bg-[#0E1513] p-9 space-y-5">
+                <div className="flex items-center gap-4">
+                  <span className="w-10 h-10 rounded-full bg-[#34D399] text-[#060A08] flex items-center justify-center text-[15px] font-bold shrink-0">1</span>
+                  <h3 className="font-heading text-[20px] font-semibold">Проект проходит проверку</h3>
                 </div>
-                <p className="text-[14px] text-[#8A9B94] leading-[1.7]">
+                <p className="text-[16px] text-[#B0BDB7] leading-[1.8]">
                   Владелец солнечной станции или ветропарка загружает документы.
                   Хеш сертификата записывается на блокчейн — его нельзя подделать или изменить.
                   Независимый верификатор подтверждает проект.
                 </p>
               </div>
-              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-7 space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-[#34D399] text-[#060A08] flex items-center justify-center text-[13px] font-bold">2</span>
-                  <h3 className="font-heading text-[16px] font-semibold">Инвестор покупает доли</h3>
+              <div className="rounded-2xl border border-[#243028] bg-[#0E1513] p-9 space-y-5">
+                <div className="flex items-center gap-4">
+                  <span className="w-10 h-10 rounded-full bg-[#34D399] text-[#060A08] flex items-center justify-center text-[15px] font-bold shrink-0">2</span>
+                  <h3 className="font-heading text-[20px] font-semibold">Инвестор покупает доли</h3>
                 </div>
-                <p className="text-[14px] text-[#8A9B94] leading-[1.7]">
+                <p className="text-[16px] text-[#B0BDB7] leading-[1.8]">
                   Вы выбираете проект и покупаете доли за KZTE (1 KZTE = 1 тенге).
                   Деньги уходят в защищённое хранилище проекта. Вам на кошелёк приходят
                   токены-доли — подтверждение вашей инвестиции.
                 </p>
               </div>
-              <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-7 space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-[#34D399] text-[#060A08] flex items-center justify-center text-[13px] font-bold">3</span>
-                  <h3 className="font-heading text-[16px] font-semibold">Загрязнители платят — вы получаете</h3>
+              <div className="rounded-2xl border border-[#243028] bg-[#0E1513] p-9 space-y-5">
+                <div className="flex items-center gap-4">
+                  <span className="w-10 h-10 rounded-full bg-[#34D399] text-[#060A08] flex items-center justify-center text-[15px] font-bold shrink-0">3</span>
+                  <h3 className="font-heading text-[20px] font-semibold">Загрязнители платят — вы получаете</h3>
                 </div>
-                <p className="text-[14px] text-[#8A9B94] leading-[1.7]">
+                <p className="text-[16px] text-[#B0BDB7] leading-[1.8]">
                   Заводы и ТЭЦ покупают углеродные кредиты у проекта.
                   Выручка автоматически распределяется между всеми инвесторами
                   пропорционально долям. Забираете доход одной кнопкой.
                 </p>
               </div>
-              <div className="rounded-xl border border-[#F97316]/30 bg-[#F97316]/5 p-7 space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-[#F97316] text-[#060A08] flex items-center justify-center text-[13px] font-bold">4</span>
-                  <h3 className="font-heading text-[16px] font-semibold text-[#F97316]">Гашение — доказательство навсегда</h3>
+              <div className="rounded-2xl border border-[#F97316]/30 bg-[#1A0F08] p-9 space-y-5">
+                <div className="flex items-center gap-4">
+                  <span className="w-10 h-10 rounded-full bg-[#F97316] text-[#060A08] flex items-center justify-center text-[15px] font-bold shrink-0">4</span>
+                  <h3 className="font-heading text-[20px] font-semibold text-[#F97316]">Гашение — доказательство навсегда</h3>
                 </div>
-                <p className="text-[14px] text-[#8A9B94] leading-[1.7]">
+                <p className="text-[16px] text-[#B0BDB7] leading-[1.8]">
                   Когда компания компенсирует свои выбросы, углеродные токены сжигаются навсегда.
                   На блокчейне остаётся запись: кто погасил, сколько тонн, когда и зачем.
                   Использовать один кредит дважды невозможно — его просто больше не существует.
@@ -343,20 +346,20 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* --- Почему блокчейн --- */}
-          <div className="max-w-[720px]">
-            <p className="label-upper mb-4 text-[#A78BFA]">Почему Solana</p>
-            <div className="space-y-4">
+          {/* --- Почему Solana --- */}
+          <div className="max-w-[800px]">
+            <p className="label-upper mb-6 text-[#A78BFA]">Почему Solana</p>
+            <div className="space-y-6">
               {[
                 ["Прозрачность", "Все операции видны на блокчейне. Любой может проверить: сколько кредитов выпущено, кто купил, кто погасил."],
-                ["Скорость и стоимость", "Транзакция на Solana занимает 0.4 секунды и стоит меньше 1 тенге. Для сравнения — Ethereum: минуты и тысячи тенге."],
+                ["Скорость и стоимость", "Транзакция занимает 0.4 секунды и стоит меньше 1 тенге. Для сравнения — Ethereum: минуты и тысячи тенге."],
                 ["Невозможность подделки", "Хеш документа, гашение кредитов, дивиденды — всё записано навечно. Изменить задним числом нельзя."],
               ].map(([title, desc]) => (
-                <div key={title} className="flex gap-4">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#A78BFA] mt-2.5 shrink-0" />
+                <div key={title} className="flex gap-5">
+                  <div className="w-2 h-2 rounded-full bg-[#A78BFA] mt-2.5 shrink-0" />
                   <div>
-                    <p className="text-[14px] font-medium text-[#F0F5F3]">{title}</p>
-                    <p className="text-[13px] text-[#8A9B94] leading-[1.6] mt-0.5">{desc}</p>
+                    <p className="text-[17px] font-medium text-[#F0F5F3]">{title}</p>
+                    <p className="text-[15px] text-[#B0BDB7] leading-[1.7] mt-1">{desc}</p>
                   </div>
                 </div>
               ))}
