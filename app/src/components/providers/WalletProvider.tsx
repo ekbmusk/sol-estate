@@ -6,14 +6,13 @@ import {
   WalletProvider as SolanaWalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
-import { clusterApiUrl } from "@solana/web3.js";
+import { RPC_ENDPOINT } from "@/lib/constants";
 
 // wallet-adapter CSS crashes Turbopack — styles are in globals.css instead
 
 export default function WalletProvider({ children }: { children: ReactNode }) {
-  const endpoint = clusterApiUrl(WalletAdapterNetwork.Devnet);
+  const endpoint = RPC_ENDPOINT;
 
   const wallets = useMemo(
     () => [new PhantomWalletAdapter()],
