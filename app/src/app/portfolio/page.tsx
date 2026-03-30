@@ -11,6 +11,7 @@ import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
 import { toast } from "sonner";
 import { ArrowUpRight, Wallet } from "lucide-react";
+import ListSharesModal from "@/components/ListSharesModal";
 
 export default function PortfolioPage() {
   const { publicKey, connected } = useWallet();
@@ -108,16 +109,16 @@ export default function PortfolioPage() {
         ) : (
           <>
             {/* Header row */}
-            <div className="hidden sm:grid grid-cols-[1fr_80px_100px_100px_90px] gap-4 px-5 py-3 border-b border-[#1E2B26]">
-              {["Проект", "Доли", "Стоимость", "К выплате", ""].map((h) => (
-                <span key={h} className="label-upper">{h}</span>
+            <div className="hidden sm:grid grid-cols-[1fr_80px_100px_100px_80px_80px] gap-4 px-5 py-3 border-b border-[#1E2B26]">
+              {["Проект", "Доли", "Стоимость", "К выплате", "", ""].map((h, i) => (
+                <span key={i} className="label-upper">{h}</span>
               ))}
             </div>
 
             {items.map((item, i) => (
               <div
                 key={item.projectId}
-                className={`grid sm:grid-cols-[1fr_80px_100px_100px_90px] gap-4 px-5 py-4 items-center
+                className={`grid sm:grid-cols-[1fr_80px_100px_100px_80px_80px] gap-4 px-5 py-4 items-center
                   ${i > 0 ? "border-t border-[#1E2B26]" : ""} hover:bg-[#1A2320] transition-colors`}
               >
                 <div>
@@ -140,6 +141,15 @@ export default function PortfolioPage() {
                 >
                   {claimingId === item.projectId ? "..." : "Получить"}
                 </button>
+                {item.sharesOwned > 0 && (
+                  <ListSharesModal
+                    projectId={item.projectId}
+                    projectName={item.projectName}
+                    sharesOwned={item.sharesOwned}
+                    currentPrice={item.pricePerShare}
+                    onSuccess={refetch}
+                  />
+                )}
               </div>
             ))}
           </>
