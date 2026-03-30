@@ -216,19 +216,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ STATS BAR ═══ */}
-      <section className="border-y border-[#1E2B26] bg-[#0C1210]">
-        <div className="mx-auto max-w-[1280px] px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4">
-            {liveStats.map((stat, i) => (
-              <div key={stat.label} className={`${i > 0 ? "border-l border-[#1E2B26]" : ""}`}>
-                <StatItem target={stat.value} suffix={stat.suffix} label={stat.label} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ═══ PROJECT CATALOG ═══ */}
       <section id="projects" className="py-20">
         <div className="mx-auto max-w-[1280px] px-6">
