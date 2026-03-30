@@ -132,7 +132,7 @@ export default function LandingPage() {
     { value: totalCredits, suffix: " tCO\u2082", label: "\u0412\u0441\u0435\u0433\u043E \u043A\u0440\u0435\u0434\u0438\u0442\u043E\u0432" },
     { value: totalRetired, suffix: " tCO\u2082", label: "\u041F\u043E\u0433\u0430\u0448\u0435\u043D\u043E" },
     { value: displayProjects.length, suffix: "", label: "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0445 \u043F\u0440\u043E\u0435\u043A\u0442\u043E\u0432" },
-    { value: totalInvested >= 1_000_000 ? Math.round(totalInvested / 1_000_000) : Math.round(totalInvested / 1_000), suffix: totalInvested >= 1_000_000 ? "M \u20B8" : "K \u20B8", label: "\u0418\u043D\u0432\u0435\u0441\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u043E" },
+    { value: totalInvested >= 1_000_000 ? Math.round(totalInvested / 1_000_000) : totalInvested >= 1_000 ? Math.round(totalInvested / 1_000) : Math.round(totalInvested), suffix: totalInvested >= 1_000_000 ? "M \u20B8" : totalInvested >= 1_000 ? "K \u20B8" : " \u20B8", label: "\u0418\u043D\u0432\u0435\u0441\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u043E" },
   ];
 
   const filtered = activeType === "all"
