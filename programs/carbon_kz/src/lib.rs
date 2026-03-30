@@ -94,4 +94,11 @@ pub mod carbon_kz {
     ) -> Result<()> {
         instructions::create_share_metadata::handle_create_share_metadata(ctx, name, symbol)
     }
+
+    pub fn mint_retire_certificate(
+        ctx: Context<MintRetireCertificate>,
+        metadata_uri: String,
+    ) -> Result<()> {
+        instructions::mint_retire_certificate::handle_mint_retire_certificate(ctx, metadata_uri)
+    }
 }

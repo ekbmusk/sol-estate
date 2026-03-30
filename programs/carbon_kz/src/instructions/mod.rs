@@ -9,6 +9,7 @@ pub mod list_shares;
 pub mod buy_shares;
 pub mod cancel_listing;
 pub mod create_share_metadata;
+pub mod mint_retire_certificate;
 
 pub use initialize_project::*;
 pub use verify_project::*;
@@ -21,3 +22,4 @@ pub use list_shares::*;
 pub use buy_shares::*;
 pub use cancel_listing::*;
 pub use create_share_metadata::*;
+pub use mint_retire_certificate::*;

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Flame, ExternalLink } from "lucide-react";
+import { Check, Flame, ExternalLink, Award } from "lucide-react";
 import RetirePanel from "@/components/RetirePanel";
+import RetireCertificate from "@/components/RetireCertificate";
 import CarbonCounter from "@/components/CarbonCounter";
 import { useProjects } from "@/hooks/useProjects";
 import { useRetireRecords } from "@/hooks/useRetireRecords";
@@ -13,6 +14,7 @@ export default function RetirePage() {
   const { projects, loading, refetch } = useProjects();
   const { records: retireRecords, loading: recordsLoading, refetch: refetchRecords } = useRetireRecords();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [certRecordPda, setCertRecordPda] = useState<string | null>(null);
 
   const handleRetireSuccess = () => {
     refetch();
@@ -194,34 +196,52 @@ export default function RetirePage() {
           </h2>
           <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] overflow-hidden">
             {/* Header */}
-            <div className="hidden sm:grid grid-cols-[1fr_1fr_80px_1fr_40px] gap-4 px-5 py-3 border-b border-[#1E2B26]">
-              {["Проект", "Кто погасил", "Тонн", "Цель", ""].map((h) => (
-                <span key={h} className="label-upper">{h}</span>
+            <div className="hidden sm:grid grid-cols-[1fr_1fr_80px_1fr_40px_40px] gap-4 px-5 py-3 border-b border-[#1E2B26]">
+              {["Проект", "Кто погасил", "Тонн", "Цель", "", ""].map((h, i) => (
+                <span key={i} className="label-upper">{h}</span>
               ))}
             </div>
 
             {retireRecords.map((rec, i) => (
-              <div
-                key={rec.pda}
-                className={`grid sm:grid-cols-[1fr_1fr_80px_1fr_40px] gap-4 px-5 py-3.5 items-center
-                  ${i > 0 ? "border-t border-[#1E2B26]" : ""}`}
-              >
-                <span className="text-[13px] font-medium truncate">{getProjectName(rec.project)}</span>
-                <span className="font-mono-data text-[12px] text-[#5A6D65]">
-                  {rec.buyer.slice(0, 4)}...{rec.buyer.slice(-4)}
-                </span>
-                <span className="font-mono-data text-[13px] font-medium text-[#F97316]">
-                  {rec.amountRetired}
-                </span>
-                <span className="text-[12px] text-[#8A9B94] truncate">{rec.purpose}</span>
-                <a
-                  href={`https://explorer.solana.com/address/${rec.pda}?cluster=devnet`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#5A6D65] hover:text-[#34D399] transition-colors"
+              <div key={rec.pda}>
+                <div
+                  className={`grid sm:grid-cols-[1fr_1fr_80px_1fr_40px_40px] gap-4 px-5 py-3.5 items-center
+                    ${i > 0 ? "border-t border-[#1E2B26]" : ""}`}
                 >
-                  <ExternalLink size={14} />
-                </a>
+                  <span className="text-[13px] font-medium truncate">{getProjectName(rec.project)}</span>
+                  <span className="font-mono-data text-[12px] text-[#5A6D65]">
+                    {rec.buyer.slice(0, 4)}...{rec.buyer.slice(-4)}
+                  </span>
+                  <span className="font-mono-data text-[13px] font-medium text-[#F97316]">
+                    {rec.amountRetired}
+                  </span>
+                  <span className="text-[12px] text-[#8A9B94] truncate">{rec.purpose}</span>
+                  <button
+                    onClick={() => setCertRecordPda(certRecordPda === rec.pda ? null : rec.pda)}
+                    className={`transition-colors ${certRecordPda === rec.pda ? "text-[#34D399]" : "text-[#5A6D65] hover:text-[#34D399]"}`}
+                    title="Сертификат"
+                  >
+                    <Award size={14} />
+                  </button>
+                  <a
+                    href={`https://explorer.solana.com/address/${rec.pda}?cluster=devnet`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#5A6D65] hover:text-[#34D399] transition-colors"
+                  >
+                    <ExternalLink size={14} />
+                  </a>
+                </div>
+
+                {/* Certificate expand */}
+                {certRecordPda === rec.pda && (
+                  <div className="px-5 pb-5 pt-2 border-t border-[#1E2B26]">
+                    <RetireCertificate
+                      record={rec}
+                      projectName={getProjectName(rec.project)}
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>
