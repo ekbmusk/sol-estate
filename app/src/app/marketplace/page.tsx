@@ -207,10 +207,15 @@ export default function MarketplacePage() {
                     <p className="text-[13px] font-medium truncate">{getProjectName(listing.project)}</p>
                   </div>
                   <div>
-                    <p className="font-mono-data text-[12px] text-[#5A6D65]">
+                    <a
+                      href={`https://explorer.solana.com/address/${listing.seller}?cluster=devnet`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono-data text-[12px] text-[#5A6D65] hover:text-[#34D399] transition-colors"
+                    >
                       {listing.seller.slice(0, 4)}...{listing.seller.slice(-4)}
                       {isSelf && <span className="text-[#34D399] ml-1">(вы)</span>}
-                    </p>
+                    </a>
                   </div>
                   <div className="text-right">
                     <p className="font-mono-data text-[13px]">{listing.amount.toLocaleString("ru-RU")}</p>
