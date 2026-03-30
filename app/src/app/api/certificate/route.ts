@@ -125,39 +125,87 @@ function escapeXml(str: string): string {
     .replace(/"/g, "&quot;");
 }
 
+import { Connection, PublicKey } from "@solana/web3.js";
+import { Program, AnchorProvider, Wallet } from "@coral-xyz/anchor";
+import idl from "@/idl/carbon_kz.json";
+
+const RPC = "https://devnet.helius-rpc.com/?api-key=REDACTED_HELIUS_KEY";
+const PROGRAM_ID = new PublicKey("3nLd8C3s2SAMVWXHy1vb7719zVPKPJWKrgxDDJ9pRRkg");
+
+async function fetchRetireData(pdaStr: string) {
+  try {
+    const connection = new Connection(RPC, "confirmed");
+    const pda = new PublicKey(pdaStr);
+    const accountInfo = await connection.getAccountInfo(pda);
+    if (!accountInfo) return null;
+
+    // Decode using anchor
+    const { Keypair } = await import("@solana/web3.js");
+    const dummyWallet = { publicKey: Keypair.generate().publicKey, signTransaction: async (t: any) => t, signAllTransactions: async (t: any) => t, payer: Keypair.generate() } as any;
+    const provider = new AnchorProvider(connection, dummyWallet, {});
+    const program = new Program(idl as any, provider);
+    const record = await (program.account as any).retireRecord.fetch(pda);
+
+    // Fetch project name
+    let projectName = record.project.toString().slice(0, 8) + "...";
+    try {
+      const proj = await (program.account as any).carbonProject.fetch(record.project);
+      projectName = proj.name;
+    } catch {}
+
+    return {
+      buyer: record.buyer.toString(),
+      project: projectName,
+      amount: record.amountRetired.toString(),
+      purpose: record.purpose,
+      date: record.timestamp.toString(),
+      pda: pdaStr,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const buyer = searchParams.get("buyer") ?? "";
-  const project = searchParams.get("project") ?? "";
-  const amount = searchParams.get("amount") ?? "0";
-  const purpose = searchParams.get("purpose") ?? "";
-  const date = searchParams.get("date") ?? "0";
   const pda = searchParams.get("pda") ?? "";
   const format = searchParams.get("format") ?? "svg";
 
-  const params = { buyer, project, amount, purpose, date, pda };
+  // Params can come from query string OR from on-chain fetch via PDA
+  let params = {
+    buyer: searchParams.get("buyer") ?? "",
+    project: searchParams.get("project") ?? "",
+    amount: searchParams.get("amount") ?? "0",
+    purpose: searchParams.get("purpose") ?? "",
+    date: searchParams.get("date") ?? "0",
+    pda,
+  };
+
+  // If only PDA provided, fetch from chain
+  if (pda && !params.buyer) {
+    const onChain = await fetchRetireData(pda);
+    if (onChain) params = onChain;
+  }
 
   if (format === "json") {
-    // Metaplex-compatible metadata JSON
     const baseUrl = request.nextUrl.origin;
-    const imageUrl = `${baseUrl}/api/certificate?${searchParams.toString()}&format=svg`;
+    const imageUrl = `${baseUrl}/api/certificate?pda=${pda}`;
 
     return NextResponse.json({
-      name: `Carbon Retire — ${amount} tCO₂`,
+      name: `Carbon Retire — ${params.amount} tCO2`,
       symbol: "CRBN",
-      description: `${amount} тонн CO₂ погашено навсегда. Проект: ${project}. Цель: ${purpose}. Верифицировано на блокчейне Solana.`,
+      description: `${params.amount} тонн CO2 погашено навсегда. Проект: ${params.project}. Цель: ${params.purpose}.`,
       image: imageUrl,
       external_url: `https://explorer.solana.com/address/${pda}?cluster=devnet`,
       attributes: [
-        { trait_type: "Amount Retired", value: `${amount} tCO₂` },
-        { trait_type: "Project", value: project },
-        { trait_type: "Purpose", value: purpose },
-        { trait_type: "Buyer", value: buyer },
+        { trait_type: "Amount Retired", value: `${params.amount} tCO2` },
+        { trait_type: "Project", value: params.project },
+        { trait_type: "Purpose", value: params.purpose },
+        { trait_type: "Buyer", value: params.buyer },
       ],
     });
   }
 
-  // Return SVG image
   const svg = generateSVG(params);
   return new NextResponse(svg, {
     headers: {

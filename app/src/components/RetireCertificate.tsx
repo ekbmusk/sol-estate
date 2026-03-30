@@ -47,8 +47,8 @@ export default function RetireCertificate({ record, projectName }: RetireCertifi
     try {
       const certificateMint = Keypair.generate();
 
-      // Build full metadata URI (absolute URL needed for Metaplex)
-      const absoluteMetadataUri = `${window.location.origin}${metadataUrl}`;
+      // Short URI — Metaplex limits to 200 chars. Use PDA as key, API resolves the rest.
+      const absoluteMetadataUri = `${window.location.origin}/api/certificate?pda=${record.pda}&format=json`;
 
       const retireRecordPda = new PublicKey(record.pda);
       const projectPda = new PublicKey(record.project);
