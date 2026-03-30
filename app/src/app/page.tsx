@@ -27,24 +27,31 @@ const platformStats = [
 function useCountUp(target: number, duration = 1200) {
   const [value, setValue] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
-  const hasAnimated = useRef(false);
+  const lastTarget = useRef(0);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || target === lastTarget.current) return;
+    lastTarget.current = target;
+
+    // If already visible or target changed, animate immediately
+    const runAnimation = () => {
+      const start = performance.now();
+      const animate = (now: number) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setValue(Math.round(eased * target));
+        if (progress < 1) requestAnimationFrame(animate);
+      };
+      requestAnimationFrame(animate);
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          const start = performance.now();
-          const animate = (now: number) => {
-            const elapsed = now - start;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setValue(Math.round(eased * target));
-            if (progress < 1) requestAnimationFrame(animate);
-          };
-          requestAnimationFrame(animate);
+        if (entry.isIntersecting) {
+          runAnimation();
+          observer.disconnect();
         }
       },
       { threshold: 0.3 }
