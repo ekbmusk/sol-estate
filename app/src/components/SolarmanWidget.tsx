@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 interface SolarmanData {
   currentPower: number;
+  dailyEnergy: number;
   totalEnergy: number;
   co2Reduced: number;
   lastUpdate: string;
@@ -62,7 +63,7 @@ export default function SolarmanWidget() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <div className="rounded-lg bg-[#060A08] border border-[#1E2B26] p-3 text-center">
           <p className="label-upper mb-1" style={{ fontSize: "9px" }}>Сейчас</p>
           <p className="font-mono-data text-[16px] font-medium text-[#FBBF24]">
@@ -71,11 +72,18 @@ export default function SolarmanWidget() {
           <p className="text-[10px] text-[#5A6D65]">кВт</p>
         </div>
         <div className="rounded-lg bg-[#060A08] border border-[#1E2B26] p-3 text-center">
+          <p className="label-upper mb-1" style={{ fontSize: "9px" }}>Сегодня</p>
+          <p className="font-mono-data text-[16px] font-medium text-[#F0F5F3]">
+            {data.dailyEnergy.toFixed(1)}
+          </p>
+          <p className="text-[10px] text-[#5A6D65]">кВт·ч</p>
+        </div>
+        <div className="rounded-lg bg-[#060A08] border border-[#1E2B26] p-3 text-center">
           <p className="label-upper mb-1" style={{ fontSize: "9px" }}>Всего</p>
           <p className="font-mono-data text-[16px] font-medium text-[#F0F5F3]">
-            {(data.totalEnergy / 1000).toFixed(2)}
+            {data.totalEnergy >= 1000 ? (data.totalEnergy / 1000).toFixed(2) : data.totalEnergy.toFixed(1)}
           </p>
-          <p className="text-[10px] text-[#5A6D65]">МВт·ч</p>
+          <p className="text-[10px] text-[#5A6D65]">{data.totalEnergy >= 1000 ? "МВт·ч" : "кВт·ч"}</p>
         </div>
         <div className="rounded-lg bg-[#060A08] border border-[#1E2B26] p-3 text-center">
           <p className="label-upper mb-1" style={{ fontSize: "9px" }}>CO₂</p>

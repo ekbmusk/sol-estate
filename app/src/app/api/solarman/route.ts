@@ -1,53 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
-
-/**
- * SOLARMAN API proxy — fetches real-time data from solar inverter.
- *
- * Set these env vars:
- *   SOLARMAN_APP_ID     — from solarmanpv.com developer portal
- *   SOLARMAN_APP_SECRET — from solarmanpv.com developer portal
- *   SOLARMAN_DEVICE_SN  — serial number of the inverter
- *
- * If env vars are not set, returns mock data for demo.
- */
+import { createHash } from "crypto";
 
 const SOLARMAN_API = "https://globalapi.solarmanpv.com";
-
-interface SolarmanTokenResponse {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-}
+const APP_ID = "REDACTED_APP_ID";
+const APP_SECRET = "REDACTED_APP_SECRET";
+const EMAIL = "REDACTED_EMAIL";
+const PASSWORD = "REDACTED_PASSWORD";
+const DEVICE_SN = "REDACTED_DEVICE_SN";
 
 interface SolarmanData {
-  currentPower: number;     // kW
-  totalEnergy: number;      // kWh
-  co2Reduced: number;       // tons
-  lastUpdate: string;       // ISO timestamp
+  currentPower: number;
+  totalEnergy: number;
+  dailyEnergy: number;
+  co2Reduced: number;
+  lastUpdate: string;
   isLive: boolean;
 }
 
-// Cache token and data to avoid rate limits
 let cachedToken: { token: string; expires: number } | null = null;
 let cachedData: { data: SolarmanData; fetchedAt: number } | null = null;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 5 * 60 * 1000;
 
-async function getToken(appId: string, appSecret: string): Promise<string> {
+function sha256(str: string): string {
+  return createHash("sha256").update(str).digest("hex").toLowerCase();
+}
+
+async function getToken(): Promise<string> {
   if (cachedToken && Date.now() < cachedToken.expires) {
     return cachedToken.token;
   }
 
-  const res = await fetch(`${SOLARMAN_API}/account/v1.0/token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      appSecret,
-      grant_type: "client_credentials",
-    }),
-  });
+  const res = await fetch(
+    `${SOLARMAN_API}/account/v1.0/token?appId=${APP_ID}&language=en`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        appSecret: APP_SECRET,
+        email: EMAIL,
+        password: sha256(PASSWORD),
+      }),
+    }
+  );
 
   const data = await res.json();
-  if (!data.access_token) throw new Error("Failed to get SOLARMAN token");
+  if (!data.access_token) {
+    console.error("SOLARMAN token error:", JSON.stringify(data));
+    throw new Error("Failed to get SOLARMAN token");
+  }
 
   cachedToken = {
     token: data.access_token,
@@ -57,79 +57,82 @@ async function getToken(appId: string, appSecret: string): Promise<string> {
   return cachedToken.token;
 }
 
-async function fetchDeviceData(
-  token: string,
-  appId: string,
-  deviceSn: string
-): Promise<SolarmanData> {
-  const res = await fetch(`${SOLARMAN_API}/device/v1.0/currentData`, {
+async function fetchDeviceData(token: string): Promise<SolarmanData> {
+  const res = await fetch(`${SOLARMAN_API}/device/v1.0/currentData?appId=${APP_ID}&language=en`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      appId,
-      language: "en",
-      deviceSn,
+      deviceSn: DEVICE_SN,
     }),
   });
 
   const data = await res.json();
 
-  // Parse dataList for key metrics
-  const dataList: Array<{ key: string; value: string }> = data.dataList || [];
+  if (!data.dataList) {
+    console.error("SOLARMAN device error:", JSON.stringify(data).slice(0, 500));
+    throw new Error("No device data");
+  }
+
+  const dataList: Array<{ key: string; value: string; name?: string }> = data.dataList || [];
   const get = (key: string) => {
     const item = dataList.find((d) => d.key === key);
     return item ? parseFloat(item.value) : 0;
   };
 
+  // Common SOLARMAN keys for inverters:
+  // APo_t1 or Pac — active power (W)
+  // Etdy_ge1 or Eday — daily energy (kWh)
+  // Et_ge0 or Etotal — total energy (kWh)
+  // CO2_ge0 — CO2 reduced (kg)
+
+  const activePowerW = get("APo_t1"); // Total AC Output Power (Active) in W
+  const dailyEnergy = get("Etdy_ge1"); // Daily Production (Active) in kWh
+  const totalEnergy = get("Et_ge0"); // Cumulative Production (Active) in kWh
+
+  // KZ grid emission factor: 0.844 kg CO₂ per kWh
+  const co2Tons = (totalEnergy * 0.844) / 1000;
+
   return {
-    currentPower: get("APo_t1") / 1000, // W → kW
-    totalEnergy: get("Etdy_ge1") + get("Et_ge0") / 1000, // kWh
-    co2Reduced: (get("Et_ge0") / 1000) * 0.000844, // kWh * emission factor → tons
+    currentPower: activePowerW / 1000, // W → kW
+    dailyEnergy,
+    totalEnergy,
+    co2Reduced: co2Tons,
     lastUpdate: new Date().toISOString(),
     isLive: true,
   };
 }
 
 function getMockData(): SolarmanData {
-  // Realistic mock for "СЭС Университета Ахмеда Ясави" — 25 kW solar
   const hour = new Date().getHours();
   const isDaytime = hour >= 7 && hour <= 19;
 
   return {
     currentPower: isDaytime ? 12.4 + Math.random() * 8 : 0,
-    totalEnergy: 42650, // 42.65 MWh cumulative
-    co2Reduced: 36.01,  // tons
+    dailyEnergy: isDaytime ? 45 + Math.random() * 30 : 0,
+    totalEnergy: 42650,
+    co2Reduced: 36.01,
     lastUpdate: new Date().toISOString(),
     isLive: false,
   };
 }
 
 export async function GET(_request: NextRequest) {
-  const appId = process.env.SOLARMAN_APP_ID;
-  const appSecret = process.env.SOLARMAN_APP_SECRET;
-  const deviceSn = process.env.SOLARMAN_DEVICE_SN;
-
-  // Return mock if no credentials
-  if (!appId || !appSecret || !deviceSn) {
-    return NextResponse.json(getMockData());
-  }
-
   // Check cache
   if (cachedData && Date.now() - cachedData.fetchedAt < CACHE_TTL) {
     return NextResponse.json(cachedData.data);
   }
 
   try {
-    const token = await getToken(appId, appSecret);
-    const data = await fetchDeviceData(token, appId, deviceSn);
+    const token = await getToken();
+    const data = await fetchDeviceData(token);
 
     cachedData = { data, fetchedAt: Date.now() };
     return NextResponse.json(data);
   } catch (err) {
-    // Fallback to mock on error
+    console.error("SOLARMAN fallback to mock:", err);
     return NextResponse.json(getMockData());
   }
 }
