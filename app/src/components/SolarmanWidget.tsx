@@ -180,22 +180,27 @@ export default function SolarmanWidget() {
           </p>
           <p className="text-[9px] text-[#5A6D65]">МВт·ч</p>
         </div>
-        <div className="p-3 text-center">
-          <p className="label-upper mb-1" style={{ fontSize: "8px" }}>CO₂</p>
-          <p className="font-mono-data text-[15px] font-medium text-[#34D399]">
-            {data.co2Reduced.toFixed(1)}
-          </p>
-          <p className="text-[9px] text-[#5A6D65]">тонн</p>
+        <div className="p-3 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-[#34D399]/[0.03]" />
+          <p className="relative label-upper mb-1" style={{ fontSize: "8px" }}>CO₂ предотвращено</p>
+          <div className="relative flex items-center justify-center gap-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-[#34D399]">
+              <path d="M12 3c-1.5 2-4 5-4 8a4 4 0 108 0c0-3-2.5-6-4-8z" fill="currentColor" opacity="0.2" stroke="currentColor" strokeWidth="1.5"/>
+            </svg>
+            <p className="font-mono-data text-[15px] font-medium text-[#34D399]">
+              {data.co2Reduced.toFixed(1)}
+            </p>
+          </div>
+          <p className="relative text-[9px] text-[#5A6D65]">тонн</p>
         </div>
       </div>
 
       {/* Footer */}
       {updatedAgo !== null && (
-        <div className={`px-5 py-2 border-t border-[#1E2B26] flex items-center justify-between transition-colors ${pulse ? "bg-[#FBBF24]/5" : ""}`}>
+        <div className={`px-5 py-2 border-t border-[#1E2B26] transition-colors ${pulse ? "bg-[#FBBF24]/5" : ""}`}>
           <span className="text-[9px] text-[#3D5048]">
             Обновлено {updatedAgo < 1 ? "только что" : `${updatedAgo} мин назад`}
           </span>
-          <span className="text-[9px] text-[#3D5048]">SN: REDACTED_DEVICE_SN</span>
         </div>
       )}
     </div>
