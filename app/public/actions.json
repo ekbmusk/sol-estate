@@ -1,0 +1,8 @@
+{
+  "rules": [
+    {
+      "pathPattern": "/api/actions/retire/**",
+      "apiPath": "/api/actions/retire/**"
+    }
+  ]
+}
