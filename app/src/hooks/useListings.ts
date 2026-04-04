@@ -18,10 +18,12 @@ export function useListings() {
   const program = useCarbonProgram();
   const [listings, setListings] = useState<OnChainListing[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchListings = useCallback(async () => {
     if (!program) return;
     setLoading(true);
+    setError(null);
 
     try {
       const accounts = await (program.account as any).listing.all();
@@ -37,7 +39,9 @@ export function useListings() {
         }))
         .filter((l: OnChainListing) => l.active);
       setListings(parsed);
-    } catch {
+    } catch (err) {
+      console.error("useListings error:", err);
+      setError(err instanceof Error ? err.message : "Failed to load listings");
       setListings([]);
     } finally {
       setLoading(false);
@@ -48,5 +52,5 @@ export function useListings() {
     fetchListings();
   }, [fetchListings]);
 
-  return { listings, loading, refetch: fetchListings };
+  return { listings, loading, error, refetch: fetchListings };
 }

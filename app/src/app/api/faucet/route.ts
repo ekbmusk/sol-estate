@@ -15,8 +15,9 @@ const KZTE_MINT = new PublicKey("tFs7nHjQUAbqrVHH6gaMEsjMnfNJRDowxjzeKLfTNqE");
 const RPC_URL = "https://api.devnet.solana.com";
 const MINT_AMOUNT = 100_000_000_000; // 100,000 KZTE (6 decimals)
 
-// Simple in-memory rate limit (resets on server restart)
-const claimed = new Set<string>();
+// Time-based rate limit (24h cooldown per wallet and IP)
+const claimedAt = new Map<string, number>();
+const COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 function loadAuthority(): Keypair {
   // Try env var first, then default keypair file
@@ -49,8 +50,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "invalid wallet address" }, { status: 400 });
     }
 
-    if (claimed.has(wallet)) {
-      return NextResponse.json({ error: "already claimed" }, { status: 429 });
+    const lastClaim = claimedAt.get(wallet);
+    if (lastClaim && Date.now() - lastClaim < COOLDOWN_MS) {
+      const remainingHrs = Math.ceil((COOLDOWN_MS - (Date.now() - lastClaim)) / (60 * 60 * 1000));
+      return NextResponse.json(
+        { error: `Already claimed. Try again in ${remainingHrs}h.` },
+        { status: 429 }
+      );
+    }
+
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const ipLastClaim = claimedAt.get(`ip:${ip}`);
+    if (ipLastClaim && Date.now() - ipLastClaim < COOLDOWN_MS) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded for this IP" },
+        { status: 429 }
+      );
     }
 
     const connection = new Connection(RPC_URL, "confirmed");
@@ -72,7 +87,8 @@ export async function POST(request: NextRequest) {
       MINT_AMOUNT
     );
 
-    claimed.add(wallet);
+    claimedAt.set(wallet, Date.now());
+    claimedAt.set(`ip:${ip}`, Date.now());
 
     return NextResponse.json({
       success: true,

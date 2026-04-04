@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useCarbonProgram } from "@/hooks/useCarbonProgram";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnection } from "@solana/wallet-adapter-react";
+import { simulateTransaction } from "@/lib/utils";
 import { BN } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import {
@@ -32,6 +33,7 @@ export default function InvestModal({ property }: { property: Project }) {
 
   const program = useCarbonProgram();
   const { publicKey, connected } = useWallet();
+  const { connection } = useConnection();
 
   const totalCost = shares * property.pricePerShare;
   const remainingShares = property.totalShares - property.sharesSold;
@@ -93,23 +95,28 @@ export default function InvestModal({ property }: { property: Project }) {
       );
 
       // Call the invest instruction
-      const sig = await program.methods
-        .invest(new BN(shares))
-        .accounts({
-          investor: publicKey,
-          project: projectPda,
-          vault: vaultPda,
-          shareMint: shareMintPda,
-          investorRecord: investorRecordPda,
-          investorKzteAccount: investorKzteAta,
-          vaultTokenAccount: vaultTokenAccount,
-          investorShareAccount: investorShareAccount,
-          kzteMint: KZTE_MINT,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-          systemProgram: PublicKey.default,
-        })
-        .rpc();
+      const accounts = {
+        investor: publicKey,
+        project: projectPda,
+        vault: vaultPda,
+        shareMint: shareMintPda,
+        investorRecord: investorRecordPda,
+        investorKzteAccount: investorKzteAta,
+        vaultTokenAccount: vaultTokenAccount,
+        investorShareAccount: investorShareAccount,
+        kzteMint: KZTE_MINT,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: PublicKey.default,
+      };
+
+      // Simulate before sending
+      const tx = await program.methods.invest(new BN(shares)).accounts(accounts).transaction();
+      tx.feePayer = publicKey;
+      tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
+      await simulateTransaction(connection, tx);
+
+      const sig = await program.methods.invest(new BN(shares)).accounts(accounts).rpc();
 
       const explorerUrl = `https://explorer.solana.com/tx/${sig}?cluster=devnet`;
 

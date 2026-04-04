@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useCarbonProgram } from "@/hooks/useCarbonProgram";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { simulateTransaction } from "@/lib/utils";
 import { BN } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import {
@@ -17,15 +18,17 @@ import type { OnChainProject } from "@/hooks/useProjects";
 interface RetirePanelProps {
   project: OnChainProject;
   onSuccess?: () => void;
+  initialAmount?: number;
 }
 
-export default function RetirePanel({ project, onSuccess }: RetirePanelProps) {
-  const [amount, setAmount] = useState(1);
+export default function RetirePanel({ project, onSuccess, initialAmount }: RetirePanelProps) {
+  const [amount, setAmount] = useState(initialAmount ?? 1);
   const [purpose, setPurpose] = useState("");
   const [loading, setLoading] = useState(false);
 
   const program = useCarbonProgram();
   const { publicKey, connected } = useWallet();
+  const { connection } = useConnection();
 
   const maxRetirable = project.totalCredits - project.creditsRetired;
 
@@ -74,18 +77,24 @@ export default function RetirePanel({ project, onSuccess }: RetirePanelProps) {
         PROGRAM_ID
       );
 
-      const sig = await program.methods
-        .retireCredits(Array.from(retireId), new BN(amount), purpose.trim())
-        .accounts({
-          buyer: publicKey,
-          project: projectPda,
-          carbonMint: carbonMintPda,
-          buyerCarbonAccount: buyerCarbonAta,
-          retireRecord: retireRecordPda,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          systemProgram: PublicKey.default,
-        })
-        .rpc();
+      const accounts = {
+        buyer: publicKey,
+        project: projectPda,
+        carbonMint: carbonMintPda,
+        buyerCarbonAccount: buyerCarbonAta,
+        retireRecord: retireRecordPda,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        systemProgram: PublicKey.default,
+      };
+      const args = [Array.from(retireId), new BN(amount), purpose.trim()] as const;
+
+      // Simulate before sending
+      const tx = await program.methods.retireCredits(...args).accounts(accounts).transaction();
+      tx.feePayer = publicKey;
+      tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
+      await simulateTransaction(connection, tx);
+
+      const sig = await program.methods.retireCredits(...args).accounts(accounts).rpc();
 
       toast.success(`${amount} углеродных кредитов погашено!`, {
         description: "Токены сожжены навсегда. RetireRecord создан on-chain.",

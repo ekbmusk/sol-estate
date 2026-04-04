@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 
 const SOLARMAN_API = "https://globalapi.solarmanpv.com";
-const APP_ID = "REDACTED_APP_ID";
-const APP_SECRET = "REDACTED_APP_SECRET";
-const EMAIL = "REDACTED_EMAIL";
-const PASSWORD = "REDACTED_PASSWORD";
-const DEVICE_SN = "REDACTED_DEVICE_SN";
+const APP_ID = process.env.SOLARMAN_APP_ID ?? "";
+const APP_SECRET = process.env.SOLARMAN_APP_SECRET ?? "";
+const EMAIL = process.env.SOLARMAN_EMAIL ?? "";
+const PASSWORD = process.env.SOLARMAN_PASSWORD ?? "";
+const DEVICE_SN = process.env.SOLARMAN_DEVICE_SN ?? "";
 
 interface SolarmanData {
   currentPower: number;

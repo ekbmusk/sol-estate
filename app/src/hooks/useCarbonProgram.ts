@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useAnchorProvider } from "@/components/providers/AnchorProvider";
 import { Program } from "@coral-xyz/anchor";
-import idl from "@/idl/carbon_kz.json";
+import { idl } from "@/lib/idl-utils";
 
 export function useCarbonProgram() {
   const provider = useAnchorProvider();
@@ -11,7 +11,7 @@ export function useCarbonProgram() {
   const program = useMemo(() => {
     if (!provider) return null;
 
-    return new Program(idl as any, provider);
+    return new Program(idl, provider);
   }, [provider]);
 
   return program;

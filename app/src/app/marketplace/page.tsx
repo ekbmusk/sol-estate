@@ -5,7 +5,8 @@ import { ArrowLeftRight, BookOpen, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useListings } from "@/hooks/useListings";
 import { useProjects } from "@/hooks/useProjects";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { simulateTransaction } from "@/lib/utils";
 import { useCarbonProgram } from "@/hooks/useCarbonProgram";
 import { BN } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
@@ -37,6 +38,7 @@ const features = [
 
 export default function MarketplacePage() {
   const { publicKey, connected } = useWallet();
+  const { connection } = useConnection();
   const program = useCarbonProgram();
   const { listings, loading: listingsLoading, refetch: refetchListings } = useListings();
   const { projects } = useProjects();
@@ -95,26 +97,31 @@ export default function MarketplacePage() {
         PROGRAM_ID
       );
 
-      const sig = await program.methods
-        .buyShares()
-        .accounts({
-          buyer: publicKey,
-          seller: sellerPubkey,
-          project: projectPda,
-          vault: vaultPda,
-          listing: listingPda,
-          buyerKzteAccount: buyerKzteAta,
-          sellerKzteAccount: sellerKzteAta,
-          escrowShareAccount: escrowShareAta,
-          buyerShareAccount: buyerShareAta,
-          shareMint: shareMintPda,
-          buyerRecord: buyerRecordPda,
-          sellerRecord: sellerRecordPda,
-          systemProgram: PublicKey.default,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-        })
-        .rpc();
+      const accounts = {
+        buyer: publicKey,
+        seller: sellerPubkey,
+        project: projectPda,
+        vault: vaultPda,
+        listing: listingPda,
+        buyerKzteAccount: buyerKzteAta,
+        sellerKzteAccount: sellerKzteAta,
+        escrowShareAccount: escrowShareAta,
+        buyerShareAccount: buyerShareAta,
+        shareMint: shareMintPda,
+        buyerRecord: buyerRecordPda,
+        sellerRecord: sellerRecordPda,
+        systemProgram: PublicKey.default,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      };
+
+      // Simulate before sending
+      const tx = await program.methods.buyShares().accounts(accounts).transaction();
+      tx.feePayer = publicKey;
+      tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
+      await simulateTransaction(connection, tx);
+
+      const sig = await program.methods.buyShares().accounts(accounts).rpc();
 
       toast.success("Доли куплены!", {
         description: `${listing.amount} долей приобретено`,

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useCarbonProgram } from "@/hooks/useCarbonProgram";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { simulateTransaction } from "@/lib/utils";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import {
   TOKEN_PROGRAM_ID,
@@ -24,6 +25,7 @@ export default function RetireCertificate({ record, projectName }: RetireCertifi
 
   const program = useCarbonProgram();
   const { publicKey, connected } = useWallet();
+  const { connection } = useConnection();
 
   const certParams = new URLSearchParams({
     buyer: record.buyer,
@@ -64,20 +66,32 @@ export default function RetireCertificate({ record, projectName }: RetireCertifi
         TOKEN_METADATA_PROGRAM_ID
       );
 
+      const accounts = {
+        buyer: publicKey,
+        project: projectPda,
+        retireRecord: retireRecordPda,
+        certificateMint: certificateMint.publicKey,
+        metadata: metadataPda,
+        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+        systemProgram: PublicKey.default,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        rent: new PublicKey("SysvarRent111111111111111111111111111111111"),
+      } as any;
+
+      // Simulate before sending
+      const tx = await program.methods
+        .mintRetireCertificate(absoluteMetadataUri)
+        .accounts(accounts)
+        .transaction();
+      tx.feePayer = publicKey;
+      tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
+      tx.partialSign(certificateMint);
+      await simulateTransaction(connection, tx);
+
       const sig = await program.methods
         .mintRetireCertificate(absoluteMetadataUri)
-        .accounts({
-          buyer: publicKey,
-          project: projectPda,
-          retireRecord: retireRecordPda,
-          certificateMint: certificateMint.publicKey,
-          metadata: metadataPda,
-          tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
-          systemProgram: PublicKey.default,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-          rent: new PublicKey("SysvarRent111111111111111111111111111111111"),
-        } as any)
+        .accounts(accounts)
         .signers([certificateMint])
         .rpc();
 

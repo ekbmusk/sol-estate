@@ -165,9 +165,9 @@ function escapeXml(str: string): string {
 
 import { Connection, PublicKey } from "@solana/web3.js";
 import { Program, AnchorProvider, Wallet } from "@coral-xyz/anchor";
-import idl from "@/idl/carbon_kz.json";
+import { idl } from "@/lib/idl-utils";
 
-const RPC = "https://devnet.helius-rpc.com/?api-key=REDACTED_HELIUS_KEY";
+const RPC = process.env.HELIUS_RPC_URL ?? "https://api.devnet.solana.com";
 const PROGRAM_ID = new PublicKey("3nLd8C3s2SAMVWXHy1vb7719zVPKPJWKrgxDDJ9pRRkg");
 
 async function fetchRetireData(pdaStr: string) {
@@ -181,7 +181,7 @@ async function fetchRetireData(pdaStr: string) {
     const { Keypair } = await import("@solana/web3.js");
     const dummyWallet = { publicKey: Keypair.generate().publicKey, signTransaction: async (t: any) => t, signAllTransactions: async (t: any) => t, payer: Keypair.generate() } as any;
     const provider = new AnchorProvider(connection, dummyWallet, {});
-    const program = new Program(idl as any, provider);
+    const program = new Program(idl, provider);
     const record = await (program.account as any).retireRecord.fetch(pda);
 
     // Fetch project name
@@ -208,6 +208,18 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const pda = searchParams.get("pda") ?? "";
   const format = searchParams.get("format") ?? "svg";
+
+  // Validate PDA if provided
+  if (pda) {
+    try {
+      new PublicKey(pda);
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid PDA address" },
+        { status: 400 }
+      );
+    }
+  }
 
   // Params can come from query string OR from on-chain fetch via PDA
   let params = {

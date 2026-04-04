@@ -12,7 +12,7 @@ export const KZTE_DECIMALS = 6;
 
 export const NETWORK = "devnet";
 
-export const RPC_ENDPOINT = "https://devnet.helius-rpc.com/?api-key=REDACTED_HELIUS_KEY";
+export const RPC_ENDPOINT = process.env.NEXT_PUBLIC_HELIUS_RPC_URL ?? "https://api.devnet.solana.com";
 
 /**
  * Converts raw lamport amount to display format with ₸ symbol

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useCarbonProgram } from "./useCarbonProgram";
@@ -25,6 +25,8 @@ export function usePortfolio() {
   const program = useCarbonProgram();
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fetchGenRef = useRef(0);
 
   const fetchPortfolio = useCallback(async () => {
     if (!publicKey || !program) {
@@ -32,12 +34,16 @@ export function usePortfolio() {
       return;
     }
     setLoading(true);
+    setError(null);
+    const currentGen = ++fetchGenRef.current;
 
     try {
       // Fetch all investor records for this wallet
       const records = await (program.account as any).investorRecord.all([
         { memcmp: { offset: 8, bytes: publicKey.toBase58() } },
       ]);
+
+      if (currentGen !== fetchGenRef.current) return; // stale fetch
 
       const portfolioItems: PortfolioItem[] = [];
 
@@ -71,16 +77,22 @@ export function usePortfolio() {
             totalDividendsPerShare: totalDPS,
             lastClaimed,
           });
-        } catch {
-          // Skip if project fetch fails
+        } catch (err) {
+          console.warn(`usePortfolio: skipped project ${record.project.toString()}:`, err);
         }
       }
 
+      if (currentGen !== fetchGenRef.current) return; // stale fetch
       setItems(portfolioItems);
-    } catch {
+    } catch (err) {
+      if (currentGen !== fetchGenRef.current) return;
+      console.error("usePortfolio error:", err);
+      setError(err instanceof Error ? err.message : "Failed to load portfolio");
       setItems([]);
     } finally {
-      setLoading(false);
+      if (currentGen === fetchGenRef.current) {
+        setLoading(false);
+      }
     }
   }, [publicKey, program]);
 
@@ -88,5 +100,5 @@ export function usePortfolio() {
     fetchPortfolio();
   }, [fetchPortfolio]);
 
-  return { items, loading, refetch: fetchPortfolio };
+  return { items, loading, error, refetch: fetchPortfolio };
 }

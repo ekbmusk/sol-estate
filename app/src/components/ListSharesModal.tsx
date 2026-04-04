@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useCarbonProgram } from "@/hooks/useCarbonProgram";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useConnection } from "@solana/wallet-adapter-react";
+import { simulateTransaction } from "@/lib/utils";
 import { BN } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import {
@@ -102,18 +103,30 @@ export default function ListSharesModal({
 
       const priceLamports = new BN(price * 1_000_000); // KZTE has 6 decimals
 
+      const accounts = {
+        seller: publicKey,
+        project: projectPda,
+        investorRecord: investorRecordPda,
+        listing: listingPda,
+        sellerShareAccount: sellerShareAta,
+        escrowShareAccount: escrowShareAta,
+        systemProgram: PublicKey.default,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      } as any;
+
+      // Simulate before sending
+      const tx = await program.methods
+        .listShares(new BN(amount), priceLamports)
+        .accounts(accounts)
+        .preInstructions(preInstructions)
+        .transaction();
+      tx.feePayer = publicKey;
+      tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
+      await simulateTransaction(connection, tx);
+
       const sig = await program.methods
         .listShares(new BN(amount), priceLamports)
-        .accounts({
-          seller: publicKey,
-          project: projectPda,
-          investorRecord: investorRecordPda,
-          listing: listingPda,
-          sellerShareAccount: sellerShareAta,
-          escrowShareAccount: escrowShareAta,
-          systemProgram: PublicKey.default,
-          tokenProgram: TOKEN_PROGRAM_ID,
-        } as any)
+        .accounts(accounts)
         .preInstructions(preInstructions)
         .rpc();
 

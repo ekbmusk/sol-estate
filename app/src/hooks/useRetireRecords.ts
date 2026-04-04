@@ -16,10 +16,12 @@ export function useRetireRecords() {
   const program = useCarbonProgram();
   const [records, setRecords] = useState<RetireRecordItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchRecords = useCallback(async () => {
     if (!program) return;
     setLoading(true);
+    setError(null);
 
     try {
       const accounts = await (program.account as any).retireRecord.all();
@@ -34,7 +36,9 @@ export function useRetireRecords() {
         }))
         .sort((a: RetireRecordItem, b: RetireRecordItem) => b.timestamp - a.timestamp);
       setRecords(parsed);
-    } catch {
+    } catch (err) {
+      console.error("useRetireRecords error:", err);
+      setError(err instanceof Error ? err.message : "Failed to load retire records");
       setRecords([]);
     } finally {
       setLoading(false);
@@ -45,5 +49,5 @@ export function useRetireRecords() {
     fetchRecords();
   }, [fetchRecords]);
 
-  return { records, loading, refetch: fetchRecords };
+  return { records, loading, error, refetch: fetchRecords };
 }

@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCarbonProgram } from "@/hooks/useCarbonProgram";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { simulateTransaction } from "@/lib/utils";
 import { PublicKey } from "@solana/web3.js";
 import {
   getAssociatedTokenAddress,
@@ -30,6 +31,7 @@ export default function DividendWidget({
 
   const program = useCarbonProgram();
   const { publicKey, connected } = useWallet();
+  const { connection } = useConnection();
 
   const handleClaim = async () => {
     if (!connected || !publicKey) {
@@ -78,18 +80,23 @@ export default function DividendWidget({
       );
 
       // Call the claimDividends instruction
-      const sig = await program.methods
-        .claimDividends()
-        .accounts({
-          investor: publicKey,
-          project: projectPda,
-          vault: vaultPda,
-          investorRecord: investorRecordPda,
-          vaultTokenAccount: vaultTokenAccount,
-          investorKzteAccount: investorKzteAccount,
-          tokenProgram: TOKEN_PROGRAM_ID,
-        })
-        .rpc();
+      const accounts = {
+        investor: publicKey,
+        project: projectPda,
+        vault: vaultPda,
+        investorRecord: investorRecordPda,
+        vaultTokenAccount: vaultTokenAccount,
+        investorKzteAccount: investorKzteAccount,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      };
+
+      // Simulate before sending
+      const tx = await program.methods.claimDividends().accounts(accounts).transaction();
+      tx.feePayer = publicKey;
+      tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
+      await simulateTransaction(connection, tx);
+
+      const sig = await program.methods.claimDividends().accounts(accounts).rpc();
 
       const explorerUrl = `https://explorer.solana.com/tx/${sig}?cluster=devnet`;
 

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { useCarbonProgram } from "@/hooks/useCarbonProgram";
+import { simulateTransaction } from "@/lib/utils";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import { useKzte } from "@/hooks/useKzte";
 import { PublicKey } from "@solana/web3.js";
@@ -15,6 +16,7 @@ import ListSharesModal from "@/components/ListSharesModal";
 
 export default function PortfolioPage() {
   const { publicKey, connected } = useWallet();
+  const { connection } = useConnection();
   const program = useCarbonProgram();
   const { items, loading, refetch } = usePortfolio();
   const { balance: kzteBalance } = useKzte();
@@ -33,11 +35,19 @@ export default function PortfolioPage() {
       const vaultTokenAccount = await getAssociatedTokenAddress(KZTE_MINT, vaultPda, true);
       const investorKzteAccount = await getAssociatedTokenAddress(KZTE_MINT, publicKey);
 
-      const sig = await program.methods.claimDividends().accounts({
+      const accounts = {
         investor: publicKey, project: projectPda, vault: vaultPda,
         investorRecord: investorRecordPda, vaultTokenAccount, investorKzteAccount,
         tokenProgram: TOKEN_PROGRAM_ID,
-      } as any).rpc();
+      } as any;
+
+      // Simulate before sending
+      const tx = await program.methods.claimDividends().accounts(accounts).transaction();
+      tx.feePayer = publicKey;
+      tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
+      await simulateTransaction(connection, tx);
+
+      const sig = await program.methods.claimDividends().accounts(accounts).rpc();
 
       toast.success("Дивиденды получены", {
         action: { label: "Explorer", onClick: () => window.open(`https://explorer.solana.com/tx/${sig}?cluster=devnet`, "_blank") },
