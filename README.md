@@ -6,7 +6,7 @@
 
 ## Проблема
 
-Казахстан — 4-е место в мире по CO2/ВВП. 349 млн тонн CO2/год. Рынок углеродных кредитов существует с 2013 года (KZ ETS), но мёртв: $1/тонна, 135 участников, только спот. Цель правительства — $50/тонна к 2030 (x50 рост). Ни одного блокчейн-проекта по carbon credits в ЦА.
+Казахстан — 4-е место в мире по CO₂/ВВП. 349 млн тонн CO₂/год. Рынок углеродных кредитов существует с 2013 года (KZ ETS), но мёртв: $1/тонна, 135 участников, только спот. Цель правительства — $50/тонна к 2030 (×50 рост). Ни одного блокчейн-проекта по carbon credits в ЦА.
 
 ## Решение
 
@@ -15,29 +15,36 @@ CarbonKZ токенизирует углеродные кредиты реаль
 - **Верификация** — doc hash фиксируется on-chain
 - **Инвестирование** — покупка долей за KZTE, share-токены на кошелёк
 - **Дивиденды** — выручка от продажи кредитов распределяется пропорционально
-- **Retire (гашение)** — burn токенов + immutable RetireRecord PDA. Double counting невозможен.
+- **Retire (гашение)** — burn токенов + immutable RetireRecord PDA. Double counting невозможен
+- **Soulbound сертификат** — NFT с freeze (Token-2022 NonTransferable v2)
+- **Pyth Oracle** — динамическое ценообразование через price feeds
+- **Solana Actions (Blinks)** — retire кредитов через QR-код / ссылку без захода на сайт
+- **Carbon Calculator** — расчёт углеродного следа с KZ-specific коэффициентами
 
 ## Архитектура
 
 ```
 ┌─────────────────────────────────────────────┐
 │                  Frontend                    │
-│         Next.js 16 + Tailwind + shadcn/ui   │
-│         Wallet: Phantom (wallet-adapter)     │
+│    Next.js 16 + Tailwind 4 + shadcn/ui      │
+│    Recharts · Wallet Adapter · Blinks API    │
 └──────────────────┬──────────────────────────┘
                    │ @coral-xyz/anchor
 ┌──────────────────▼──────────────────────────┐
-│            Solana Program (Anchor)           │
+│         Solana Program (Anchor 0.32)         │
 │                                              │
 │  initialize_project  verify_project  invest  │
 │  distribute_revenue  claim_dividends         │
 │  retire_credits      mint_carbon_tokens      │
-│  list_shares         buy_shares              │
-│  cancel_listing      create_share_metadata   │
+│  list_shares  buy_shares  cancel_listing     │
+│  create_share_metadata                       │
+│  mint_retire_certificate (soulbound)         │
+│  mint_retire_certificate_v2 (Token-2022)     │
+│  update_price (Pyth Oracle)                  │
 │                                              │
-│  PDA Accounts:                               │
-│  CarbonProject  InvestorRecord  VaultAccount │
-│  RetireRecord   Listing                      │
+│  PDA: CarbonProject · InvestorRecord         │
+│       VaultAccount · RetireRecord            │
+│       Listing · OracleConfig                 │
 └──────────────────────────────────────────────┘
 ```
 
@@ -46,12 +53,14 @@ CarbonKZ токенизирует углеродные кредиты реаль
 | Layer | Technology |
 |-------|-----------|
 | Blockchain | Solana (Devnet) |
-| Smart Contract | Anchor 0.32, Rust |
-| Token | SPL Token (KZTE, CarbonToken, ShareToken) |
+| Smart Contract | Anchor 0.32.1, Rust |
+| Token | SPL Token + Token-2022 (KZTE, CarbonToken, ShareToken) |
+| Oracle | Pyth Network (pyth-solana-receiver-sdk 1.1.0) |
 | Frontend | Next.js 16, React 19, TypeScript |
-| Styling | Tailwind CSS 4, shadcn/ui |
-| Wallet | @solana/wallet-adapter (Phantom) |
+| Styling | Tailwind CSS 4, shadcn/ui, Recharts |
+| Wallet | @solana/wallet-adapter (Phantom, Solflare) |
 | Payments | KZTE stablecoin (1:1 KZT, 6 decimals) |
+| Deploy | Vercel (frontend), Solana Devnet (program) |
 
 ## Devnet
 
@@ -81,21 +90,50 @@ cd app && npm install && npm run dev
 
 ## Проекты на devnet
 
-| Проект | Тип | CO2/год | Локация |
+| Проект | Тип | CO₂/год | Локация |
 |--------|-----|---------|---------|
 | СЭС Университета Ахмеда Ясави | Solar | 36 т | Туркестан |
 | Ветропарк Ерейментау | Wind | 12,000 т | Акмолинская обл. |
 | Лесовосстановление Бурабай | Forest | 3,000 т | Нац. парк Бурабай |
 | ArcelorMittal Теміртау | Industrial | 8,000 т | Карагандинская обл. |
 
-## Killer Feature: Retire (Гашение)
+## Ключевые фичи
 
+### Retire (Гашение) — killer feature
 1. Компания покупает CarbonToken
 2. Вызывает `retire_credits` с количеством и целью
 3. Токены **сжигаются** навсегда (SPL Token burn)
 4. Создаётся immutable `RetireRecord` PDA on-chain
-5. Double counting невозможен — сожжённый токен не существует
-6. On-chain proof для аудиторов через Solana Explorer
+5. Soulbound NFT-сертификат (frozen / Token-2022 NonTransferable)
+6. Double counting невозможен — сожжённый токен не существует
+
+### Solana Actions (Blinks)
+Retire кредитов через URL/QR-код без захода на сайт:
+```
+GET  /api/actions/retire              — список всех проектов
+GET  /api/actions/retire?projectId=X  — конкретный проект
+POST /api/actions/retire              — unsigned tx для кошелька
+```
+
+### Carbon Calculator
+Расчёт углеродного следа с казахстанскими коэффициентами:
+- Электричество: 0.636 кг CO₂/кВт·ч (угольная генерация КЗ)
+- Автомобиль: 0.21 кг CO₂/км
+- Авиация: 0.255 кг CO₂/пасс-км
+- Газ: 2.0 кг CO₂/м³
+
+### Pyth Oracle
+Динамическое ценообразование через Pyth price feeds с конвертацией USD → KZT.
+
+## Безопасность
+- Checked arithmetic (`checked_add/mul/div`) — везде, без исключений
+- Vault PDA — единственный authority над KZTE ATA
+- Mint authority = CarbonProject PDA (не admin)
+- Retire: burn ПЕРЕД state mutation (reentrancy protection)
+- Escrow owner validation в buy_shares (listing PDA)
+- Dividend precision: multiply before divide (u128 headroom)
+- RetireRecord PDA uniqueness — double-retire невозможен
+- `document_hash` immutable после создания
 
 ## Команда
 

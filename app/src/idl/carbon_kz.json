@@ -125,7 +125,7 @@
         {
           "name": "escrow_share_account",
           "docs": [
-            "Escrow share token account"
+            "Escrow share token account — must be owned by listing PDA"
           ],
           "writable": true
         },

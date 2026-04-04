@@ -55,10 +55,11 @@ pub struct BuyShares<'info> {
     )]
     pub seller_kzte_account: Box<Account<'info, TokenAccount>>,
 
-    /// Escrow share token account
+    /// Escrow share token account — must be owned by listing PDA
     #[account(
         mut,
         constraint = escrow_share_account.mint == project.share_mint,
+        constraint = escrow_share_account.owner == listing.key() @ CarbonKZError::Unauthorized,
     )]
     pub escrow_share_account: Box<Account<'info, TokenAccount>>,
 
