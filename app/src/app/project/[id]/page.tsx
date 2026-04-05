@@ -1,9 +1,11 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Droplets } from "lucide-react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { toast } from "sonner";
 import InvestModal from "@/components/InvestModal";
 import DividendWidget from "@/components/DividendWidget";
 import SolarmanWidget from "@/components/SolarmanWidget";
@@ -25,8 +27,31 @@ const PRECISION = BigInt("1000000000000");
 
 export default function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const { publicKey } = useWallet();
   const { project: onChainProject, loading: projectLoading } = useProject(id);
   const { investor } = useInvestor(id);
+  const [faucetLoading, setFaucetLoading] = useState(false);
+
+  const handleFaucet = async () => {
+    if (!publicKey) { toast.error("Подключите кошелёк"); return; }
+    setFaucetLoading(true);
+    try {
+      const res = await fetch("/api/faucet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ wallet: publicKey.toString() }),
+      });
+      const data = await res.json();
+      if (!res.ok) { toast.error("Faucet", { description: data.error }); return; }
+      toast.success("100,000 KZTE получены!", {
+        action: { label: "Explorer", onClick: () => window.open(data.explorer, "_blank") },
+      });
+    } catch (err) {
+      toast.error("Ошибка", { description: err instanceof Error ? err.message : "Неизвестная ошибка" });
+    } finally {
+      setFaucetLoading(false);
+    }
+  };
   const mock = mockProjects.find((p) => p.id === id);
 
   // Merge on-chain data with mock for location/description
@@ -224,6 +249,14 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
               </p>
             </div>
             <InvestModal property={project} />
+            <button
+              onClick={handleFaucet}
+              disabled={faucetLoading}
+              className="flex items-center justify-center gap-2 w-full rounded-md border border-[#34D399]/30 bg-[#34D399]/5 px-4 py-2.5 text-[13px] font-medium text-[#34D399] hover:bg-[#34D399]/10 disabled:opacity-50 transition-colors cursor-pointer disabled:cursor-default"
+            >
+              <Droplets size={14} />
+              {faucetLoading ? "..." : "Получить тестовые KZTE"}
+            </button>
           </div>
 
           <DividendWidget
