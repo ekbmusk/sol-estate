@@ -204,33 +204,66 @@ export default function RetirePage() {
 
             {retireRecords.map((rec, i) => (
               <div key={rec.pda}>
-                <div
-                  className={`grid sm:grid-cols-[1fr_1fr_80px_1fr_40px_40px] gap-4 px-5 py-3.5 items-center
-                    ${i > 0 ? "border-t border-[#1E2B26]" : ""}`}
-                >
-                  <span className="text-[13px] font-medium truncate">{getProjectName(rec.project)}</span>
-                  <span className="font-mono-data text-[12px] text-[#5A6D65]">
-                    {rec.buyer.slice(0, 4)}...{rec.buyer.slice(-4)}
-                  </span>
-                  <span className="font-mono-data text-[13px] font-medium text-[#F97316]">
-                    {rec.amountRetired}
-                  </span>
-                  <span className="text-[12px] text-[#8A9B94] truncate">{rec.purpose}</span>
-                  <button
-                    onClick={() => setCertRecordPda(certRecordPda === rec.pda ? null : rec.pda)}
-                    className={`transition-colors ${certRecordPda === rec.pda ? "text-[#34D399]" : "text-[#5A6D65] hover:text-[#34D399]"}`}
-                    title="Сертификат"
-                  >
-                    <Award size={14} />
-                  </button>
-                  <a
-                    href={`https://explorer.solana.com/address/${rec.pda}?cluster=devnet`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#5A6D65] hover:text-[#34D399] transition-colors"
-                  >
-                    <ExternalLink size={14} />
-                  </a>
+                <div className={`px-5 py-3.5 ${i > 0 ? "border-t border-[#1E2B26]" : ""}`}>
+                  {/* Desktop row */}
+                  <div className="hidden sm:grid grid-cols-[1fr_1fr_80px_1fr_40px_40px] gap-4 items-center">
+                    <span className="text-[13px] font-medium truncate">{getProjectName(rec.project)}</span>
+                    <span className="font-mono-data text-[12px] text-[#5A6D65]">
+                      {rec.buyer.slice(0, 4)}...{rec.buyer.slice(-4)}
+                    </span>
+                    <span className="font-mono-data text-[13px] font-medium text-[#F97316]">
+                      {rec.amountRetired}
+                    </span>
+                    <span className="text-[12px] text-[#8A9B94] truncate">{rec.purpose}</span>
+                    <button
+                      onClick={() => setCertRecordPda(certRecordPda === rec.pda ? null : rec.pda)}
+                      className={`transition-colors ${certRecordPda === rec.pda ? "text-[#34D399]" : "text-[#5A6D65] hover:text-[#34D399]"}`}
+                      title="Сертификат"
+                    >
+                      <Award size={14} />
+                    </button>
+                    <a
+                      href={`https://explorer.solana.com/address/${rec.pda}?cluster=devnet`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#5A6D65] hover:text-[#34D399] transition-colors"
+                    >
+                      <ExternalLink size={14} />
+                    </a>
+                  </div>
+
+                  {/* Mobile card */}
+                  <div className="sm:hidden space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[14px] font-medium truncate">{getProjectName(rec.project)}</span>
+                      <span className="font-mono-data text-[14px] font-medium text-[#F97316]">
+                        {rec.amountRetired} т
+                      </span>
+                    </div>
+                    <p className="text-[12px] text-[#8A9B94]">{rec.purpose}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono-data text-[11px] text-[#5A6D65]">
+                        {rec.buyer.slice(0, 4)}...{rec.buyer.slice(-4)}
+                      </span>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setCertRecordPda(certRecordPda === rec.pda ? null : rec.pda)}
+                          className={`transition-colors ${certRecordPda === rec.pda ? "text-[#34D399]" : "text-[#5A6D65] hover:text-[#34D399]"}`}
+                          title="Сертификат"
+                        >
+                          <Award size={14} />
+                        </button>
+                        <a
+                          href={`https://explorer.solana.com/address/${rec.pda}?cluster=devnet`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#5A6D65] hover:text-[#34D399] transition-colors"
+                        >
+                          <ExternalLink size={14} />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Certificate expand */}

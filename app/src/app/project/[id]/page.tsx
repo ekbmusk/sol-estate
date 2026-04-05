@@ -7,6 +7,7 @@ import { ChevronLeft } from "lucide-react";
 import InvestModal from "@/components/InvestModal";
 import DividendWidget from "@/components/DividendWidget";
 import SolarmanWidget from "@/components/SolarmanWidget";
+import ProjectChart from "@/components/ProjectChart";
 import { mockProjects, type Project } from "@/lib/mockData";
 import { useProject } from "@/hooks/useProject";
 import { useInvestor } from "@/hooks/useInvestor";
@@ -176,6 +177,15 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
                 <div className="h-full rounded-full bg-[#FBBF24] animate-progress" style={{ width: `${retireProgress}%` }} />
               </div>
             </div>
+          </div>
+
+          {/* Credit dynamics chart */}
+          <div className="animate-in delay-3">
+            <ProjectChart
+              totalCredits={project.totalCredits}
+              creditsRetired={project.creditsRetired}
+              projectId={project.id}
+            />
           </div>
 
           {/* SOLARMAN live data — only for solar projects */}

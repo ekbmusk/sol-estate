@@ -192,8 +192,8 @@ export default function MarketplacePage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {/* Table header */}
-            <div className="grid grid-cols-5 gap-4 px-5 py-2">
+            {/* Table header — desktop */}
+            <div className="hidden sm:grid grid-cols-5 gap-4 px-5 py-2">
               <span className="label-upper">Проект</span>
               <span className="label-upper">Продавец</span>
               <span className="label-upper text-right">Кол-во</span>
@@ -208,37 +208,81 @@ export default function MarketplacePage() {
               return (
                 <div
                   key={listing.pda}
-                  className="grid grid-cols-5 gap-4 items-center rounded-xl border border-[#1E2B26] bg-[#0C1210] px-5 py-4"
+                  className="rounded-xl border border-[#1E2B26] bg-[#0C1210] px-5 py-4"
                 >
-                  <div>
-                    <p className="text-[13px] font-medium truncate">{getProjectName(listing.project)}</p>
+                  {/* Desktop row */}
+                  <div className="hidden sm:grid grid-cols-5 gap-4 items-center">
+                    <div>
+                      <p className="text-[13px] font-medium truncate">{getProjectName(listing.project)}</p>
+                    </div>
+                    <div>
+                      <a
+                        href={`https://explorer.solana.com/address/${listing.seller}?cluster=devnet`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono-data text-[12px] text-[#5A6D65] hover:text-[#34D399] transition-colors"
+                      >
+                        {listing.seller.slice(0, 4)}...{listing.seller.slice(-4)}
+                        {isSelf && <span className="text-[#34D399] ml-1">(вы)</span>}
+                      </a>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-mono-data text-[13px]">{listing.amount.toLocaleString("ru-RU")}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-mono-data text-[13px]">{listing.pricePerShare.toLocaleString("ru-RU")} &#x20B8;</p>
+                    </div>
+                    <div className="text-right flex items-center justify-end gap-3">
+                      <p className="font-mono-data text-[13px] font-medium text-[#34D399]">
+                        {total.toLocaleString("ru-RU")} &#x20B8;
+                      </p>
+                      {!isSelf && connected && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-[#34D399]/30 text-[#34D399] hover:bg-[#34D399]/10 text-[11px] h-7 px-3 cursor-pointer"
+                          disabled={buyingPda === listing.pda}
+                          onClick={() => handleBuy(listing)}
+                        >
+                          {buyingPda === listing.pda ? "..." : "Купить"}
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <a
-                      href={`https://explorer.solana.com/address/${listing.seller}?cluster=devnet`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-mono-data text-[12px] text-[#5A6D65] hover:text-[#34D399] transition-colors"
-                    >
-                      {listing.seller.slice(0, 4)}...{listing.seller.slice(-4)}
-                      {isSelf && <span className="text-[#34D399] ml-1">(вы)</span>}
-                    </a>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-mono-data text-[13px]">{listing.amount.toLocaleString("ru-RU")}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-mono-data text-[13px]">{listing.pricePerShare.toLocaleString("ru-RU")} &#x20B8;</p>
-                  </div>
-                  <div className="text-right flex items-center justify-end gap-3">
-                    <p className="font-mono-data text-[13px] font-medium text-[#34D399]">
-                      {total.toLocaleString("ru-RU")} &#x20B8;
-                    </p>
+
+                  {/* Mobile card */}
+                  <div className="sm:hidden space-y-3">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[14px] font-medium truncate">{getProjectName(listing.project)}</p>
+                      <a
+                        href={`https://explorer.solana.com/address/${listing.seller}?cluster=devnet`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono-data text-[11px] text-[#5A6D65] hover:text-[#34D399] transition-colors"
+                      >
+                        {listing.seller.slice(0, 4)}...{listing.seller.slice(-4)}
+                        {isSelf && <span className="text-[#34D399] ml-1">(вы)</span>}
+                      </a>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Кол-во</p>
+                        <p className="font-mono-data text-[13px] mt-0.5">{listing.amount.toLocaleString("ru-RU")}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Цена</p>
+                        <p className="font-mono-data text-[13px] mt-0.5">{listing.pricePerShare.toLocaleString("ru-RU")} &#x20B8;</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Итого</p>
+                        <p className="font-mono-data text-[13px] font-medium text-[#34D399] mt-0.5">{total.toLocaleString("ru-RU")} &#x20B8;</p>
+                      </div>
+                    </div>
                     {!isSelf && connected && (
                       <Button
                         size="sm"
                         variant="outline"
-                        className="border-[#34D399]/30 text-[#34D399] hover:bg-[#34D399]/10 text-[11px] h-7 px-3 cursor-pointer"
+                        className="w-full border-[#34D399]/30 text-[#34D399] hover:bg-[#34D399]/10 text-[12px] h-8 cursor-pointer"
                         disabled={buyingPda === listing.pda}
                         onClick={() => handleBuy(listing)}
                       >

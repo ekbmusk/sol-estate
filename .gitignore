@@ -10,3 +10,7 @@ test-ledger
 app/node_modules
 app/.next
 .env*
+
+# Claude
+CLAUDE.md
+.claude/

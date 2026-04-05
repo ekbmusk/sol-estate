@@ -13,6 +13,9 @@ import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
 import { toast } from "sonner";
 import { ArrowUpRight, Wallet } from "lucide-react";
 import ListSharesModal from "@/components/ListSharesModal";
+import CreditsPieChart from "@/components/CreditsPieChart";
+import { useProjects } from "@/hooks/useProjects";
+import { type Project } from "@/lib/mockData";
 
 export default function PortfolioPage() {
   const { publicKey, connected } = useWallet();
@@ -20,10 +23,35 @@ export default function PortfolioPage() {
   const program = useCarbonProgram();
   const { items, loading, refetch } = usePortfolio();
   const { balance: kzteBalance } = useKzte();
+  const { projects: onChainProjects } = useProjects();
   const [claimingId, setClaimingId] = useState<string | null>(null);
 
   const totalValue = items.reduce((s, i) => s + i.sharesOwned * i.pricePerShare, 0);
   const totalClaimable = items.reduce((s, i) => s + i.claimableDividends, 0);
+
+  // Build project data for pie chart from user's invested projects
+  const investedProjects: Project[] = items
+    .map((item) => {
+      const p = onChainProjects.find((pr) => pr.id === item.projectId);
+      if (!p) return null;
+      return {
+        id: p.id,
+        name: p.name,
+        location: "",
+        description: "",
+        projectType: p.projectType as Project["projectType"],
+        totalCredits: item.sharesOwned,
+        creditsRetired: 0,
+        totalShares: p.totalShares,
+        sharesSold: p.sharesSold,
+        pricePerShare: p.pricePerShare,
+        verified: p.verified,
+        status: p.status as Project["status"],
+        imageUrl: "",
+        documentHash: "",
+      };
+    })
+    .filter((p): p is Project => p !== null);
 
   const handleClaim = async (projectId: string) => {
     if (!connected || !publicKey || !program) return;
@@ -101,6 +129,13 @@ export default function PortfolioPage() {
         ))}
       </div>
 
+      {/* Chart */}
+      {investedProjects.length > 0 && (
+        <div className="mb-10 max-w-[360px]">
+          <CreditsPieChart projects={investedProjects} />
+        </div>
+      )}
+
       {/* Holdings */}
       <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] overflow-hidden">
         {loading ? (
@@ -128,38 +163,84 @@ export default function PortfolioPage() {
             {items.map((item, i) => (
               <div
                 key={item.projectId}
-                className={`grid sm:grid-cols-[1fr_80px_100px_100px_80px_80px] gap-4 px-5 py-4 items-center
-                  ${i > 0 ? "border-t border-[#1E2B26]" : ""} hover:bg-[#1A2320] transition-colors`}
+                className={`px-5 py-4 ${i > 0 ? "border-t border-[#1E2B26]" : ""} hover:bg-[#1A2320] transition-colors`}
               >
-                <div>
+                {/* Desktop row */}
+                <div className="hidden sm:grid grid-cols-[1fr_80px_100px_100px_80px_80px] gap-4 items-center">
+                  <div>
+                    <Link href={`/project/${item.projectId}`} className="text-[14px] font-medium hover:text-[#34D399] transition-colors inline-flex items-center gap-1">
+                      {item.projectName}
+                      <ArrowUpRight size={12} strokeWidth={2} className="opacity-40" />
+                    </Link>
+                  </div>
+                  <span className="font-mono-data text-[13px]">{item.sharesOwned.toLocaleString("ru-RU")}</span>
+                  <span className="font-mono-data text-[13px]">{(item.sharesOwned * item.pricePerShare).toLocaleString("ru-RU")} &#x20B8;</span>
+                  <span className="font-mono-data text-[13px] text-[#34D399]">
+                    {item.claimableDividends > 0
+                      ? `${item.claimableDividends.toLocaleString("ru-RU", { maximumFractionDigits: 2 })} \u20B8`
+                      : "—"}
+                  </span>
+                  <button
+                    onClick={() => handleClaim(item.projectId)}
+                    disabled={item.claimableDividends <= 0 || claimingId === item.projectId}
+                    className="text-[12px] font-medium text-[#34D399] hover:underline disabled:text-[#5A6D65] disabled:no-underline cursor-pointer disabled:cursor-default transition-colors"
+                  >
+                    {claimingId === item.projectId ? "..." : "Получить"}
+                  </button>
+                  {item.sharesOwned > 0 && (
+                    <ListSharesModal
+                      projectId={item.projectId}
+                      projectName={item.projectName}
+                      sharesOwned={item.sharesOwned}
+                      currentPrice={item.pricePerShare}
+                      onSuccess={refetch}
+                    />
+                  )}
+                </div>
+
+                {/* Mobile card */}
+                <div className="sm:hidden space-y-3">
                   <Link href={`/project/${item.projectId}`} className="text-[14px] font-medium hover:text-[#34D399] transition-colors inline-flex items-center gap-1">
                     {item.projectName}
                     <ArrowUpRight size={12} strokeWidth={2} className="opacity-40" />
                   </Link>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Доли</p>
+                      <p className="font-mono-data text-[13px] mt-0.5">{item.sharesOwned.toLocaleString("ru-RU")}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Стоимость</p>
+                      <p className="font-mono-data text-[13px] mt-0.5">{(item.sharesOwned * item.pricePerShare).toLocaleString("ru-RU")} &#x20B8;</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">К выплате</p>
+                      <p className="font-mono-data text-[13px] text-[#34D399] mt-0.5">
+                        {item.claimableDividends > 0
+                          ? `${item.claimableDividends.toLocaleString("ru-RU", { maximumFractionDigits: 2 })} \u20B8`
+                          : "—"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleClaim(item.projectId)}
+                      disabled={item.claimableDividends <= 0 || claimingId === item.projectId}
+                      className="flex-1 rounded-lg border border-[#34D399]/30 py-1.5 text-[12px] font-medium text-[#34D399] hover:bg-[#34D399]/10 disabled:text-[#5A6D65] disabled:border-[#1E2B26] cursor-pointer disabled:cursor-default transition-colors"
+                    >
+                      {claimingId === item.projectId ? "..." : "Получить"}
+                    </button>
+                    {item.sharesOwned > 0 && (
+                      <ListSharesModal
+                        projectId={item.projectId}
+                        projectName={item.projectName}
+                        sharesOwned={item.sharesOwned}
+                        currentPrice={item.pricePerShare}
+                        onSuccess={refetch}
+                      />
+                    )}
+                  </div>
                 </div>
-                <span className="font-mono-data text-[13px]">{item.sharesOwned.toLocaleString("ru-RU")}</span>
-                <span className="font-mono-data text-[13px]">{(item.sharesOwned * item.pricePerShare).toLocaleString("ru-RU")} &#x20B8;</span>
-                <span className="font-mono-data text-[13px] text-[#34D399]">
-                  {item.claimableDividends > 0
-                    ? `${item.claimableDividends.toLocaleString("ru-RU", { maximumFractionDigits: 2 })} \u20B8`
-                    : "—"}
-                </span>
-                <button
-                  onClick={() => handleClaim(item.projectId)}
-                  disabled={item.claimableDividends <= 0 || claimingId === item.projectId}
-                  className="text-[12px] font-medium text-[#34D399] hover:underline disabled:text-[#5A6D65] disabled:no-underline cursor-pointer disabled:cursor-default transition-colors"
-                >
-                  {claimingId === item.projectId ? "..." : "Получить"}
-                </button>
-                {item.sharesOwned > 0 && (
-                  <ListSharesModal
-                    projectId={item.projectId}
-                    projectName={item.projectName}
-                    sharesOwned={item.sharesOwned}
-                    currentPrice={item.pricePerShare}
-                    onSuccess={refetch}
-                  />
-                )}
               </div>
             ))}
           </>

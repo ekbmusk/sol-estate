@@ -5,6 +5,7 @@ import "./globals.css";
 import WalletProvider from "@/components/providers/WalletProvider";
 import AnchorProvider from "@/components/providers/AnchorProvider";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { Toaster } from "sonner";
 
 const ibmPlexSans = IBM_Plex_Sans({
@@ -52,6 +53,7 @@ export default function RootLayout({
           <AnchorProvider>
             <Navbar />
             <main className="flex-1">{children}</main>
+            <Footer />
             <Toaster
               richColors
               position="bottom-right"
