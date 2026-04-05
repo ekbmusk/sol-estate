@@ -11,7 +11,7 @@ import { PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
 import { toast } from "sonner";
-import { ArrowUpRight, Wallet } from "lucide-react";
+import { ArrowUpRight, Wallet, Droplets } from "lucide-react";
 import ListSharesModal from "@/components/ListSharesModal";
 import CreditsPieChart from "@/components/CreditsPieChart";
 import { useProjects } from "@/hooks/useProjects";
@@ -25,6 +25,7 @@ export default function PortfolioPage() {
   const { balance: kzteBalance } = useKzte();
   const { projects: onChainProjects } = useProjects();
   const [claimingId, setClaimingId] = useState<string | null>(null);
+  const [faucetLoading, setFaucetLoading] = useState(false);
 
   const totalValue = items.reduce((s, i) => s + i.sharesOwned * i.pricePerShare, 0);
   const totalClaimable = items.reduce((s, i) => s + i.claimableDividends, 0);
@@ -88,6 +89,35 @@ export default function PortfolioPage() {
     }
   };
 
+  const handleFaucet = async () => {
+    if (!publicKey) return;
+    setFaucetLoading(true);
+    try {
+      const res = await fetch("/api/faucet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ wallet: publicKey.toString() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error("Faucet", { description: data.error });
+        return;
+      }
+      toast.success("100,000 KZTE получены!", {
+        action: {
+          label: "Explorer",
+          onClick: () => window.open(data.explorer, "_blank"),
+        },
+      });
+    } catch (err) {
+      toast.error("Ошибка faucet", {
+        description: err instanceof Error ? err.message : "Неизвестная ошибка",
+      });
+    } finally {
+      setFaucetLoading(false);
+    }
+  };
+
   if (!publicKey) {
     return (
       <div className="mx-auto max-w-[1280px] px-6 py-24 text-center relative overflow-hidden">
@@ -105,14 +135,24 @@ export default function PortfolioPage() {
     <div className="mx-auto max-w-[1280px] px-6 py-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <h1 className="font-heading text-[28px] sm:text-[32px] font-bold tracking-[-0.02em]">Мой портфель</h1>
-        {kzteBalance !== null && (
-          <div className="rounded-lg border border-[#1E2B26] bg-[#0C1210] px-4 py-2">
-            <p className="label-upper mb-0.5">Баланс KZTE</p>
-            <p className="font-mono-data text-[16px] font-medium text-[#34D399]">
-              {kzteBalance.toLocaleString("ru-RU")} &#x20B8;
-            </p>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {kzteBalance !== null && (
+            <div className="rounded-lg border border-[#1E2B26] bg-[#0C1210] px-4 py-2">
+              <p className="label-upper mb-0.5">Баланс KZTE</p>
+              <p className="font-mono-data text-[16px] font-medium text-[#34D399]">
+                {kzteBalance.toLocaleString("ru-RU")} &#x20B8;
+              </p>
+            </div>
+          )}
+          <button
+            onClick={handleFaucet}
+            disabled={faucetLoading}
+            className="flex items-center gap-2 rounded-lg border border-[#34D399]/30 bg-[#34D399]/5 px-4 py-2.5 text-[13px] font-medium text-[#34D399] hover:bg-[#34D399]/10 disabled:opacity-50 transition-colors cursor-pointer disabled:cursor-default"
+          >
+            <Droplets size={14} />
+            {faucetLoading ? "..." : "Получить KZTE"}
+          </button>
+        </div>
       </div>
 
       {/* Summary */}
