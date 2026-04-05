@@ -142,12 +142,12 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div className="mx-auto max-w-[1280px] px-6 py-16 relative overflow-hidden">
+    <div className="mx-auto max-w-[1280px] px-6 py-8 sm:py-16 relative overflow-hidden">
       <div className="dot-grid dot-grid-fade absolute inset-0 opacity-50 pointer-events-none" />
 
       {/* Header */}
-      <div className="relative max-w-[640px] mx-auto text-center mb-14">
-        <h1 className="font-heading text-[32px] font-bold tracking-[-0.02em] mb-3">
+      <div className="relative max-w-[640px] mx-auto text-center mb-8 sm:mb-14">
+        <h1 className="font-heading text-[28px] sm:text-[32px] font-bold tracking-[-0.02em] mb-3">
           Маркетплейс
         </h1>
         <p className="text-[15px] text-[#8A9B94] leading-[1.6]">

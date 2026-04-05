@@ -30,7 +30,7 @@ export default function RetirePage() {
   const selectedProject = verifiedProjects.find((p) => p.id === selectedId);
 
   return (
-    <div className="mx-auto max-w-[960px] px-6 py-16 relative overflow-hidden">
+    <div className="mx-auto max-w-[960px] px-6 py-8 sm:py-16 relative overflow-hidden">
       <div className="dot-grid dot-grid-fade absolute inset-0 opacity-50 pointer-events-none" />
 
       {/* Header */}
