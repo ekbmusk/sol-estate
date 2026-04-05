@@ -196,11 +196,13 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
           )}
 
           {/* Document hash */}
-          <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] px-5 py-3.5 flex items-center justify-between animate-in delay-3">
-            <span className="label-upper">Хеш документа</span>
-            <code className="font-mono-data text-[12px] text-[#5A6D65] truncate max-w-[240px]">
-              {project.documentHash}
-            </code>
+          <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] px-5 py-3.5 animate-in delay-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span className="label-upper">Хеш документа</span>
+              <code className="font-mono-data text-[12px] text-[#5A6D65] truncate max-w-full sm:max-w-[240px]">
+                {project.documentHash}
+              </code>
+            </div>
           </div>
         </div>
 

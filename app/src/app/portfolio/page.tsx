@@ -103,8 +103,8 @@ export default function PortfolioPage() {
 
   return (
     <div className="mx-auto max-w-[1280px] px-6 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="font-heading text-[32px] font-bold tracking-[-0.02em]">Мой портфель</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <h1 className="font-heading text-[28px] sm:text-[32px] font-bold tracking-[-0.02em]">Мой портфель</h1>
         {kzteBalance !== null && (
           <div className="rounded-lg border border-[#1E2B26] bg-[#0C1210] px-4 py-2">
             <p className="label-upper mb-0.5">Баланс KZTE</p>
@@ -116,7 +116,7 @@ export default function PortfolioPage() {
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-4 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
         {[
           { label: "Общая стоимость", value: `${totalValue.toLocaleString("ru-RU")} \u20B8`, color: "" },
           { label: "Инвестиций", value: `${items.length}`, color: "" },

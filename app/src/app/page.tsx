@@ -127,7 +127,7 @@ export default function LandingPage() {
       <section className="relative overflow-hidden">
         <div className="gradient-mesh absolute inset-0" />
         <div className="dot-grid dot-grid-fade absolute inset-0 opacity-60" />
-        <div className="relative mx-auto max-w-[1280px] px-6 pt-20 pb-24">
+        <div className="relative mx-auto max-w-[1280px] px-6 pt-12 sm:pt-20 pb-16 sm:pb-24">
           <div className="grid lg:grid-cols-5 gap-16 items-center">
             {/* Left — 3/5 */}
             <div className="lg:col-span-3">
