@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeftRight, BookOpen, BarChart3 } from "lucide-react";
+import { ArrowLeftRight, BookOpen, BarChart3, History } from "lucide-react";
+import { useTradeHistory } from "@/hooks/useTradeHistory";
 import { Button } from "@/components/ui/button";
 import { useListings } from "@/hooks/useListings";
 import { useProjects } from "@/hooks/useProjects";
@@ -43,6 +44,7 @@ export default function MarketplacePage() {
   const { listings, loading: listingsLoading, refetch: refetchListings } = useListings();
   const { projects } = useProjects();
   const [buyingPda, setBuyingPda] = useState<string | null>(null);
+  const { trades, loading: tradesLoading } = useTradeHistory();
 
   const getProjectName = (projectPda: string) => {
     const p = projects.find((pr) => pr.pda === projectPda);
@@ -296,6 +298,88 @@ export default function MarketplacePage() {
           </div>
         )}
       </div>
+
+      {/* Trade history */}
+      {trades.length > 0 && (
+        <div className="relative max-w-[900px] mx-auto mt-12">
+          <div className="flex items-center gap-2 mb-6">
+            <History size={18} className="text-[#5A6D65]" />
+            <h2 className="font-heading text-xl font-bold tracking-[-0.01em]">
+              История сделок
+            </h2>
+          </div>
+          <div className="space-y-2">
+            {trades.map((trade) => {
+              const isBuyer = publicKey?.toString() === trade.buyer;
+              const isSeller = publicKey?.toString() === trade.seller;
+              const costDisplay = (trade.totalCost / 1_000_000).toLocaleString("ru-RU");
+              const time = trade.timestamp
+                ? new Date(trade.timestamp * 1000).toLocaleDateString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
+                : "";
+
+              return (
+                <div key={trade.signature} className="rounded-xl border border-[#1E2B26] bg-[#0C1210] px-5 py-4">
+                  {/* Desktop */}
+                  <div className="hidden sm:flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <span className="text-[12px] text-[#5A6D65]">{time}</span>
+                      <span className="font-mono-data text-[12px] text-[#8A9B94]">
+                        {trade.buyer.slice(0, 4)}...{trade.buyer.slice(-4)}
+                        {isBuyer && <span className="text-[#34D399] ml-1">(вы)</span>}
+                      </span>
+                      <span className="text-[11px] text-[#5A6D65]">→</span>
+                      <span className="font-mono-data text-[12px] text-[#8A9B94]">
+                        {trade.seller.slice(0, 4)}...{trade.seller.slice(-4)}
+                        {isSeller && <span className="text-[#34D399] ml-1">(вы)</span>}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="font-mono-data text-[13px]">{trade.amount} долей</span>
+                      <span className="font-mono-data text-[13px] font-medium text-[#34D399]">{costDisplay} ₸</span>
+                      <a
+                        href={`https://explorer.solana.com/tx/${trade.signature}?cluster=devnet`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#5A6D65] hover:text-[#34D399] transition-colors text-[11px]"
+                      >
+                        Explorer ↗
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Mobile */}
+                  <div className="sm:hidden space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[12px] text-[#5A6D65]">{time}</span>
+                      <span className="font-mono-data text-[13px] font-medium text-[#34D399]">{costDisplay} ₸</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px]">
+                      <span className="font-mono-data text-[#8A9B94]">
+                        {trade.buyer.slice(0, 4)}...{trade.buyer.slice(-4)}
+                        {isBuyer && <span className="text-[#34D399] ml-1">(вы)</span>}
+                      </span>
+                      <span className="text-[#5A6D65]">→</span>
+                      <span className="font-mono-data text-[#8A9B94]">
+                        {trade.seller.slice(0, 4)}...{trade.seller.slice(-4)}
+                        {isSeller && <span className="text-[#34D399] ml-1">(вы)</span>}
+                      </span>
+                      <a
+                        href={`https://explorer.solana.com/tx/${trade.signature}?cluster=devnet`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-auto text-[#5A6D65] hover:text-[#34D399] text-[11px]"
+                      >
+                        ↗
+                      </a>
+                    </div>
+                    <span className="font-mono-data text-[12px] text-[#8A9B94]">{trade.amount} долей</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
