@@ -62,13 +62,27 @@ export function useTradeHistory() {
             if (!buyEvent) continue;
 
             const d = buyEvent.data;
+
+            // Parse amount/cost — can be BN, number, or string
+            let amount = 0;
+            let totalCost = 0;
+            try {
+              amount = d.amount?.toNumber ? d.amount.toNumber() : Number(d.amount);
+            } catch { amount = parseInt(d.amount?.toString() ?? "0"); }
+            try {
+              totalCost = d.totalCost?.toNumber ? d.totalCost.toNumber() : Number(d.totalCost);
+            } catch { totalCost = parseInt(d.totalCost?.toString() ?? "0"); }
+
+            // projectId can be camelCase or snake_case
+            const projectId = (d.projectId ?? d.project_id ?? "") as string;
+
             results.push({
               signature: sig.signature,
               buyer: d.buyer?.toString() ?? "",
               seller: d.seller?.toString() ?? "",
-              amount: typeof d.amount === "object" ? d.amount.toNumber() : Number(d.amount),
-              totalCost: typeof d.totalCost === "object" ? d.totalCost.toNumber() : Number(d.totalCost),
-              projectId: d.projectId ?? "",
+              amount: isNaN(amount) ? 0 : amount,
+              totalCost: isNaN(totalCost) ? 0 : totalCost,
+              projectId,
               timestamp: sig.blockTime ?? 0,
             });
           } catch {
