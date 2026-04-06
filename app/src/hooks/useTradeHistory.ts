@@ -58,7 +58,7 @@ export function useTradeHistory() {
               events.push(event);
             }
 
-            const buyEvent = events.find((e) => e.name === "sharesBought");
+            const buyEvent = events.find((e) => e.name === "SharesBought" || e.name === "sharesBought");
             if (!buyEvent) continue;
 
             const d = buyEvent.data;
