@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Flame, ExternalLink, Award } from "lucide-react";
+import { Check, Flame, ExternalLink, Award, ShoppingCart } from "lucide-react";
+import { toast } from "sonner";
 import RetirePanel from "@/components/RetirePanel";
 import RetireCertificate from "@/components/RetireCertificate";
 import CarbonCounter from "@/components/CarbonCounter";
@@ -15,6 +16,30 @@ export default function RetirePage() {
   const { records: retireRecords, loading: recordsLoading, refetch: refetchRecords } = useRetireRecords();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [certRecordPda, setCertRecordPda] = useState<string | null>(null);
+  const [buyAmount, setBuyAmount] = useState(10);
+  const [buyingCarbon, setBuyingCarbon] = useState(false);
+
+  const handleBuyCarbon = async () => {
+    if (!publicKey || !selectedId) return;
+    setBuyingCarbon(true);
+    try {
+      const res = await fetch("/api/carbon-faucet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ wallet: publicKey.toString(), projectId: selectedId, amount: buyAmount }),
+      });
+      const data = await res.json();
+      if (!res.ok) { toast.error("Ошибка", { description: data.error }); return; }
+      toast.success(`${data.amount} углеродных кредитов получено!`, {
+        action: { label: "Explorer", onClick: () => window.open(data.explorer, "_blank") },
+      });
+      refetch();
+    } catch (err) {
+      toast.error("Ошибка", { description: err instanceof Error ? err.message : "Неизвестная ошибка" });
+    } finally {
+      setBuyingCarbon(false);
+    }
+  };
 
   const handleRetireSuccess = () => {
     refetch();
@@ -114,6 +139,37 @@ export default function RetirePage() {
               </div>
             )}
           </div>
+
+          {/* Buy carbon tokens */}
+          {selectedProject && publicKey && (
+            <div className="rounded-xl border border-[#F97316]/20 bg-[#F97316]/5 p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <ShoppingCart size={16} className="text-[#F97316]" />
+                <p className="text-[14px] font-medium">Купить углеродные кредиты</p>
+              </div>
+              <p className="text-[12px] text-[#8A9B94] mb-4">
+                Приобретите Carbon Tokens проекта «{selectedProject.name}» для последующего гашения
+              </p>
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min={1}
+                  max={selectedProject.totalCredits - selectedProject.creditsRetired}
+                  value={buyAmount}
+                  onChange={(e) => setBuyAmount(Math.max(1, Number(e.target.value)))}
+                  className="flex h-9 w-24 rounded-md border border-[#1E2B26] bg-[#060A08] px-3 text-sm font-mono-data text-[#F0F5F3] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#F97316]/50"
+                />
+                <span className="text-[12px] text-[#5A6D65]">тонн CO₂</span>
+                <button
+                  onClick={handleBuyCarbon}
+                  disabled={buyingCarbon}
+                  className="ml-auto flex items-center gap-2 rounded-lg bg-[#F97316] px-4 py-2 text-[13px] font-semibold text-[#060A08] hover:bg-[#EA580C] disabled:opacity-50 transition-colors cursor-pointer disabled:cursor-default"
+                >
+                  {buyingCarbon ? "..." : "Купить"}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Retire panel */}
           {selectedProject ? (
