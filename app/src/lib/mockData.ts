@@ -31,7 +31,7 @@ export const mockProjects: Project[] = [
     verified: true,
     status: "active",
     imageUrl: "/placeholder-solar.jpg",
-    documentHash: "QmSESYasavi36tCO2",
+    documentHash: "d8631789ed4c58356763ab94fd2115013ce5bd01f9ec129487d28a07a368f850",
   },
   {
     id: "wind-yereymentau",
@@ -48,7 +48,7 @@ export const mockProjects: Project[] = [
     verified: true,
     status: "active",
     imageUrl: "/placeholder-wind.jpg",
-    documentHash: "QmWindYereymentau789xyz012",
+    documentHash: "11060230f8ec7d9557c0a0527d554b539780f0eab851cea95e796eb5251ece01",
   },
   {
     id: "forest-burabay",
@@ -65,7 +65,7 @@ export const mockProjects: Project[] = [
     verified: true,
     status: "active",
     imageUrl: "/placeholder-forest.jpg",
-    documentHash: "QmForestBurabay456mno789pqr",
+    documentHash: "4a9977add1227a6e30f2867b363a9cbe3793786c5f5038c8b638891bd9432c51",
   },
   {
     id: "arcelor-temirtau",
@@ -82,7 +82,7 @@ export const mockProjects: Project[] = [
     verified: true,
     status: "active",
     imageUrl: "/placeholder-industrial.jpg",
-    documentHash: "QmArcelorTemirtau012stu345vwx",
+    documentHash: "62f978ca962469b411382680d4c49761d61999129b24159572e829beb01c8521",
   },
 ];
 

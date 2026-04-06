@@ -211,33 +211,34 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
 
           {/* Project details for ses-yasavi */}
           {id === "ses-yasavi" && (
-            <div className="rounded-xl border border-[#FBBF24]/20 bg-[#FBBF24]/5 p-5 sm:p-6 animate-in delay-2 space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#FBBF24] animate-pulse" />
-                <p className="text-[13px] font-semibold text-[#FBBF24] uppercase tracking-wider">Реальное оборудование</p>
+            <div className="rounded-xl border border-[#FBBF24]/20 overflow-hidden animate-in delay-2 relative">
+              <div className="absolute inset-0" style={{
+                background: "radial-gradient(ellipse 80% 60% at 20% 20%, rgba(251,191,36,0.08) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 80% 80%, rgba(251,191,36,0.05) 0%, transparent 60%)",
+              }} />
+              <div className="absolute inset-0 bg-[#0C1210]/80" />
+              <div className="relative p-5 sm:p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#FBBF24] animate-pulse" />
+                  <p className="text-[13px] font-semibold text-[#FBBF24] uppercase tracking-wider">Реальное оборудование</p>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {[
+                    { label: "Мощность", value: "25 кВт" },
+                    { label: "Выработка", value: "42.65 МВт·ч/год" },
+                    { label: "Коэффициент", value: "0.636 кг/кВт·ч" },
+                    { label: "Инсоляция", value: "1,700+ кВт·ч/м²" },
+                  ].map((s) => (
+                    <div key={s.label} className="rounded-lg bg-[#060A08]/60 border border-[#FBBF24]/10 px-3 py-2.5">
+                      <p className="text-[10px] text-[#FBBF24]/60 uppercase tracking-wider">{s.label}</p>
+                      <p className="font-mono-data text-[15px] font-medium text-[#F0F5F3] mt-0.5">{s.value}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[12px] text-[#8A9B94] leading-[1.6]">
+                  Данные генерации поступают в реальном времени с инвертора через SOLARMAN API.
+                  Это не симуляция — live-мониторинг настоящего оборудования на кампусе университета.
+                </p>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div>
-                  <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Мощность</p>
-                  <p className="font-mono-data text-[15px] font-medium text-[#F0F5F3] mt-0.5">25 кВт</p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Выработка</p>
-                  <p className="font-mono-data text-[15px] font-medium text-[#F0F5F3] mt-0.5">42.65 МВт·ч/год</p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Коэффициент</p>
-                  <p className="font-mono-data text-[15px] font-medium text-[#F0F5F3] mt-0.5">0.636 кг/кВт·ч</p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Инсоляция</p>
-                  <p className="font-mono-data text-[15px] font-medium text-[#F0F5F3] mt-0.5">1,700+ кВт·ч/м²</p>
-                </div>
-              </div>
-              <p className="text-[12px] text-[#8A9B94] leading-[1.6]">
-                Данные генерации поступают в реальном времени с инвертора через SOLARMAN API.
-                Это не симуляция — live-мониторинг настоящего оборудования на кампусе университета.
-              </p>
             </div>
           )}
 
