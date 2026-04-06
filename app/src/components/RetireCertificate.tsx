@@ -49,8 +49,11 @@ export default function RetireCertificate({ record, projectName }: RetireCertifi
     try {
       const certificateMint = Keypair.generate();
 
-      // Short URI — Metaplex limits to 200 chars. Use PDA as key, API resolves the rest.
-      const absoluteMetadataUri = `${window.location.origin}/api/certificate?pda=${record.pda}&format=json`;
+      // Use production URL so Phantom can always fetch metadata
+      const prodHost = window.location.hostname === "localhost"
+        ? "https://sol-estate-ivory.vercel.app"
+        : window.location.origin;
+      const absoluteMetadataUri = `${prodHost}/api/certificate?pda=${record.pda}&format=json`;
 
       const retireRecordPda = new PublicKey(record.pda);
       const projectPda = new PublicKey(record.project);
