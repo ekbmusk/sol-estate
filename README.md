@@ -1,5 +1,5 @@
 # 🌿 CarbonKZ — Tokenized Carbon Credits Marketplace on Solana
-
+DEMO: https://sol-estate-ivory.vercel.app/
 ### 🇰🇿 Первый маркетплейс токенизированных углеродных кредитов в Центральной Азии
 
 Полный цикл: верификация зелёного проекта → токенизация → инвестирование за KZTE (₸) → дивиденды → P2P marketplace → retire (гашение с on-chain proof)
