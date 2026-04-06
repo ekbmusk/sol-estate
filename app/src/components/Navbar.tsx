@@ -15,12 +15,12 @@ const WalletMultiButton = dynamic(
 );
 
 const navLinks = [
+  { href: "/demo", label: "Демо", accent: true },
   { href: "/", label: "Проекты", exact: true },
   { href: "/portfolio", label: "Портфель" },
   { href: "/marketplace", label: "Маркетплейс" },
   { href: "/retire", label: "Гашение" },
   { href: "/calculator", label: "Калькулятор" },
-  { href: "/demo", label: "Демо" },
 ];
 
 export default function Navbar() {
@@ -46,6 +46,20 @@ export default function Navbar() {
               const isActive = link.exact
                 ? pathname === link.href
                 : pathname.startsWith(link.href);
+              if ((link as any).accent) {
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`px-3 py-1.5 mr-1 rounded-md text-[13px] font-semibold transition-all duration-200
+                      ${isActive
+                        ? "bg-[#34D399] text-[#060A08]"
+                        : "bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/30 hover:bg-[#34D399]/20"}`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              }
               return (
                 <Link
                   key={link.href}
@@ -85,6 +99,21 @@ export default function Navbar() {
             const isActive = link.exact
               ? pathname === link.href
               : pathname.startsWith(link.href);
+            if ((link as any).accent) {
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-[14px] font-semibold transition-colors mb-2
+                    ${isActive
+                      ? "bg-[#34D399] text-[#060A08]"
+                      : "bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/30"}`}
+                >
+                  {link.label}
+                </Link>
+              );
+            }
             return (
               <Link
                 key={link.href}
