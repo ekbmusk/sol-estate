@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { PROGRAM_ID } from "@/lib/constants";
-import { BorshCoder, EventParser, BN } from "@coral-xyz/anchor";
-import idl from "@/idl/carbon_kz.json";
 
 export interface TradeItem {
   signature: string;
@@ -17,80 +15,97 @@ export interface TradeItem {
   timestamp: number;
 }
 
+// Decode SharesBought event from "Program data:" base64 log
+// Layout: discriminator(8) + project_id(4+len) + buyer(32) + seller(32) + amount(8) + total_cost(8)
+function decodeSharesBought(base64Data: string): TradeItem | null {
+  try {
+    const data = Buffer.from(base64Data, "base64");
+    let offset = 8; // skip discriminator
+
+    // project_id: borsh string = u32 length + utf8 bytes
+    const strLen = data.readUInt32LE(offset);
+    offset += 4;
+    const projectId = data.subarray(offset, offset + strLen).toString("utf8");
+    offset += strLen;
+
+    // buyer: 32 bytes pubkey
+    const buyer = new PublicKey(data.subarray(offset, offset + 32)).toString();
+    offset += 32;
+
+    // seller: 32 bytes pubkey
+    const seller = new PublicKey(data.subarray(offset, offset + 32)).toString();
+    offset += 32;
+
+    // amount: u64 LE
+    const amount = Number(data.readBigUInt64LE(offset));
+    offset += 8;
+
+    // total_cost: u64 LE
+    const totalCost = Number(data.readBigUInt64LE(offset));
+
+    return { signature: "", buyer, seller, amount, totalCost, projectId, timestamp: 0 };
+  } catch {
+    return null;
+  }
+}
+
 export function useTradeHistory() {
   const { connection } = useConnection();
   const [trades, setTrades] = useState<TradeItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let cancelled = false;
+  const fetchTrades = useCallback(async () => {
+    try {
+      const signatures = await connection.getSignaturesForAddress(
+        PROGRAM_ID,
+        { limit: 30 },
+        "confirmed"
+      );
 
-    async function fetchTrades() {
-      try {
-        const signatures = await connection.getSignaturesForAddress(
-          PROGRAM_ID,
-          { limit: 30 },
-          "confirmed"
-        );
+      const results: TradeItem[] = [];
 
-        const coder = new BorshCoder(idl as any);
-        const eventParser = new EventParser(PROGRAM_ID, coder);
+      for (const sig of signatures) {
+        if (results.length >= 20) break;
+        try {
+          const tx = await connection.getTransaction(sig.signature, {
+            maxSupportedTransactionVersion: 0,
+            commitment: "confirmed",
+          });
+          if (!tx?.meta?.logMessages) continue;
 
-        const results: TradeItem[] = [];
+          // Find "Program data:" log line (Anchor event)
+          const dataLog = tx.meta.logMessages.find(
+            (log: string) => log.startsWith("Program data:")
+          );
+          // Also check it's a BuyShares tx
+          const hasBuy = tx.meta.logMessages.some(
+            (log: string) => log.includes("Bought") && log.includes("shares for")
+          );
+          if (!dataLog || !hasBuy) continue;
 
-        for (const sig of signatures) {
-          if (cancelled || results.length >= 20) break;
-          try {
-            const tx = await connection.getParsedTransaction(sig.signature, {
-              maxSupportedTransactionVersion: 0,
-            });
-            if (!tx?.meta?.logMessages) continue;
+          const base64 = dataLog.replace("Program data: ", "");
+          const trade = decodeSharesBought(base64);
+          if (!trade) continue;
 
-            // Check if this is a BuyShares tx
-            const hasBuyLog = tx.meta.logMessages.some(
-              (log) => log.includes("Bought") && log.includes("shares for")
-            );
-            if (!hasBuyLog) continue;
-
-            // Parse Anchor events from logs
-            const events = Array.from(eventParser.parseLogs(tx.meta.logMessages));
-            const buyEvent = events.find((e) => e.name === "sharesBought");
-
-            if (buyEvent) {
-              const amount = BN.isBN(buyEvent.data.amount)
-                ? buyEvent.data.amount.toNumber()
-                : Number(buyEvent.data.amount);
-              const totalCost = BN.isBN(buyEvent.data.totalCost)
-                ? buyEvent.data.totalCost.toNumber()
-                : Number(buyEvent.data.totalCost);
-
-              results.push({
-                signature: sig.signature,
-                buyer: (buyEvent.data.buyer as PublicKey).toString(),
-                seller: (buyEvent.data.seller as PublicKey).toString(),
-                amount,
-                totalCost,
-                projectId: buyEvent.data.projectId as string,
-                timestamp: sig.blockTime ?? 0,
-              });
-            }
-          } catch {
-            // Skip
-          }
+          trade.signature = sig.signature;
+          trade.timestamp = sig.blockTime ?? 0;
+          results.push(trade);
+        } catch {
+          // Skip
         }
-
-        if (!cancelled) {
-          setTrades(results);
-          setLoading(false);
-        }
-      } catch {
-        if (!cancelled) setLoading(false);
       }
-    }
 
-    fetchTrades();
-    return () => { cancelled = true; };
+      setTrades(results);
+    } catch {
+      // Silent fail
+    } finally {
+      setLoading(false);
+    }
   }, [connection]);
+
+  useEffect(() => {
+    fetchTrades();
+  }, [fetchTrades]);
 
   return { trades, loading };
 }
