@@ -300,7 +300,7 @@ export default function MarketplacePage() {
       </div>
 
       {/* Trade history */}
-      {trades.length > 0 && (
+      {(trades.length > 0 || tradesLoading) && (
         <div className="relative max-w-[900px] mx-auto mt-12">
           <div className="flex items-center gap-2 mb-6">
             <History size={18} className="text-[#5A6D65]" />
@@ -308,6 +308,27 @@ export default function MarketplacePage() {
               История сделок
             </h2>
           </div>
+
+          {tradesLoading ? (
+            <div className="space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="rounded-xl border border-[#1E2B26] bg-[#0C1210] px-5 py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="h-4 w-20 rounded skeleton" />
+                      <div className="h-4 w-24 rounded skeleton" />
+                      <div className="h-3 w-4 rounded skeleton" />
+                      <div className="h-4 w-24 rounded skeleton" />
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="h-4 w-16 rounded skeleton" />
+                      <div className="h-4 w-20 rounded skeleton" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
           <div className="space-y-2">
             {trades.map((trade) => {
               const isBuyer = publicKey?.toString() === trade.buyer;
@@ -381,6 +402,7 @@ export default function MarketplacePage() {
               );
             })}
           </div>
+          )}
         </div>
       )}
     </div>
