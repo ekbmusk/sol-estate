@@ -117,9 +117,15 @@ export default function LandingPage() {
     { value: Math.round(totalInvested), suffix: " \u20B8", label: "\u0418\u043D\u0432\u0435\u0441\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u043E" },
   ];
 
-  const filtered = activeType === "all"
+  const filteredRaw = activeType === "all"
     ? displayProjects
     : displayProjects.filter((p) => p.projectType === activeType);
+  // Always put ses-yasavi first
+  const filtered = [...filteredRaw].sort((a, b) => {
+    if (a.id === "ses-yasavi") return -1;
+    if (b.id === "ses-yasavi") return 1;
+    return 0;
+  });
 
   return (
     <div>

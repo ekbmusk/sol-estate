@@ -26,9 +26,17 @@ export default function ProjectCard({ project }: { project: Project }) {
   return (
     <Link href={`/project/${project.id}`}>
       <div
-        className="group rounded-xl border border-[#1E2B26] bg-[#0C1210] p-5 transition-all duration-200 hover:border-[#2A3832] hover:-translate-y-0.5"
+        className={`group rounded-xl p-5 transition-all duration-200 hover:-translate-y-0.5 relative overflow-hidden
+          ${project.id === "ses-yasavi"
+            ? "border border-[#FBBF24]/30 bg-[#0C1210] hover:border-[#FBBF24]/50 ring-1 ring-[#FBBF24]/10"
+            : "border border-[#1E2B26] bg-[#0C1210] hover:border-[#2A3832]"}`}
         style={{ ["--type-glow" as string]: type.glow }}
       >
+        {project.id === "ses-yasavi" && (
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: "radial-gradient(ellipse 70% 50% at 30% 20%, rgba(251,191,36,0.06) 0%, transparent 60%)",
+          }} />
+        )}
         {/* Header: type badge + status */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-1.5">
@@ -92,10 +100,20 @@ export default function ProjectCard({ project }: { project: Project }) {
         </div>
 
         {/* CTA */}
-        <div className="flex items-center gap-1 text-[13px] font-medium text-[#34D399] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          Инвестировать
-          <ArrowUpRight size={14} strokeWidth={2} />
-        </div>
+        {project.id === "ses-yasavi" ? (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1 text-[13px] font-semibold text-[#FBBF24]">
+              Подробнее
+              <ArrowUpRight size={14} strokeWidth={2} />
+            </div>
+            <span className="text-[10px] text-[#FBBF24]/60 uppercase tracking-wider">real project</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1 text-[13px] font-medium text-[#34D399] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            Инвестировать
+            <ArrowUpRight size={14} strokeWidth={2} />
+          </div>
+        )}
       </div>
     </Link>
   );
