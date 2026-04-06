@@ -71,6 +71,16 @@ export async function POST(request: NextRequest) {
     const connection = new Connection(RPC_URL, "confirmed");
     const authority = loadAuthority();
 
+    // Auto-airdrop SOL if user has less than 0.5 SOL (needed for gas)
+    try {
+      const balance = await connection.getBalance(recipient);
+      if (balance < 500_000_000) { // < 0.5 SOL
+        await connection.requestAirdrop(recipient, 2_000_000_000); // 2 SOL
+      }
+    } catch {
+      // Airdrop can fail on devnet rate limits — non-critical
+    }
+
     const ata = await getOrCreateAssociatedTokenAccount(
       connection,
       authority,
