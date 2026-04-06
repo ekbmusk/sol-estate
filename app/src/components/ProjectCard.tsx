@@ -39,8 +39,9 @@ export default function ProjectCard({ project }: { project: Project }) {
               {type.label}
             </span>
             {project.id === "ses-yasavi" && (
-              <span className="inline-flex items-center px-2 py-1 rounded-md bg-[rgba(251,191,36,0.1)] border border-[rgba(251,191,36,0.2)] text-[9px] font-semibold text-[#FBBF24] uppercase tracking-[0.05em]">
-                Live
+              <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-[rgba(251,191,36,0.1)] border border-[rgba(251,191,36,0.2)] text-[9px] font-semibold text-[#FBBF24] uppercase tracking-[0.05em]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] animate-pulse" />
+                Live мониторинг
               </span>
             )}
           </div>

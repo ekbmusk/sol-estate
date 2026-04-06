@@ -209,6 +209,45 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
             </div>
           </div>
 
+          {/* Project details for ses-yasavi */}
+          {id === "ses-yasavi" && (
+            <div className="rounded-xl border border-[#FBBF24]/20 bg-[#FBBF24]/5 p-5 sm:p-6 animate-in delay-2 space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#FBBF24] animate-pulse" />
+                <p className="text-[13px] font-semibold text-[#FBBF24] uppercase tracking-wider">Реальное оборудование</p>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div>
+                  <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Мощность</p>
+                  <p className="font-mono-data text-[15px] font-medium text-[#F0F5F3] mt-0.5">25 кВт</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Выработка</p>
+                  <p className="font-mono-data text-[15px] font-medium text-[#F0F5F3] mt-0.5">42.65 МВт·ч/год</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Коэффициент</p>
+                  <p className="font-mono-data text-[15px] font-medium text-[#F0F5F3] mt-0.5">0.636 кг/кВт·ч</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Инсоляция</p>
+                  <p className="font-mono-data text-[15px] font-medium text-[#F0F5F3] mt-0.5">1,700+ кВт·ч/м²</p>
+                </div>
+              </div>
+              <p className="text-[12px] text-[#8A9B94] leading-[1.6]">
+                Данные генерации поступают в реальном времени с инвертора через SOLARMAN API.
+                Это не симуляция — live-мониторинг настоящего оборудования на кампусе университета.
+              </p>
+            </div>
+          )}
+
+          {/* SOLARMAN live data — only for solar projects */}
+          {project.projectType === "solar" && (
+            <div className="animate-in delay-3">
+              <SolarmanWidget />
+            </div>
+          )}
+
           {/* Credit dynamics chart */}
           <div className="animate-in delay-3">
             <ProjectChart
@@ -217,13 +256,6 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
               projectId={project.id}
             />
           </div>
-
-          {/* SOLARMAN live data — only for solar projects */}
-          {project.projectType === "solar" && (
-            <div className="animate-in delay-3">
-              <SolarmanWidget />
-            </div>
-          )}
 
           {/* Document hash */}
           <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] px-5 py-3.5 animate-in delay-3">
