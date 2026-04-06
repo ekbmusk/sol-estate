@@ -95,6 +95,24 @@ pub mod carbon_kz {
         instructions::create_share_metadata::handle_create_share_metadata(ctx, name, symbol)
     }
 
+    pub fn create_carbon_metadata(
+        ctx: Context<CreateCarbonMetadata>,
+        name: String,
+        symbol: String,
+        uri: String,
+    ) -> Result<()> {
+        instructions::create_carbon_metadata::handle_create_carbon_metadata(ctx, name, symbol, uri)
+    }
+
+    pub fn update_token_metadata(
+        ctx: Context<UpdateTokenMetadata>,
+        name: String,
+        symbol: String,
+        uri: String,
+    ) -> Result<()> {
+        instructions::update_token_metadata::handle_update_token_metadata(ctx, name, symbol, uri)
+    }
+
     pub fn mint_retire_certificate(
         ctx: Context<MintRetireCertificate>,
         metadata_uri: String,

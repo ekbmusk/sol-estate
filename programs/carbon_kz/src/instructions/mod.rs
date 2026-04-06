@@ -10,6 +10,8 @@ pub mod buy_shares;
 pub mod cancel_listing;
 pub mod create_share_metadata;
 pub mod mint_retire_certificate;
+pub mod update_token_metadata;
+pub mod create_carbon_metadata;
 
 pub use initialize_project::*;
 pub use verify_project::*;
@@ -23,3 +25,5 @@ pub use buy_shares::*;
 pub use cancel_listing::*;
 pub use create_share_metadata::*;
 pub use mint_retire_certificate::*;
+pub use update_token_metadata::*;
+pub use create_carbon_metadata::*;
