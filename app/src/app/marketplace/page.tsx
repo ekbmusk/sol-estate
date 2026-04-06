@@ -334,6 +334,9 @@ export default function MarketplacePage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
+                      {trade.projectId && (
+                        <span className="text-[12px] text-[#8A9B94]">{trade.projectId}</span>
+                      )}
                       <span className="font-mono-data text-[13px]">{trade.amount} долей</span>
                       <span className="font-mono-data text-[13px] font-medium text-[#34D399]">{costDisplay} ₸</span>
                       <a

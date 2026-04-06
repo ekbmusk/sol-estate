@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useConnection } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
 import { PROGRAM_ID } from "@/lib/constants";
+import { BorshCoder, EventParser } from "@coral-xyz/anchor";
+import idl from "@/idl/carbon_kz.json";
 
 export interface TradeItem {
   signature: string;
@@ -24,54 +27,48 @@ export function useTradeHistory() {
 
     async function fetchTrades() {
       try {
-        // Get recent signatures for the program
         const signatures = await connection.getSignaturesForAddress(
           PROGRAM_ID,
-          { limit: 50 },
+          { limit: 30 },
           "confirmed"
         );
+
+        const coder = new BorshCoder(idl as any);
+        const eventParser = new EventParser(PROGRAM_ID, coder);
 
         const results: TradeItem[] = [];
 
         for (const sig of signatures) {
-          if (cancelled) break;
+          if (cancelled || results.length >= 20) break;
           try {
             const tx = await connection.getParsedTransaction(sig.signature, {
               maxSupportedTransactionVersion: 0,
             });
             if (!tx?.meta?.logMessages) continue;
 
-            // Look for "Bought X shares for Y KZTE" in logs
-            const buyLog = tx.meta.logMessages.find((log) =>
-              log.includes("Bought") && log.includes("shares for")
+            // Check if this is a BuyShares tx
+            const hasBuyLog = tx.meta.logMessages.some(
+              (log) => log.includes("Bought") && log.includes("shares for")
             );
-            if (!buyLog) continue;
+            if (!hasBuyLog) continue;
 
-            // Parse: "Bought 100 shares for 500000000000 KZTE"
-            const match = buyLog.match(/Bought (\d+) shares for (\d+) KZTE/);
-            if (!match) continue;
+            // Parse Anchor events from logs
+            const events = Array.from(eventParser.parseLogs(tx.meta.logMessages));
+            const buyEvent = events.find((e) => e.name === "sharesBought");
 
-            // Find project_id from logs
-            const projectLog = tx.meta.logMessages.find((log) =>
-              log.includes("project_id")
-            );
-
-            // Get accounts from transaction
-            const accounts = tx.transaction.message.accountKeys;
-            const buyer = accounts[0]?.pubkey?.toString() ?? "";
-            const seller = accounts.length > 1 ? accounts[1]?.pubkey?.toString() ?? "" : "";
-
-            results.push({
-              signature: sig.signature,
-              buyer,
-              seller,
-              amount: parseInt(match[1]),
-              totalCost: parseInt(match[2]),
-              projectId: "",
-              timestamp: sig.blockTime ?? 0,
-            });
+            if (buyEvent) {
+              results.push({
+                signature: sig.signature,
+                buyer: (buyEvent.data.buyer as PublicKey).toString(),
+                seller: (buyEvent.data.seller as PublicKey).toString(),
+                amount: Number(buyEvent.data.amount),
+                totalCost: Number(buyEvent.data.totalCost),
+                projectId: buyEvent.data.projectId as string,
+                timestamp: sig.blockTime ?? 0,
+              });
+            }
           } catch {
-            // Skip failed tx parse
+            // Skip
           }
         }
 
