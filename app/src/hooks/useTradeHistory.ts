@@ -61,20 +61,26 @@ export function useTradeHistory() {
             const buyEvent = events.find((e) => e.name === "SharesBought" || e.name === "sharesBought");
             if (!buyEvent) continue;
 
-            const d = buyEvent.data;
+            const d = buyEvent.data as any;
 
-            // Parse amount/cost — can be BN, number, or string
-            let amount = 0;
-            let totalCost = 0;
-            try {
-              amount = d.amount?.toNumber ? d.amount.toNumber() : Number(d.amount);
-            } catch { amount = parseInt(d.amount?.toString() ?? "0"); }
-            try {
-              totalCost = d.totalCost?.toNumber ? d.totalCost.toNumber() : Number(d.totalCost);
-            } catch { totalCost = parseInt(d.totalCost?.toString() ?? "0"); }
+            // Fields are snake_case: project_id, total_cost
+            const rawAmount = d.amount ?? d.Amount ?? 0;
+            const rawCost = d.total_cost ?? d.totalCost ?? 0;
 
-            // projectId can be camelCase or snake_case
-            const projectId = (d.projectId ?? d.project_id ?? "") as string;
+            function parseBnOrHex(v: any): number {
+              if (!v) return 0;
+              if (v.toNumber) try { return v.toNumber(); } catch { /* fall through */ }
+              const s = v.toString();
+              const n = Number(s);
+              if (!isNaN(n)) return n;
+              // hex string from borsh
+              return parseInt(s, 16) || 0;
+            }
+
+            const amount = parseBnOrHex(rawAmount);
+            const totalCost = parseBnOrHex(rawCost);
+
+            const projectId = (d.project_id ?? d.projectId ?? "") as string;
 
             results.push({
               signature: sig.signature,
