@@ -210,6 +210,17 @@ function Step3() {
         </p>
       </div>
 
+      <div className="rounded-xl border border-[#FBBF24]/20 bg-[#FBBF24]/5 p-5 mb-2">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="px-2 py-0.5 rounded bg-[#FBBF24]/20 text-[10px] font-bold text-[#FBBF24] uppercase tracking-wider">Live</span>
+          <span className="text-[14px] font-semibold text-[#F0F5F3]">СЭС Университета Ахмеда Ясави — наш реальный проект</span>
+        </div>
+        <p className="text-[13px] text-[#8A9B94] leading-[1.7]">
+          25 кВт солнечная станция на кампусе университета в Туркестане. Данные генерации поступают в реальном времени
+          через SOLARMAN API — это не симуляция, а live-мониторинг настоящего оборудования.
+        </p>
+      </div>
+
       <div className="grid sm:grid-cols-2 gap-4">
         {mockProjects.map((p) => (
           <ProjectCard key={p.id} project={p} />

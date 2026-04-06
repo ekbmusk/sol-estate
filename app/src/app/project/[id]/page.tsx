@@ -149,6 +149,11 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
                   On-chain
                 </span>
               )}
+              {id === "ses-yasavi" && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[rgba(251,191,36,0.1)] border border-[rgba(251,191,36,0.2)] text-[10px] font-semibold text-[#FBBF24] uppercase tracking-[0.05em]">
+                  Наш реальный проект
+                </span>
+              )}
             </div>
             <h1 className="font-heading text-[32px] sm:text-[36px] font-bold tracking-[-0.02em]">
               {project.name}
