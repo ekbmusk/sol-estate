@@ -11,38 +11,34 @@ async function main() {
 
   const program = anchor.workspace.carbonKz as Program<CarbonKz>;
 
-  const projects = [
-    { id: "solar-kapchagai", name: "Капшагай Доля", symbol: "KPCH" },
-    { id: "wind-yereymentau", name: "Ерейментау Доля", symbol: "YRMN" },
-    { id: "forest-burabay", name: "Бурабай Доля", symbol: "BRBY" },
-    { id: "arcelor-temirtau", name: "ArcelorMittal Доля", symbol: "ARMT" },
+  const shares = [
+    { id: "ses-yasavi", name: "СЭС Ясави Доля", symbol: "sYSV" },
+    { id: "wind-yereymentau", name: "ВЭС Ерейментау Доля", symbol: "sYRM" },
+    { id: "forest-burabay", name: "Бурабай Доля", symbol: "sBRB" },
+    { id: "arcelor-temirtau", name: "ArcelorMittal Доля", symbol: "sAMT" },
   ];
 
-  for (const proj of projects) {
+  for (const s of shares) {
     const [projectPda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("project"), Buffer.from(proj.id)],
+      [Buffer.from("project"), Buffer.from(s.id)],
       program.programId
     );
-    const [shareMintPda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("share_mint"), Buffer.from(proj.id)],
+    const [shareMint] = PublicKey.findProgramAddressSync(
+      [Buffer.from("share_mint"), Buffer.from(s.id)],
       program.programId
     );
     const [metadataPda] = PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("metadata"),
-        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        shareMintPda.toBuffer(),
-      ],
+      [Buffer.from("metadata"), TOKEN_METADATA_PROGRAM_ID.toBuffer(), shareMint.toBuffer()],
       TOKEN_METADATA_PROGRAM_ID
     );
 
     try {
       const tx = await (program.methods as any)
-        .createShareMetadata(proj.name, proj.symbol)
+        .createShareMetadata(s.name, s.symbol)
         .accounts({
           authority: provider.wallet.publicKey,
           project: projectPda,
-          shareMint: shareMintPda,
+          shareMint: shareMint,
           metadata: metadataPda,
           tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
           systemProgram: anchor.web3.SystemProgram.programId,
@@ -50,12 +46,12 @@ async function main() {
         })
         .rpc();
 
-      console.log(`✓ ${proj.name} (${proj.symbol}): https://explorer.solana.com/tx/${tx}?cluster=devnet`);
+      console.log(`✓ ${s.name} (${s.symbol}): https://explorer.solana.com/tx/${tx}?cluster=devnet`);
     } catch (err: any) {
       if (err.message?.includes("already in use")) {
-        console.log(`⊘ ${proj.name} — metadata already exists`);
+        console.log(`⊘ ${s.name} — metadata already exists`);
       } else {
-        console.error(`✗ ${proj.name} failed:`, err.message?.slice(0, 200));
+        console.error(`✗ ${s.name}:`, err.message?.slice(0, 200));
       }
     }
   }
