@@ -138,6 +138,20 @@ function Step1() {
           <p className="text-[12px] text-[#8A9B94] mt-1">блокчейн-проектов в ЦА</p>
         </div>
       </div>
+
+      <div className="rounded-xl border border-[#FBBF24]/20 bg-[#FBBF24]/5 p-5 sm:p-6">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="w-2 h-2 rounded-full bg-[#FBBF24]" />
+          <p className="text-[13px] font-semibold text-[#FBBF24] uppercase tracking-wider">Личная мотивация</p>
+        </div>
+        <p className="text-[15px] text-[#B0BDB7] leading-[1.8]">
+          Я изучаю возобновляемую энергетику в Международном казахско-турецком университете
+          им. Ахмеда Ясави в Туркестане. На кампусе стоит реальная солнечная электростанция на 25 кВт —
+          мы подключили её к платформе через SOLARMAN API. Тема углеродных кредитов не абстрактная для нас —
+          мы видим, как генерируется чистая энергия каждый день, и хотим дать инструмент для монетизации
+          этого вклада через блокчейн.
+        </p>
+      </div>
     </div>
   );
 }
