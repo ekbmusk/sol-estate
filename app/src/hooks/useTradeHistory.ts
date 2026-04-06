@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { PROGRAM_ID } from "@/lib/constants";
-import { BorshCoder, EventParser } from "@coral-xyz/anchor";
+import { BorshCoder, EventParser, BN } from "@coral-xyz/anchor";
 import idl from "@/idl/carbon_kz.json";
 
 export interface TradeItem {
@@ -57,12 +57,19 @@ export function useTradeHistory() {
             const buyEvent = events.find((e) => e.name === "sharesBought");
 
             if (buyEvent) {
+              const amount = BN.isBN(buyEvent.data.amount)
+                ? buyEvent.data.amount.toNumber()
+                : Number(buyEvent.data.amount);
+              const totalCost = BN.isBN(buyEvent.data.totalCost)
+                ? buyEvent.data.totalCost.toNumber()
+                : Number(buyEvent.data.totalCost);
+
               results.push({
                 signature: sig.signature,
                 buyer: (buyEvent.data.buyer as PublicKey).toString(),
                 seller: (buyEvent.data.seller as PublicKey).toString(),
-                amount: Number(buyEvent.data.amount),
-                totalCost: Number(buyEvent.data.totalCost),
+                amount,
+                totalCost,
                 projectId: buyEvent.data.projectId as string,
                 timestamp: sig.blockTime ?? 0,
               });
