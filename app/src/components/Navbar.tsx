@@ -20,6 +20,7 @@ const navLinks = [
   { href: "/marketplace", label: "Маркетплейс" },
   { href: "/retire", label: "Гашение" },
   { href: "/calculator", label: "Калькулятор" },
+  { href: "/demo", label: "Демо" },
 ];
 
 export default function Navbar() {
