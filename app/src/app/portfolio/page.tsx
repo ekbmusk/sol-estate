@@ -150,7 +150,7 @@ export default function PortfolioPage() {
             className="flex items-center gap-2 rounded-lg border border-[#34D399]/30 bg-[#34D399]/5 px-4 py-2.5 text-[13px] font-medium text-[#34D399] hover:bg-[#34D399]/10 disabled:opacity-50 transition-colors cursor-pointer disabled:cursor-default"
           >
             <Droplets size={14} />
-            {faucetLoading ? "..." : "Получить KZTE"}
+            {faucetLoading ? "..." : "Получить SOL + KZTE"}
           </button>
         </div>
       </div>
