@@ -427,7 +427,7 @@ Decentrathon 5.0 — Кейс 1 (RWA: Real World Assets)
 | | Telegram |
 |---|---|
 | Бекарыс | [@callmebekaa](https://t.me/callmebekaa) |
-| Ким | [@kimjjk](https://t.me/kimjjk) |
+| Темирлан | [@kimjjk](https://t.me/kimjjk) |
 
 ---
 
