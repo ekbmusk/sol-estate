@@ -143,6 +143,9 @@ function Step1() {
         <div className="flex items-center gap-2 mb-3">
           <span className="w-2 h-2 rounded-full bg-[#FBBF24]" />
           <p className="text-[13px] font-semibold text-[#FBBF24] uppercase tracking-wider">Личная мотивация</p>
+          <a href="https://t.me/callmebekaa" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[#34D399] hover:underline">
+            @callmebekaa
+          </a>
         </div>
         <p className="text-[15px] text-[#B0BDB7] leading-[1.8]">
           Я изучаю возобновляемую энергетику в Международном казахско-турецком университете
