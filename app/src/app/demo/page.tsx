@@ -263,8 +263,8 @@ function Step4() {
         {[
           { n: "1", title: "Подключите Phantom кошелёк", desc: "Нажмите кнопку кошелька в правом верхнем углу. Сеть — Devnet.", color: "#34D399" },
           { n: "2", title: "Получите тестовые KZTE", desc: "Перейдите в Портфель и нажмите «Получить KZTE» — 100,000 ₸ на кошелёк.", color: "#FBBF24" },
-          { n: "3", title: "Выберите проект и инвестируйте", desc: "Откройте любой проект → «Инвестировать» → укажите количество долей → подтвердите.", color: "#60A5FA" },
-          { n: "4", title: "Проверьте в кошельке", desc: "Share tokens (sYSV, sBRB, sAMT) появятся в Phantom. Транзакция видна в Explorer.", color: "#A78BFA" },
+          { n: "3", title: "Выберите проект и инвестируйте", desc: "Откройте любой проект → «Инвестировать» → укажите количество долей → подтвердите. Комиссия платформы — 1.5%.", color: "#60A5FA" },
+          { n: "4", title: "Проверьте в кошельке", desc: "Share tokens (sYSV, sBRB, sAMT) появятся в Phantom. Доходность при росте цены до $50/т — до ×50 ROI.", color: "#A78BFA" },
         ].map((s) => (
           <div key={s.n} className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-5 flex gap-4">
             <div
@@ -316,12 +316,22 @@ function Step5() {
       </div>
 
       <div className="rounded-xl border border-[#A78BFA]/20 bg-[#A78BFA]/5 p-5">
-        <p className="label-upper mb-3 text-[#A78BFA]">Формула</p>
-        <code className="font-mono-data text-[13px] text-[#F0F5F3] block leading-[2]">
-          PRECISION = 10<sup>12</sup><br />
-          claimable = (total_dps - last_claimed) × shares / PRECISION
-        </code>
-        <p className="text-[12px] text-[#5A6D65] mt-3">
+        <p className="label-upper mb-3 text-[#A78BFA]">Пример: проект 5 000 т CO₂, ваша доля 10%</p>
+        <div className="grid grid-cols-3 gap-4 text-center mt-3">
+          <div>
+            <p className="font-mono-data text-[18px] font-bold text-[#8A9B94]">$500</p>
+            <p className="text-[11px] text-[#5A6D65] mt-1">доход/год при $1/т</p>
+          </div>
+          <div>
+            <p className="font-mono-data text-[18px] font-bold text-[#FBBF24]">$7 500</p>
+            <p className="text-[11px] text-[#5A6D65] mt-1">доход/год при $15/т (2028)</p>
+          </div>
+          <div>
+            <p className="font-mono-data text-[18px] font-bold text-[#34D399]">$25 000</p>
+            <p className="text-[11px] text-[#5A6D65] mt-1">доход/год при $50/т (2030)</p>
+          </div>
+        </div>
+        <p className="text-[12px] text-[#5A6D65] mt-4">
           Gas платит инвестор, не владелец → масштабируемо. Double-claim невозможен через last_claimed.
         </p>
       </div>
@@ -369,7 +379,7 @@ function Step6() {
         <p className="text-[14px] text-[#B0BDB7] leading-[1.8]">
           <strong className="text-[#F97316]">Почему это важно:</strong> Сожжённый токен не существует.
           Double counting невозможен. RetireRecord PDA — immutable proof для аудиторов.
-          Любой может проверить через Solana Explorer.
+          Комиссия платформы за гашение — <strong className="text-[#FBBF24]">1%</strong>. Любой может проверить через Solana Explorer.
         </p>
       </div>
 
@@ -390,10 +400,11 @@ function Step7() {
         </h2>
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-4 gap-3">
         <Stat value="14" label="инструкций" color="text-[#34D399]" />
-        <Stat value="5" label="PDA accounts" />
         <Stat value="16/16" label="тестов" color="text-[#34D399]" />
+        <Stat value="1-2%" label="комиссия платформы" color="text-[#FBBF24]" />
+        <Stat value="×50" label="ROI инвестора к 2030" color="text-[#34D399]" />
       </div>
 
       <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-5">
@@ -447,7 +458,7 @@ function Step7() {
           ))}
         </div>
         <p className="text-[14px] text-[#8A9B94] mt-5">
-          Solana — быстро и дёшево. Казахстан — первый в ЦА.
+          Solana — быстро и дёшево. Казахстан — первый в ЦА. TAM при $50/т — <strong className="text-[#FBBF24]">$17.5B</strong>.
         </p>
       </div>
 
