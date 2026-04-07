@@ -3,405 +3,398 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CarbonKZ — Презентация</title>
+<title>CarbonKZ — Pitch Deck</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-
-  :root {
-    --bg: #060A08;
-    --surface: #0C1210;
-    --border: #1E2B26;
-    --text: #F0F5F3;
-    --text-dim: #8A9B94;
-    --text-muted: #5A6D65;
-    --green: #34D399;
-    --orange: #F97316;
-    --blue: #60A5FA;
-    --purple: #A78BFA;
-    --yellow: #FBBF24;
-    --red: #F87171;
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
+    background: #F5F5F5;
+    color: #1A1A2E;
     overflow: hidden;
     height: 100vh;
     width: 100vw;
   }
 
-  /* ── Slide System ── */
+  /* ── Slide system ── */
   .slide {
     position: absolute;
     inset: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 60px 100px;
+    background: #FFFFFF;
     opacity: 0;
     pointer-events: none;
-    transform: translateX(60px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transform: translateX(40px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
   }
   .slide.active {
     opacity: 1;
     pointer-events: all;
     transform: translateX(0);
   }
-  .slide.exit-left {
-    opacity: 0;
-    transform: translateX(-60px);
+
+  /* ── Slide header ── */
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 48px;
+    border-bottom: 1px solid #E5E7EB;
+    flex-shrink: 0;
+  }
+  .slide-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1A1A2E;
+  }
+  .confidential {
+    font-size: 11px;
+    color: #9CA3AF;
+    font-weight: 500;
+    letter-spacing: 0.03em;
   }
 
-  /* ── Background effects ── */
-  .bg-grid {
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(circle at 1px 1px, #1E2B2620 1px, transparent 0);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
+  /* ── Slide body ── */
+  .slide-body {
+    flex: 1;
+    padding: 48px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
   }
-  .bg-glow {
-    position: fixed;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    filter: blur(200px);
-    opacity: 0.07;
-    pointer-events: none;
-    z-index: 0;
-    transition: all 1.5s ease;
+
+  /* ── Slide footer ── */
+  .slide-footer {
+    padding: 14px 48px;
+    border-top: 1px solid #E5E7EB;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .slide-footer span {
+    font-size: 11px;
+    color: #9CA3AF;
+    font-weight: 400;
   }
 
   /* ── Typography ── */
-  .label {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-  }
   h1 {
-    font-size: 52px;
+    font-size: 48px;
     font-weight: 900;
     letter-spacing: -0.03em;
     line-height: 1.1;
-    margin-bottom: 28px;
+    color: #1A1A2E;
   }
   h2 {
-    font-size: 38px;
+    font-size: 32px;
     font-weight: 800;
-    letter-spacing: -0.025em;
-    line-height: 1.15;
-    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: #1A1A2E;
+    margin-bottom: 32px;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A1A2E;
+    margin-bottom: 6px;
   }
   .subtitle {
-    font-size: 18px;
-    color: var(--text-dim);
-    line-height: 1.7;
-    max-width: 700px;
+    font-size: 20px;
+    font-weight: 400;
+    color: #6B7280;
+    line-height: 1.6;
   }
-
-  /* ── Stats Grid ── */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin: 32px 0;
+  .text {
+    font-size: 16px;
+    color: #4B5563;
+    line-height: 1.8;
   }
-  .stat {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 24px;
+  .text-sm {
+    font-size: 13px;
+    color: #6B7280;
+    line-height: 1.6;
   }
-  .stat-value {
+  .mono {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 32px;
-    font-weight: 700;
   }
-  .stat-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-top: 6px;
-  }
+  .accent { color: #059669; }
+  .accent-orange { color: #EA580C; }
+
+  /* ── Grid layouts ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 24px; }
 
   /* ── Cards ── */
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 24px;
-  }
-  .card-accent {
-    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
-    background: color-mix(in srgb, var(--accent) 5%, var(--bg));
-  }
-
-  /* ── Flow Diagram ── */
-  .flow {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 32px 0;
-  }
-  .flow-step {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1px solid #E5E7EB;
     border-radius: 12px;
-    padding: 16px 20px;
-    flex: 1;
-  }
-  .flow-num {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 15px;
-    color: var(--bg);
-    flex-shrink: 0;
-  }
-  .flow-arrow {
-    color: var(--text-muted);
-    font-size: 20px;
-    flex-shrink: 0;
+    padding: 28px;
+    background: #FAFAFA;
   }
 
-  /* ── Steps list ── */
-  .steps-list {
+  /* ── Bullet items with icons ── */
+  .bullet-item {
     display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin: 24px 0;
-  }
-  .step-item {
-    display: flex;
-    gap: 16px;
     align-items: flex-start;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 22px;
+    gap: 14px;
+    margin-bottom: 20px;
   }
-  .step-num {
-    width: 32px;
-    height: 32px;
+  .bullet-icon {
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
     font-size: 14px;
-    color: var(--bg);
     flex-shrink: 0;
-  }
-  .step-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-  }
-  .step-desc {
-    font-size: 13px;
-    color: var(--text-dim);
-    margin-top: 3px;
+    margin-top: 2px;
   }
 
-  /* ── Tags ── */
-  .tags {
+  /* ── Stat boxes ── */
+  .stat-row {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 16px 0;
-  }
-  .tag {
-    padding: 6px 14px;
-    border-radius: 8px;
-    background: #1A2320;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-dim);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* ── Pill badges ── */
-  .pill {
-    display: inline-flex;
-    padding: 10px 24px;
-    border-radius: 100px;
-    font-size: 15px;
-    font-weight: 600;
-  }
-
-  /* ── Check list ── */
-  .checklist {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .check-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--text-dim);
-  }
-  .check-mark {
-    color: var(--green);
-    font-size: 16px;
-    font-weight: 700;
-  }
-
-  /* ── Projects grid ── */
-  .projects {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin: 24px 0;
-  }
-  .project-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 22px;
-    position: relative;
-    overflow: hidden;
-  }
-  .project-card.featured {
-    border-color: #FBBF2440;
-    background: linear-gradient(135deg, #FBBF2408, var(--surface));
-  }
-  .project-card.featured::before {
-    content: 'LIVE';
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    color: var(--yellow);
-    background: #FBBF2420;
-    padding: 3px 10px;
-    border-radius: 6px;
-  }
-  .project-icon {
-    font-size: 28px;
-    margin-bottom: 10px;
-  }
-  .project-name {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  .project-loc {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 12px;
-  }
-  .project-stat {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 20px;
-    font-weight: 700;
-  }
-  .project-stat-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  /* ── Two columns ── */
-  .cols {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: 24px;
     margin: 24px 0;
   }
-
-  /* ── Inline code ── */
-  code {
+  .stat-box {
+    flex: 1;
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    background: #FAFAFA;
+  }
+  .stat-box .value {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--green);
-    background: #34D39910;
-    padding: 2px 8px;
-    border-radius: 6px;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .stat-box .label {
+    font-size: 11px;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
   }
 
-  /* ── Progress bar (bottom) ── */
-  .progress-bar {
-    position: fixed;
-    bottom: 0;
+  /* ── Market size circles ── */
+  .market-circles {
+    position: relative;
+    width: 420px;
+    height: 420px;
+    margin: 0 auto;
+  }
+  .market-circle {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .market-circle .mc-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    color: #1A1A2E;
+  }
+  .market-circle .mc-label {
+    font-size: 11px;
+    color: #6B7280;
+    text-align: center;
+    margin-top: 2px;
+  }
+  .mc-tam {
+    width: 420px; height: 420px;
+    top: 0; left: 0;
+    background: #D1FAE5;
+  }
+  .mc-tam .mc-value { font-size: 32px; }
+  .mc-sam {
+    width: 260px; height: 260px;
+    bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    background: #A7F3D0;
+  }
+  .mc-sam .mc-value { font-size: 24px; }
+  .mc-som {
+    width: 130px; height: 130px;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    background: #6EE7B7;
+  }
+  .mc-som .mc-value { font-size: 18px; }
+
+  /* ── Market annotations ── */
+  .mc-note {
+    position: absolute;
+    font-size: 12px;
+    color: #6B7280;
+    line-height: 1.4;
+    max-width: 160px;
+  }
+
+  /* ── Competition axis ── */
+  .comp-axis {
+    position: relative;
+    width: 450px;
+    height: 380px;
+    margin: 0 auto;
+  }
+  .comp-axis-line-x {
+    position: absolute;
+    top: 50%;
     left: 0;
-    height: 3px;
-    background: var(--green);
-    transition: width 0.5s ease;
-    z-index: 100;
+    right: 0;
+    height: 1px;
+    background: #D1D5DB;
+  }
+  .comp-axis-line-y {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #D1D5DB;
+  }
+  .comp-axis-label {
+    position: absolute;
+    font-size: 11px;
+    color: #9CA3AF;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .comp-dot {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+    transform: translate(-50%, -50%);
   }
 
-  /* ── Slide counter ── */
-  .counter {
-    position: fixed;
-    bottom: 20px;
-    right: 40px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--text-muted);
-    z-index: 100;
+  /* ── Feature columns ── */
+  .feature-col {
+    text-align: center;
+    padding: 24px 16px;
+  }
+  .feature-icon {
+    font-size: 36px;
+    margin-bottom: 14px;
   }
 
-  /* ── Side nav buttons ── */
+  /* ── Team ── */
+  .team-member {
+    text-align: center;
+  }
+  .team-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 800;
+    color: white;
+  }
+
+  /* ── Cover special ── */
+  .cover-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    height: 100%;
+    padding: 64px 80px;
+  }
+  .cover-logo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #059669;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .cover-url {
+    font-size: 14px;
+    color: #059669;
+    margin-top: 24px;
+    font-weight: 500;
+  }
+
+  /* ── Thank you ── */
+  .thankyou {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  /* ── Nav buttons ── */
   .nav-btn {
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
     z-index: 200;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text-dim);
-    font-size: 22px;
+    border: 1px solid #D1D5DB;
+    background: #FFFFFF;
+    color: #6B7280;
+    font-size: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    user-select: none;
-    -webkit-user-select: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
-  .nav-btn:hover {
-    background: var(--border);
-    color: var(--text);
-    border-color: var(--green);
-  }
-  .nav-btn:active {
-    transform: translateY(-50%) scale(0.92);
-  }
-  .nav-btn:disabled {
-    opacity: 0.15;
-    cursor: default;
-    pointer-events: none;
-  }
-  .nav-btn.prev { left: 20px; }
-  .nav-btn.next { right: 20px; }
+  .nav-btn:hover { background: #F3F4F6; color: #1A1A2E; border-color: #059669; }
+  .nav-btn:active { transform: translateY(-50%) scale(0.92); }
+  .nav-btn:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+  .nav-btn.prev { left: 16px; }
+  .nav-btn.next { right: 16px; }
 
-  /* ── Print / PDF ── */
+  /* ── Progress bar ── */
+  .progress-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: #059669;
+    transition: width 0.4s ease;
+    z-index: 100;
+  }
+  .counter {
+    position: fixed;
+    bottom: 12px;
+    right: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #9CA3AF;
+    z-index: 100;
+  }
+
+  /* ── Print ── */
   @media print {
-    body { overflow: visible; cursor: auto; }
+    body { overflow: visible; }
     .slide {
       position: relative;
       opacity: 1 !important;
@@ -409,618 +402,529 @@
       pointer-events: all !important;
       page-break-after: always;
       height: 100vh;
-      padding: 40px 60px;
     }
-    .progress-bar, .counter, .nav-btn, .bg-grid, .bg-glow { display: none; }
+    .progress-bar, .counter, .nav-btn { display: none; }
   }
 
   /* ── Animations ── */
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  .slide.active .anim {
-    animation: fadeUp 0.5s ease forwards;
-  }
-  .slide.active .anim-d1 { animation-delay: 0.1s; opacity: 0; }
-  .slide.active .anim-d2 { animation-delay: 0.2s; opacity: 0; }
-  .slide.active .anim-d3 { animation-delay: 0.3s; opacity: 0; }
-  .slide.active .anim-d4 { animation-delay: 0.4s; opacity: 0; }
-  .slide.active .anim-d5 { animation-delay: 0.5s; opacity: 0; }
-
-  /* ── Retire fire glow ── */
-  .retire-glow {
-    box-shadow: 0 0 80px #F9731620, 0 0 160px #F9731610;
-  }
-
-  .three-pills {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    margin: 24px 0;
-  }
+  .slide.active .anim { animation: fadeUp 0.4s ease forwards; }
+  .slide.active .a1 { animation-delay: 0.08s; opacity: 0; }
+  .slide.active .a2 { animation-delay: 0.16s; opacity: 0; }
+  .slide.active .a3 { animation-delay: 0.24s; opacity: 0; }
+  .slide.active .a4 { animation-delay: 0.32s; opacity: 0; }
 </style>
 </head>
 <body>
 
-<div class="bg-grid"></div>
-<div class="bg-glow" id="glow" style="top: -200px; left: -200px; background: #34D399;"></div>
+<!-- ══════════════ SLIDE 1: COVER ══════════════ -->
+<div class="slide active">
+  <div class="cover-body">
+    <div class="anim">
+      <div class="cover-logo">🌿 CarbonKZ</div>
+      <h1 style="font-size: 44px; max-width: 700px;">Первый маркетплейс токенизированных углеродных кредитов в Центральной Азии</h1>
+      <p class="subtitle a1" style="margin-top: 20px; max-width: 600px;">
+        Верификация → Инвестиции → Дивиденды → Retire с on-chain proof. На блокчейне Solana.
+      </p>
+      <p class="cover-url a2">sol-estate-ivory.vercel.app</p>
+    </div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!-- SLIDE 1: ПРОБЛЕМА -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="slide active" data-glow="#F97316" data-glow-pos="top-right">
-  <div class="anim">
-    <div class="label" style="color: var(--orange);">Проблема</div>
-    <h1>Казахстан — топ-10<br>по углеродоёмкости ВВП</h1>
-  </div>
-
-  <div class="stats anim anim-d1">
-    <div class="stat">
-      <div class="stat-value" style="color: var(--orange);">349M т</div>
-      <div class="stat-label">CO₂ / год</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">17.5 т</div>
-      <div class="stat-label">на человека (3× ОЭСР)</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" style="color: var(--red);">$1</div>
-      <div class="stat-label">KZ ETS / тонна</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" style="color: var(--green);">$91</div>
-      <div class="stat-label">EU ETS / тонна</div>
-    </div>
-  </div>
-
-  <div class="card card-accent anim anim-d2" style="--accent: var(--orange); margin-top: 8px;">
-    <p class="subtitle" style="max-width: 100%;">
-      Рынок углеродных кредитов КЗ существует с 2013 года, но фактически <strong style="color:var(--text)">мёртв</strong>:
-      135 участников, только спот, банки <strong style="color:var(--text)">не допущены</strong> к торгам.
-      Double counting, ручная верификация, нулевая ликвидность.
-    </p>
-  </div>
-
-  <div class="stats anim anim-d3" style="grid-template-columns: repeat(3, 1fr); margin-top: 16px;">
-    <div class="stat">
-      <div class="stat-value" style="color: var(--yellow); font-size: 24px;">$50/т к 2030</div>
-      <div class="stat-label">цель правительства (×50)</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" style="color: var(--blue); font-size: 24px;">$4.8M</div>
-      <div class="stat-label">World Bank грант (2025)</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" style="color: var(--green); font-size: 24px;">0</div>
-      <div class="stat-label">блокчейн carbon в ЦА</div>
+    <div class="stat-row a3" style="margin-top: 48px; width: 100%; max-width: 600px;">
+      <div class="stat-box">
+        <div class="value accent">14</div>
+        <div class="label">инструкций</div>
+      </div>
+      <div class="stat-box">
+        <div class="value">16/16</div>
+        <div class="label">тестов</div>
+      </div>
+      <div class="stat-box">
+        <div class="value accent-orange">4</div>
+        <div class="label">проекта на devnet</div>
+      </div>
+      <div class="stat-box">
+        <div class="value accent">KZTE</div>
+        <div class="label">стейблкоин ₸</div>
+      </div>
     </div>
   </div>
+  <div class="slide-footer"><span>Команда Zerde · Decentrathon 5.0 · Кейс 1 (RWA)</span></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!-- SLIDE 2: РЕШЕНИЕ -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="slide" data-glow="#34D399" data-glow-pos="center">
-  <div class="anim">
-    <div class="label" style="color: var(--green);">Решение</div>
-    <h1>CarbonKZ</h1>
-    <p class="subtitle" style="margin-top: -12px; font-size: 22px; color: var(--text-dim);">
-      Первый маркетплейс токенизированных углеродных кредитов в Центральной Азии
-    </p>
+<!-- ══════════════ SLIDE 2: PROBLEM ══════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-title">Problem:</span>
+    <span class="confidential">Confidential</span>
   </div>
+  <div class="slide-body">
+    <div class="anim">
+      <h2 style="margin-bottom: 24px;">Казахстан — топ-10 по углеродоёмкости ВВП</h2>
+    </div>
 
-  <div class="flow anim anim-d1">
-    <div class="flow-step">
-      <div class="flow-num" style="background: var(--green);">1</div>
-      <div>
-        <div class="step-title">Верификация</div>
-        <div class="step-desc">doc_hash on-chain</div>
-      </div>
+    <div class="a1" style="display: flex; flex-direction: column; gap: 18px; max-width: 700px;">
+      <p class="text">
+        <strong>349 млн тонн CO₂ в год.</strong> 17.5 тонн на человека — в 3 раза выше среднего по ОЭСР. Половина энергобаланса — уголь.
+      </p>
+      <p class="text">
+        <strong>Рынок мёртв:</strong> $1 за тонну при $91 в Евросоюзе. 135 участников, только спот. Банки и финансовые институты не допущены к торгам на Caspy Exchange.
+      </p>
+      <p class="text">
+        <strong>Double counting</strong> — один кредит заявлен несколькими сторонами. Верификация вручную, конфликт интересов у аудиторов. Нулевая прозрачность.
+      </p>
     </div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">
-      <div class="flow-num" style="background: var(--blue);">2</div>
-      <div>
-        <div class="step-title">Инвестирование</div>
-        <div class="step-desc">KZTE → vault</div>
-      </div>
-    </div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">
-      <div class="flow-num" style="background: var(--purple);">3</div>
-      <div>
-        <div class="step-title">Дивиденды</div>
-        <div class="step-desc">выручка → claim</div>
-      </div>
-    </div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">
-      <div class="flow-num" style="background: var(--orange);">4</div>
-      <div>
-        <div class="step-title">Retire</div>
-        <div class="step-desc">burn + proof</div>
-      </div>
-    </div>
-  </div>
 
-  <div class="cols anim anim-d2">
-    <div class="card">
-      <div class="label" style="color: var(--text-muted); font-size: 11px;">On-chain</div>
-      <div class="tags">
-        <span class="tag">Anchor 0.32</span>
-        <span class="tag">SPL Token</span>
-        <span class="tag">14 инструкций</span>
-        <span class="tag">5 PDA</span>
-        <span class="tag">16/16 тестов</span>
+    <div class="stat-row a2" style="max-width: 700px;">
+      <div class="stat-box">
+        <div class="value accent-orange">$1/т</div>
+        <div class="label">KZ ETS сейчас</div>
       </div>
-    </div>
-    <div class="card">
-      <div class="label" style="color: var(--text-muted); font-size: 11px;">Frontend</div>
-      <div class="tags">
-        <span class="tag">Next.js 16</span>
-        <span class="tag">React 19</span>
-        <span class="tag">Tailwind 4</span>
-        <span class="tag">KZTE (₸)</span>
-        <span class="tag">Solana Devnet</span>
+      <div class="stat-box">
+        <div class="value accent">$50/т</div>
+        <div class="label">цель к 2030 (×50)</div>
+      </div>
+      <div class="stat-box">
+        <div class="value" style="color: #3B82F6;">$4.8M</div>
+        <div class="label">World Bank грант</div>
+      </div>
+      <div class="stat-box">
+        <div class="value accent">0</div>
+        <div class="label">блокчейн в ЦА</div>
       </div>
     </div>
   </div>
-
-  <div class="card anim anim-d3" style="margin-top: 8px; text-align: center; padding: 16px;">
-    <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted);">
-      Program ID: </span>
-    <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--green);">
-      3nLd8C3s2SAMVWXHy1vb7719zVPKPJWKrgxDDJ9pRRkg
-    </span>
-  </div>
+  <div class="slide-footer"><span>CarbonKZ — углеродный рынок Казахстана на Solana</span></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!-- SLIDE 3: ПРОЕКТЫ -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="slide" data-glow="#FBBF24" data-glow-pos="top-left">
-  <div class="anim">
-    <div class="label" style="color: var(--yellow);">Реальные проекты</div>
-    <h2>4 верифицированных проекта на Solana Devnet</h2>
+<!-- ══════════════ SLIDE 3: SOLUTION ══════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-title">Solution:</span>
+    <span class="confidential">Confidential</span>
   </div>
-
-  <div class="projects anim anim-d1">
-    <div class="project-card featured">
-      <div class="project-icon">☀️</div>
-      <div class="project-name">СЭС Университета Ахмеда Ясави</div>
-      <div class="project-loc">Туркестан · Solar · 25 кВт · Realtime Solarman API</div>
-      <div style="display: flex; gap: 24px; margin-top: 14px;">
-        <div>
-          <div class="project-stat" style="color: var(--yellow);">36 т</div>
-          <div class="project-stat-label">CO₂ / год</div>
-        </div>
-        <div>
-          <div class="project-stat">360</div>
-          <div class="project-stat-label">долей</div>
-        </div>
-        <div>
-          <div class="project-stat" style="color: var(--green);">100 ₸</div>
-          <div class="project-stat-label">за долю</div>
-        </div>
-      </div>
+  <div class="slide-body">
+    <div class="anim">
+      <h2>Платформа полного цикла на Solana</h2>
     </div>
 
-    <div class="project-card">
-      <div class="project-icon">💨</div>
-      <div class="project-name">Ветропарк Ерейментау</div>
-      <div class="project-loc">Акмолинская обл. · Wind · 45 МВт · UNFCCC CDM</div>
-      <div style="display: flex; gap: 24px; margin-top: 14px;">
+    <div class="a1" style="max-width: 640px;">
+      <div class="bullet-item">
+        <div class="bullet-icon" style="background: #D1FAE5; color: #059669;">✓</div>
         <div>
-          <div class="project-stat" style="color: var(--blue);">12 000 т</div>
-          <div class="project-stat-label">CO₂ / год</div>
-        </div>
-        <div>
-          <div class="project-stat">12 000</div>
-          <div class="project-stat-label">долей</div>
-        </div>
-        <div>
-          <div class="project-stat" style="color: var(--green);">50 ₸</div>
-          <div class="project-stat-label">за долю</div>
+          <h3>Верификация on-chain</h3>
+          <p class="text-sm">SHA-256 хеш документа записывается в блокчейн. Подделать невозможно. Независимый верификатор подтверждает проект.</p>
         </div>
       </div>
-    </div>
-
-    <div class="project-card">
-      <div class="project-icon">🌲</div>
-      <div class="project-name">Лесовосстановление Бурабай</div>
-      <div class="project-loc">Нац. парк Бурабай · Forest · 500 000 деревьев</div>
-      <div style="display: flex; gap: 24px; margin-top: 14px;">
+      <div class="bullet-item">
+        <div class="bullet-icon" style="background: #DBEAFE; color: #2563EB;">✓</div>
         <div>
-          <div class="project-stat" style="color: var(--green);">3 000 т</div>
-          <div class="project-stat-label">CO₂ / год</div>
-        </div>
-        <div>
-          <div class="project-stat">3 000</div>
-          <div class="project-stat-label">долей</div>
-        </div>
-        <div>
-          <div class="project-stat" style="color: var(--green);">150 ₸</div>
-          <div class="project-stat-label">за долю</div>
+          <h3>Инвестирование за KZTE (₸)</h3>
+          <p class="text-sm">Любой человек покупает доли проекта за тенге. KZTE → vault, взамен — ShareToken. Комиссия платформы — 1.5%.</p>
         </div>
       </div>
-    </div>
-
-    <div class="project-card">
-      <div class="project-icon">🏭</div>
-      <div class="project-name">ArcelorMittal Теміртау</div>
-      <div class="project-loc">Карагандинская обл. · Industrial · Модернизация печей</div>
-      <div style="display: flex; gap: 24px; margin-top: 14px;">
+      <div class="bullet-item">
+        <div class="bullet-icon" style="background: #EDE9FE; color: #7C3AED;">✓</div>
         <div>
-          <div class="project-stat" style="color: var(--purple);">8 000 т</div>
-          <div class="project-stat-label">CO₂ / год</div>
+          <h3>Дивиденды</h3>
+          <p class="text-sm">Загрязнители покупают кредиты → выручка в vault → инвестор забирает дивиденды. До $25 000/год с 10% доли при $50/т.</p>
         </div>
+      </div>
+      <div class="bullet-item">
+        <div class="bullet-icon" style="background: #FFF7ED; color: #EA580C;">🔥</div>
         <div>
-          <div class="project-stat">8 000</div>
-          <div class="project-stat-label">долей</div>
-        </div>
-        <div>
-          <div class="project-stat" style="color: var(--green);">80 ₸</div>
-          <div class="project-stat-label">за долю</div>
+          <h3>Retire — burn + immutable proof</h3>
+          <p class="text-sm">Токены сжигаются навсегда. RetireRecord PDA: кто, сколько, когда, зачем. Double counting решён. Комиссия — 1%.</p>
         </div>
       </div>
     </div>
   </div>
+  <div class="slide-footer"><span>CarbonKZ — углеродный рынок Казахстана на Solana</span></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!-- SLIDE 4: ИНВЕСТИРОВАНИЕ -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="slide" data-glow="#60A5FA" data-glow-pos="bottom-right">
-  <div class="anim">
-    <div class="label" style="color: var(--blue);">Инвестирование</div>
-    <h2>Покупка долей за KZTE (₸)</h2>
+<!-- ══════════════ SLIDE 4: MARKET SIZE ══════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-title">Market size:</span>
+    <span class="confidential">Confidential</span>
   </div>
+  <div class="slide-body" style="flex-direction: row; align-items: center; gap: 48px;">
+    <div class="anim" style="flex-shrink: 0;">
+      <div class="market-circles">
+        <div class="market-circle mc-tam">
+          <div class="mc-value" style="margin-top: -40px;">$17.5B</div>
+          <div class="mc-label">TAM</div>
+        </div>
+        <div class="market-circle mc-sam">
+          <div class="mc-value" style="margin-top: -20px;">$675M</div>
+          <div class="mc-label">SAM</div>
+        </div>
+        <div class="market-circle mc-som">
+          <div class="mc-value">$6.75M</div>
+          <div class="mc-label">SOM</div>
+        </div>
 
-  <div class="steps-list anim anim-d1">
-    <div class="step-item">
-      <div class="step-num" style="background: var(--green);">1</div>
-      <div>
-        <div class="step-title">Подключить Phantom / Solflare</div>
-        <div class="step-desc">Кошелёк на Solana Devnet. Одна кнопка — подключение.</div>
-      </div>
-    </div>
-    <div class="step-item">
-      <div class="step-num" style="background: var(--yellow);">2</div>
-      <div>
-        <div class="step-title">Получить тестовые KZTE</div>
-        <div class="step-desc">Faucet: 100 000 ₸ на кошелёк. KZTE = стейблкоин 1:1 к тенге, 6 decimals.</div>
-      </div>
-    </div>
-    <div class="step-item">
-      <div class="step-num" style="background: var(--blue);">3</div>
-      <div>
-        <div class="step-title">Выбрать проект → Инвестировать</div>
-        <div class="step-desc">KZTE переводится в vault проекта через SPL Token transfer (CPI). Взамен — mint ShareToken.</div>
-      </div>
-    </div>
-    <div class="step-item">
-      <div class="step-num" style="background: var(--purple);">4</div>
-      <div>
-        <div class="step-title">Share Tokens в кошельке</div>
-        <div class="step-desc">Токены долей (sYSV, sERY, sBRB, sAMT) видны в Phantom. Транзакция — в Explorer.</div>
+        <div class="mc-note" style="top: 30px; right: -170px;">
+          <strong>TAM</strong><br>349M т × $50/т<br>Весь углеродный рынок КЗ к 2030
+        </div>
+        <div class="mc-note" style="top: 200px; right: -170px;">
+          <strong>SAM</strong><br>135 компаний KZ ETS<br>Обязательный + ESG рынок
+        </div>
+        <div class="mc-note" style="bottom: 20px; right: -170px;">
+          <strong>SOM</strong><br>1% проникновение<br>в первый год
+        </div>
       </div>
     </div>
   </div>
-
-  <div class="card card-accent anim anim-d2" style="--accent: var(--green); margin-top: 8px;">
-    <div class="label" style="color: var(--green); font-size: 11px;">Доходность инвестора</div>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; text-align: center; margin-top: 8px;">
-      <div>
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--text-dim);">$1/т</div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Сейчас</div>
-        <div style="font-size: 13px; color: var(--text-dim); margin-top: 4px;">$500/год (10% доля)</div>
-      </div>
-      <div>
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--yellow);">$15/т</div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">2028 (×15)</div>
-        <div style="font-size: 13px; color: var(--yellow); margin-top: 4px;">$7 500/год</div>
-      </div>
-      <div>
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--green);">$50/т</div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">2030 цель (×50)</div>
-        <div style="font-size: 13px; color: var(--green); margin-top: 4px;">$25 000/год</div>
-      </div>
-    </div>
-    <div style="font-size: 12px; color: var(--text-muted); margin-top: 12px; text-align: center;">
-      На примере проекта 5 000 т CO₂/год. Комиссия платформы с инвестиции: <strong style="color: var(--text);">1.5%</strong>
-    </div>
-  </div>
+  <div class="slide-footer"><span>CarbonKZ — углеродный рынок Казахстана на Solana</span></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!-- SLIDE 5: ДИВИДЕНДЫ -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="slide" data-glow="#A78BFA" data-glow-pos="center-left">
-  <div class="anim">
-    <div class="label" style="color: var(--purple);">Пассивный доход</div>
-    <h2>Дивиденды от продажи кредитов</h2>
+<!-- ══════════════ SLIDE 5: PRODUCT ══════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-title">Product:</span>
+    <span class="confidential">Confidential</span>
   </div>
-
-  <div class="cols anim anim-d1">
-    <div>
-      <div class="steps-list" style="margin: 0;">
-        <div class="step-item">
-          <div class="step-num" style="background: var(--orange);">1</div>
-          <div>
-            <div class="step-title">Загрязнитель покупает кредиты</div>
-            <div class="step-desc">КазМунайГаз, ArcelorMittal → KZTE в vault проекта</div>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num" style="background: var(--purple);">2</div>
-          <div>
-            <div class="step-title"><code>distribute_revenue</code></div>
-            <div class="step-desc">Владелец вносит выручку → обновляется dividends_per_share</div>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num" style="background: var(--green);">3</div>
-          <div>
-            <div class="step-title"><code>claim_dividends</code></div>
-            <div class="step-desc">Инвестор забирает свою долю. Gas платит сам → масштабируемо.</div>
-          </div>
-        </div>
-      </div>
+  <div class="slide-body">
+    <div class="anim">
+      <h2 style="margin-bottom: 28px;">6 страниц — полный цикл</h2>
     </div>
 
-    <div>
-      <div class="card card-accent" style="--accent: var(--green);">
-        <div class="label" style="color: var(--green); font-size: 11px;">Пример: Ветропарк 12 000 т CO₂</div>
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 13px; color: var(--text-dim);">Ваша доля</span>
-            <span style="font-size: 13px; font-weight: 600; color: var(--text);">100 долей (0.83%)</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 13px; color: var(--text-dim);">Вложено</span>
-            <span style="font-size: 13px; font-weight: 600; color: var(--text);">500 000 ₸</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 13px; color: var(--text-dim);">Дивиденды (при $1/т)</span>
-            <span style="font-size: 13px; font-weight: 600; color: var(--text-dim);">~50 000 ₸/год</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 13px; color: var(--text-dim);">Дивиденды (при $50/т)</span>
-            <span style="font-size: 13px; font-weight: 700; color: var(--green);">~2 500 000 ₸/год</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; padding: 8px 0;">
-            <span style="font-size: 13px; color: var(--text-dim);">ROI при $50/т</span>
-            <span style="font-size: 15px; font-weight: 800; color: var(--green);">×50 за 5 лет</span>
-          </div>
-        </div>
+    <div class="grid-3 a1">
+      <div class="card">
+        <div style="font-size: 24px; margin-bottom: 10px;">📋</div>
+        <h3>Каталог проектов</h3>
+        <p class="text-sm">4 верифицированных проекта: солнечная, ветер, лес, промышленность. Фильтрация по типу. Live-данные.</p>
       </div>
-      <div class="card" style="margin-top: 12px;">
-        <div style="font-size: 12px; color: var(--text-dim); line-height: 1.7;">
-          <span style="color: var(--green);">✓</span> Double-claim невозможен через <code>last_claimed</code><br>
-          <span style="color: var(--green);">✓</span> Gas платит инвестор → масштабируемо<br>
-          <span style="color: var(--green);">✓</span> Vault PDA — единственный authority
-        </div>
+      <div class="card">
+        <div style="font-size: 24px; margin-bottom: 10px;">☀️</div>
+        <h3>Страница проекта</h3>
+        <p class="text-sm">Детали, прогресс инвестиций, кнопка «Инвестировать», Solarman API для СЭС Ясави. Realtime мониторинг.</p>
+      </div>
+      <div class="card">
+        <div style="font-size: 24px; margin-bottom: 10px;">💼</div>
+        <h3>Портфель</h3>
+        <p class="text-sm">Все ваши инвестиции, pie chart, дивиденды. Кнопка «Получить» — claim на кошелёк. KZTE faucet.</p>
+      </div>
+      <div class="card">
+        <div style="font-size: 24px; margin-bottom: 10px;">🔄</div>
+        <h3>P2P Маркетплейс</h3>
+        <p class="text-sm">Перепродажа долей через on-chain escrow. Безопасная сделка: токены заморожены до оплаты. Комиссия — 2%.</p>
+      </div>
+      <div class="card" style="border-color: #FDBA74; background: #FFF7ED;">
+        <div style="font-size: 24px; margin-bottom: 10px;">🔥</div>
+        <h3>Retire (гашение)</h3>
+        <p class="text-sm">Burn кредитов + RetireRecord + NFT сертификат. Immutable proof для аудиторов и ESG-отчётов. Killer feature.</p>
+      </div>
+      <div class="card">
+        <div style="font-size: 24px; margin-bottom: 10px;">🧮</div>
+        <h3>Калькулятор CO₂</h3>
+        <p class="text-sm">Расчёт углеродного следа с казахстанскими коэффициентами: электричество, авто, авиация, газ.</p>
       </div>
     </div>
   </div>
+  <div class="slide-footer"><span>CarbonKZ — углеродный рынок Казахстана на Solana</span></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!-- SLIDE 6: RETIRE (KILLER FEATURE) -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="slide" data-glow="#F97316" data-glow-pos="center">
-  <div class="anim">
-    <div class="label" style="color: var(--orange);">🔥 Killer Feature</div>
-    <h1 style="font-size: 48px;">Retire — гашение кредитов навсегда</h1>
+<!-- ══════════════ SLIDE 6: BUSINESS MODEL ══════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-title">Business model:</span>
+    <span class="confidential">Confidential</span>
   </div>
-
-  <div class="card retire-glow anim anim-d1" style="border-color: #F9731640; background: linear-gradient(135deg, #1A0F08, var(--surface)); padding: 32px;">
-    <div class="steps-list" style="margin: 0;">
-      <div class="step-item" style="background: transparent; border: none; padding: 8px 0;">
-        <div class="step-num" style="background: var(--yellow);">1</div>
-        <div>
-          <div class="step-title">Загрязнитель покупает Carbon Tokens</div>
-          <div class="step-desc">Токены, представляющие тонны CO₂</div>
-        </div>
-      </div>
-      <div class="step-item" style="background: transparent; border: none; padding: 8px 0;">
-        <div class="step-num" style="background: var(--orange);">2</div>
-        <div>
-          <div class="step-title" style="color: var(--orange);">SPL Token BURN</div>
-          <div class="step-desc">Токены <strong style="color:var(--text)">уничтожаются навсегда</strong> — исчезают из обращения. Burn ПЕРЕД state mutation.</div>
-        </div>
-      </div>
-      <div class="step-item" style="background: transparent; border: none; padding: 8px 0;">
-        <div class="step-num" style="background: var(--orange);">3</div>
-        <div>
-          <div class="step-title" style="color: var(--orange);">RetireRecord PDA</div>
-          <div class="step-desc">Immutable proof on-chain: <strong style="color:var(--text)">кто, сколько, когда, зачем</strong>. Уникальный seed → double-retire невозможен.</div>
-        </div>
-      </div>
-      <div class="step-item" style="background: transparent; border: none; padding: 8px 0;">
-        <div class="step-num" style="background: var(--green);">4</div>
-        <div>
-          <div class="step-title" style="color: var(--green);">NFT Сертификат</div>
-          <div class="step-desc">Mint NFT с SVG-сертификатом и metadata URI. Видно в Phantom.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card anim anim-d2" style="margin-top: 16px; text-align: center; padding: 20px;">
-    <p style="font-size: 18px; color: var(--text); font-weight: 600;">
-      Сожжённый токен <span style="color: var(--orange);">не существует</span>.
-      Double counting <span style="color: var(--green);">решён навсегда</span>.
-    </p>
-    <p style="font-size: 14px; color: var(--text-dim); margin-top: 8px;">
-      Любой может проверить через Solana Explorer. Комиссия платформы за retire: <strong style="color: var(--yellow);">1%</strong>. Immutable proof для аудиторов и ESG-отчётов.
-    </p>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════ -->
-<!-- SLIDE 7: БИЗНЕС-МОДЕЛЬ -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="slide" data-glow="#FBBF24" data-glow-pos="center">
-  <div class="anim">
-    <div class="label" style="color: var(--yellow);">Бизнес-модель</div>
-    <h2>Доходность платформы и инвестора</h2>
-  </div>
-
-  <div class="cols anim anim-d1">
-    <div>
-      <div class="card card-accent" style="--accent: var(--yellow);">
-        <div class="label" style="color: var(--yellow); font-size: 11px;">Доход платформы CarbonKZ</div>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 14px; color: var(--text);">Комиссия с инвестиций</span>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">1.5%</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 14px; color: var(--text);">Комиссия P2P маркетплейс</span>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">2%</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 14px; color: var(--text);">Комиссия за retire</span>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">1%</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
-            <span style="font-size: 14px; color: var(--text);">Листинг проекта</span>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">50 000 ₸</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
-            <span style="font-size: 14px; color: var(--text);">Premium верификация</span>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">100 000 ₸</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <div class="card card-accent" style="--accent: var(--green);">
-        <div class="label" style="color: var(--green); font-size: 11px;">Доход инвестора (10% доля, 5 000 т проект)</div>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+  <div class="slide-body">
+    <div class="grid-2 anim" style="height: 100%;">
+      <div>
+        <h2 style="font-size: 22px;">Доход платформы</h2>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px;">
             <div>
-              <div style="font-size: 14px; color: var(--text);">Сейчас ($1/т)</div>
-              <div style="font-size: 11px; color: var(--text-muted);">135 участников, спот</div>
+              <div style="font-size: 15px; font-weight: 600;">Комиссия с инвестиций</div>
+              <div class="text-sm">Каждая покупка долей</div>
             </div>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--text-dim);">$500/год</span>
+            <div class="mono" style="font-size: 24px; font-weight: 800; color: #059669;">1.5%</div>
           </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+          <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px;">
             <div>
-              <div style="font-size: 14px; color: var(--text);">2028 ($15/т)</div>
-              <div style="font-size: 11px; color: var(--text-muted);">рост ×15</div>
+              <div style="font-size: 15px; font-weight: 600;">Комиссия P2P маркетплейс</div>
+              <div class="text-sm">Перепродажа долей</div>
             </div>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">$7 500/год</span>
+            <div class="mono" style="font-size: 24px; font-weight: 800; color: #059669;">2%</div>
           </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+          <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px;">
             <div>
-              <div style="font-size: 14px; color: var(--text);">2030 ($50/т)</div>
-              <div style="font-size: 11px; color: var(--text-muted);">цель правительства</div>
+              <div style="font-size: 15px; font-weight: 600;">Комиссия за retire</div>
+              <div class="text-sm">Гашение кредитов</div>
             </div>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--green);">$25 000/год</span>
+            <div class="mono" style="font-size: 24px; font-weight: 800; color: #EA580C;">1%</div>
           </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+          <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px;">
             <div>
-              <div style="font-size: 14px; color: var(--text);">ROI к 2030</div>
-              <div style="font-size: 11px; color: var(--text-muted);">рост стоимости доли</div>
+              <div style="font-size: 15px; font-weight: 600;">Листинг проекта</div>
+              <div class="text-sm">Регистрация нового проекта</div>
             </div>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 800; color: var(--green);">×50</span>
+            <div class="mono" style="font-size: 20px; font-weight: 800; color: #1A1A2E;">50 000 ₸</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 style="font-size: 22px;">Доход инвестора</h2>
+        <p class="text-sm" style="margin-bottom: 16px;">Проект 5 000 т CO₂/год, доля инвестора — 10%</p>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px;">
+            <div>
+              <div style="font-size: 15px; font-weight: 600;">Сейчас ($1/т)</div>
+              <div class="text-sm">135 участников, спот</div>
+            </div>
+            <div class="mono" style="font-size: 22px; font-weight: 700; color: #9CA3AF;">$500/год</div>
+          </div>
+          <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px;">
+            <div>
+              <div style="font-size: 15px; font-weight: 600;">2028 ($15/т)</div>
+              <div class="text-sm">×15 рост цены</div>
+            </div>
+            <div class="mono" style="font-size: 22px; font-weight: 700; color: #D97706;">$7 500/год</div>
+          </div>
+          <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-color: #A7F3D0; background: #ECFDF5;">
+            <div>
+              <div style="font-size: 15px; font-weight: 600;">2030 ($50/т)</div>
+              <div class="text-sm">Цель правительства</div>
+            </div>
+            <div class="mono" style="font-size: 22px; font-weight: 800; color: #059669;">$25 000/год</div>
+          </div>
+          <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-color: #A7F3D0; background: #ECFDF5;">
+            <div>
+              <div style="font-size: 15px; font-weight: 700;">ROI к 2030</div>
+              <div class="text-sm">Рост стоимости доли</div>
+            </div>
+            <div class="mono" style="font-size: 28px; font-weight: 900; color: #059669;">×50</div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="card anim anim-d2" style="margin-top: 16px; text-align: center; padding: 16px;">
-    <div style="display: flex; justify-content: center; gap: 40px;">
-      <div>
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--yellow);">349M т</div>
-        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;">Общий рынок КЗ / год</div>
-      </div>
-      <div>
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--green);">$17.5B</div>
-        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;">TAM при $50/т к 2030</div>
-      </div>
-      <div>
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--orange);">$175M</div>
-        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;">Доход платформы 1%</div>
-      </div>
-    </div>
-  </div>
+  <div class="slide-footer"><span>CarbonKZ — углеродный рынок Казахстана на Solana</span></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!-- SLIDE 8: ИТОГ -->
-<!-- ═══════════════════════════════════════════════ -->
-<div class="slide" data-glow="#34D399" data-glow-pos="center">
-  <div class="anim" style="text-align: center;">
-    <div class="label" style="color: var(--green);">Итог</div>
-    <h1 style="font-size: 46px;">CarbonKZ решает три проблемы<br>углеродного рынка Казахстана</h1>
+<!-- ══════════════ SLIDE 7: ADOPTION STRATEGY ══════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-title">Adoption strategy:</span>
+    <span class="confidential">Confidential</span>
   </div>
+  <div class="slide-body">
+    <div class="anim">
+      <h2>Три канала привлечения</h2>
+    </div>
 
-  <div class="three-pills anim anim-d1">
-    <span class="pill" style="background: #34D39915; color: var(--green); border: 1px solid #34D39930;">Прозрачность</span>
-    <span class="pill" style="background: #60A5FA15; color: var(--blue); border: 1px solid #60A5FA30;">Ликвидность</span>
-    <span class="pill" style="background: #A78BFA15; color: var(--purple); border: 1px solid #A78BFA30;">Верификация</span>
-  </div>
-
-  <div class="stats anim anim-d2" style="grid-template-columns: repeat(5, 1fr); margin-top: 32px;">
-    <div class="stat" style="text-align: center;">
-      <div class="stat-value" style="color: var(--green); font-size: 24px;">×50</div>
-      <div class="stat-label">ROI инвестора к 2030</div>
-    </div>
-    <div class="stat" style="text-align: center;">
-      <div class="stat-value" style="color: var(--yellow); font-size: 24px;">1-2%</div>
-      <div class="stat-label">комиссия платформы</div>
-    </div>
-    <div class="stat" style="text-align: center;">
-      <div class="stat-value" style="font-size: 24px;">14</div>
-      <div class="stat-label">инструкций</div>
-    </div>
-    <div class="stat" style="text-align: center;">
-      <div class="stat-value" style="color: var(--green); font-size: 24px;">16/16</div>
-      <div class="stat-label">тестов</div>
-    </div>
-    <div class="stat" style="text-align: center;">
-      <div class="stat-value" style="color: var(--orange); font-size: 24px;">0</div>
-      <div class="stat-label">конкурентов в ЦА</div>
-    </div>
-  </div>
-
-  <div class="cols anim anim-d3" style="margin-top: 24px;">
-    <div class="card" style="text-align: center;">
-      <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px;">Почему Solana</div>
-      <div style="font-size: 14px; color: var(--text-dim); line-height: 1.7;">
-        ~400 мс · ~$0.00025/tx · 65K TPS<br>Solana Economic Zone Kazakhstan
+    <div class="grid-3 a1">
+      <div class="card" style="text-align: center; padding: 36px 24px;">
+        <div style="font-size: 40px; margin-bottom: 16px;">🏭</div>
+        <h3>Compliance market</h3>
+        <p class="text-sm" style="margin-top: 10px;">
+          <strong>135 компаний</strong> с выбросами &gt;20K т/год обязаны по закону. КазМунайГаз, ArcelorMittal, KEGOC, угольные ТЭЦ. Квота снижается ежегодно — спрос гарантирован.
+        </p>
       </div>
-    </div>
-    <div class="card" style="text-align: center;">
-      <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px;">Почему Казахстан</div>
-      <div style="font-size: 14px; color: var(--text-dim); line-height: 1.7;">
-        349M т CO₂ · $1→$50 (×50) · $350M ЦБ<br>KZTE стейблкоин · 0 конкурентов
+      <div class="card" style="text-align: center; padding: 36px 24px;">
+        <div style="font-size: 40px; margin-bottom: 16px;">🌱</div>
+        <h3>Voluntary ESG</h3>
+        <p class="text-sm" style="margin-top: 10px;">
+          Kaspi, Halyk Bank, Air Astana, Shell, Chevron — покупают кредиты для <strong>ESG-отчётов</strong>. Растущий тренд: инвесторы требуют прозрачность.
+        </p>
+      </div>
+      <div class="card" style="text-align: center; padding: 36px 24px;">
+        <div style="font-size: 40px; margin-bottom: 16px;">⚡</div>
+        <h3>Solana экосистема</h3>
+        <p class="text-sm" style="margin-top: 10px;">
+          Solana Economic Zone KZ ($100M). <strong>KZTE стейблкоин</strong> — Нацбанк + Solana + Mastercard. ЦБ РК: $350M на цифровые активы. Готовая инфраструктура.
+        </p>
       </div>
     </div>
   </div>
-
-  <div class="card anim anim-d4" style="margin-top: 24px; text-align: center; padding: 20px;">
-    <div style="font-size: 14px; color: var(--text-dim);">
-      Команда <strong style="color: var(--text);">Zerde</strong> · г. Павлодар, г. Туркестан · Decentrathon 5.0 · Кейс 1 (RWA)
-    </div>
-    <div style="display: flex; gap: 24px; justify-content: center; margin-top: 12px;">
-      <span style="font-size: 14px; color: var(--green);">@callmebekaa</span>
-      <span style="font-size: 14px; color: var(--green);">@kimjjk</span>
-    </div>
-  </div>
+  <div class="slide-footer"><span>CarbonKZ — углеродный рынок Казахстана на Solana</span></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!-- PROGRESS + COUNTER -->
-<!-- ═══════════════════════════════════════════════ -->
+<!-- ══════════════ SLIDE 8: COMPETITION ══════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-title">Competition:</span>
+    <span class="confidential">Confidential</span>
+  </div>
+  <div class="slide-body" style="flex-direction: row; align-items: center; gap: 48px;">
+    <div class="anim" style="flex-shrink: 0;">
+      <div class="comp-axis">
+        <!-- Axis lines -->
+        <div class="comp-axis-line-x"></div>
+        <div class="comp-axis-line-y"></div>
+
+        <!-- Labels -->
+        <div class="comp-axis-label" style="top: -20px; left: 50%; transform: translateX(-50%);">Full DeFi</div>
+        <div class="comp-axis-label" style="bottom: -20px; left: 50%; transform: translateX(-50%);">Basic</div>
+        <div class="comp-axis-label" style="top: 50%; left: -60px; transform: translateY(-50%);">Regional</div>
+        <div class="comp-axis-label" style="top: 50%; right: -50px; transform: translateY(-50%);">Global</div>
+
+        <!-- CarbonKZ — top left (regional + full defi) -->
+        <div class="comp-dot" style="top: 15%; left: 30%; background: #D1FAE5; color: #059669; border: 2px solid #059669; width: 72px; height: 72px; font-size: 11px;">
+          CarbonKZ
+        </div>
+
+        <!-- Toucan — top right (global + full defi) -->
+        <div class="comp-dot" style="top: 25%; left: 75%; background: #FEE2E2; color: #DC2626;">
+          Toucan
+        </div>
+
+        <!-- KlimaDAO — middle right (global + medium) -->
+        <div class="comp-dot" style="top: 55%; left: 70%; background: #FEE2E2; color: #DC2626;">
+          Klima<br>DAO
+        </div>
+
+        <!-- Flowcarbon — bottom right -->
+        <div class="comp-dot" style="top: 70%; left: 80%; background: #FEF3C7; color: #D97706;">
+          Flow<br>carbon
+        </div>
+
+        <!-- Caspy — bottom left (regional + basic) -->
+        <div class="comp-dot" style="top: 75%; left: 25%; background: #F3F4F6; color: #6B7280;">
+          Caspy<br>ETS
+        </div>
+      </div>
+    </div>
+
+    <div class="a1" style="max-width: 280px;">
+      <h3 style="font-size: 16px; margin-bottom: 16px;">Наше преимущество</h3>
+      <div class="text-sm" style="display: flex; flex-direction: column; gap: 10px;">
+        <div><span class="accent" style="font-weight: 700;">vs Toucan/Klima:</span> фокус на КЗ, KZTE, compliance market</div>
+        <div><span class="accent" style="font-weight: 700;">vs Caspy ETS:</span> блокчейн, P2P, retire proof, открытый доступ</div>
+        <div><span class="accent-orange" style="font-weight: 700;">В ЦА:</span> 0 конкурентов. Чистая ниша.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>CarbonKZ — углеродный рынок Казахстана на Solana</span></div>
+</div>
+
+<!-- ══════════════ SLIDE 9: COMPETITIVE ADVANTAGES ══════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-title">Competitive advantages:</span>
+    <span class="confidential">Confidential</span>
+  </div>
+  <div class="slide-body">
+    <div class="anim">
+      <h2>Почему CarbonKZ выигрывает</h2>
+    </div>
+
+    <div class="grid-4 a1">
+      <div class="feature-col">
+        <div class="feature-icon">🇰🇿</div>
+        <h3>Первые в ЦА</h3>
+        <p class="text-sm">0 конкурентов в регионе. Фокус на KZ ETS — 135 обязательных компаний. Локальный compliance market.</p>
+      </div>
+      <div class="feature-col">
+        <div class="feature-icon">💰</div>
+        <h3>KZTE стейблкоин</h3>
+        <p class="text-sm">1:1 к тенге. Нацбанк + Solana + Mastercard. Нет конвертации в USD — понятно для локального рынка.</p>
+      </div>
+      <div class="feature-col">
+        <div class="feature-icon">🔥</div>
+        <h3>On-chain Retire</h3>
+        <p class="text-sm">Burn + RetireRecord PDA. Immutable proof для аудиторов. Double counting невозможен. NFT сертификат.</p>
+      </div>
+      <div class="feature-col">
+        <div class="feature-icon">🔄</div>
+        <h3>P2P маркетплейс</h3>
+        <p class="text-sm">On-chain escrow. Перепродажа долей без посредников. Дивиденды + рост стоимости. Полноценный DeFi.</p>
+      </div>
+    </div>
+
+    <div class="stat-row a2" style="margin-top: 32px;">
+      <div class="stat-box">
+        <div class="value accent">14</div>
+        <div class="label">on-chain инструкций</div>
+      </div>
+      <div class="stat-box">
+        <div class="value">5</div>
+        <div class="label">PDA аккаунтов</div>
+      </div>
+      <div class="stat-box">
+        <div class="value accent">16/16</div>
+        <div class="label">тестов</div>
+      </div>
+      <div class="stat-box">
+        <div class="value accent-orange">×50</div>
+        <div class="label">ROI к 2030</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>CarbonKZ — углеродный рынок Казахстана на Solana</span></div>
+</div>
+
+<!-- ══════════════ SLIDE 10: TEAM ══════════════ -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-title">Team:</span>
+    <span class="confidential">Confidential</span>
+  </div>
+  <div class="slide-body" style="align-items: center;">
+    <div class="anim">
+      <h2 style="text-align: center;">Команда Zerde</h2>
+      <p class="text-sm" style="text-align: center; margin-bottom: 48px;">г. Павлодар · г. Туркестан · Decentrathon 5.0 · Кейс 1 (RWA)</p>
+    </div>
+
+    <div class="grid-2 a1" style="max-width: 500px; gap: 64px;">
+      <div class="team-member">
+        <div class="team-avatar" style="background: linear-gradient(135deg, #059669, #34D399);">Б</div>
+        <h3 style="font-size: 20px;">Бекарыс</h3>
+        <p class="text-sm">Smart Contract · Backend · DevOps</p>
+        <p style="margin-top: 8px;"><a href="https://t.me/callmebekaa" style="color: #059669; text-decoration: none; font-size: 14px; font-weight: 500;">@callmebekaa</a></p>
+      </div>
+      <div class="team-member">
+        <div class="team-avatar" style="background: linear-gradient(135deg, #2563EB, #60A5FA);">Т</div>
+        <h3 style="font-size: 20px;">Темирлан</h3>
+        <p class="text-sm">Frontend · UI/UX · Design</p>
+        <p style="margin-top: 8px;"><a href="https://t.me/kimjjk" style="color: #059669; text-decoration: none; font-size: 14px; font-weight: 500;">@kimjjk</a></p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>CarbonKZ — углеродный рынок Казахстана на Solana</span></div>
+</div>
+
+<!-- ══════════════ SLIDE 11: CONTACT & THANK YOU ══════════════ -->
+<div class="slide">
+  <div class="slide-body">
+    <div class="thankyou anim">
+      <div style="font-size: 48px; margin-bottom: 20px;">🌿</div>
+      <h1 style="font-size: 52px; margin-bottom: 12px;">Спасибо!</h1>
+      <p class="subtitle a1">CarbonKZ — углеродный рынок Казахстана.<br>Прозрачный. Токенизированный. На Solana.</p>
+
+      <div class="stat-row a2" style="margin-top: 40px; max-width: 600px;">
+        <div class="stat-box">
+          <div style="font-size: 13px; font-weight: 600; color: #059669;">Demo</div>
+          <div class="label" style="margin-top: 6px;">sol-estate-ivory.vercel.app</div>
+        </div>
+        <div class="stat-box">
+          <div style="font-size: 13px; font-weight: 600; color: #059669;">Telegram</div>
+          <div class="label" style="margin-top: 6px;">@callmebekaa · @kimjjk</div>
+        </div>
+        <div class="stat-box">
+          <div style="font-size: 13px; font-weight: 600; color: #059669;">GitHub</div>
+          <div class="label" style="margin-top: 6px;">ekbmusk/sol-estate</div>
+        </div>
+      </div>
+
+      <div class="a3" style="margin-top: 24px;">
+        <p class="mono" style="font-size: 11px; color: #9CA3AF;">Program ID: 3nLd8C3s2SAMVWXHy1vb7719zVPKPJWKrgxDDJ9pRRkg</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>Команда Zerde · Decentrathon 5.0 · Кейс 1 (RWA)</span></div>
+</div>
+
+<!-- ══════════════ CONTROLS ══════════════ -->
 <div class="progress-bar" id="progress"></div>
-<div class="counter" id="counter">1 / 8</div>
+<div class="counter" id="counter">1 / 11</div>
 <button class="nav-btn prev" id="btnPrev" disabled onclick="goTo(current - 1)">&#8249;</button>
 <button class="nav-btn next" id="btnNext" onclick="goTo(current + 1)">&#8250;</button>
 
@@ -1028,12 +932,10 @@
   const slides = document.querySelectorAll('.slide');
   const progress = document.getElementById('progress');
   const counter = document.getElementById('counter');
-  const glow = document.getElementById('glow');
-  let current = 0;
-  const total = slides.length;
-
   const btnPrev = document.getElementById('btnPrev');
   const btnNext = document.getElementById('btnNext');
+  let current = 0;
+  const total = slides.length;
 
   function updateButtons() {
     btnPrev.disabled = current === 0;
@@ -1042,57 +944,23 @@
 
   function goTo(n) {
     if (n < 0 || n >= total || n === current) return;
-    const dir = n > current ? 1 : -1;
-
     slides[current].classList.remove('active');
-    slides[current].classList.add(dir > 0 ? 'exit-left' : '');
-    setTimeout(() => slides[current === 0 ? 0 : current].classList.remove('exit-left'), 500);
-
-    // Remove all exit classes
-    slides.forEach(s => { s.classList.remove('exit-left'); });
-
     current = n;
     slides[current].classList.add('active');
-
     progress.style.width = `${((current + 1) / total) * 100}%`;
     counter.textContent = `${current + 1} / ${total}`;
     updateButtons();
-
-    // Move glow
-    const glowColor = slides[current].dataset.glow || '#34D399';
-    const pos = slides[current].dataset.glowPos || 'center';
-    glow.style.background = glowColor;
-
-    const positions = {
-      'top-right': { top: '-100px', left: '60%' },
-      'top-left': { top: '-100px', left: '-10%' },
-      'center': { top: '30%', left: '30%' },
-      'center-left': { top: '30%', left: '-10%' },
-      'bottom-right': { top: '60%', left: '60%' },
-    };
-    const p = positions[pos] || positions.center;
-    glow.style.top = p.top;
-    glow.style.left = p.left;
   }
 
-  // Init
   progress.style.width = `${(1 / total) * 100}%`;
+  updateButtons();
 
-  // Keyboard nav
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
-      e.preventDefault();
-      goTo(current + 1);
-    }
-    if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-      e.preventDefault();
-      goTo(current - 1);
-    }
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goTo(current - 1); }
     if (e.key === 'Home') goTo(0);
     if (e.key === 'End') goTo(total - 1);
   });
-
-  updateButtons();
 </script>
 
 </body>
