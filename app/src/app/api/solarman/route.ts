@@ -95,9 +95,13 @@ async function fetchDeviceData(token: string): Promise<SolarmanData> {
   // KZ grid emission factor: 0.844 kg CO₂ per kWh
   const co2Tons = (totalEnergy * 0.844) / 1000;
 
+  // Turkestan timezone is UTC+5, sunrise ~7, sunset ~19
+  const kzHour = new Date(Date.now() + 5 * 3600_000).getUTCHours();
+  const isNight = kzHour < 7 || kzHour >= 20;
+
   return {
-    currentPower: activePowerW / 1000, // W → kW
-    dailyEnergy,
+    currentPower: isNight ? 0 : activePowerW / 1000, // W → kW
+    dailyEnergy: isNight ? 0 : dailyEnergy,
     totalEnergy,
     co2Reduced: co2Tons,
     lastUpdate: new Date().toISOString(),
