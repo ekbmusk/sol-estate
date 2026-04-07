@@ -1,5 +1,8 @@
 # 🌿 CarbonKZ — Tokenized Carbon Credits Marketplace on Solana
 DEMO: https://sol-estate-ivory.vercel.app/
+
+📹 **Видео:** https://www.youtube.com/watch?v=RwAD03HL6j8
+
 ### 🇰🇿 Первый маркетплейс токенизированных углеродных кредитов в Центральной Азии
 
 Полный цикл: верификация зелёного проекта → токенизация → инвестирование за KZTE (₸) → дивиденды → P2P marketplace → retire (гашение с on-chain proof)
@@ -16,31 +19,7 @@ DEMO: https://sol-estate-ivory.vercel.app/
 
 ## 🔥 Проблема
 
-> Казахстан входит в **топ-10 стран мира** по углеродоёмкости ВВП — CO₂/ВВП на 70% выше мирового среднего
-
-| Факт | Значение |
-|------|----------|
-| CO₂ выбросы/год | **349 млн тонн** |
-| На душу населения | **17.5 т/чел** (~3× ОЭСР) |
-| Текущая цена кредита KZ ETS | **$1/тонна** |
-| Целевая цена к 2030 | **$50/тонна** (×50 рост) |
-| Участники Caspy Exchange | **135 компаний**, только спот |
-| Блокчейн carbon credit проекты в ЦА | **0** |
-
-### Почему рынок мёртв
-
-- 🔒 **Закрытый доступ** — банки и финансовые институты не допущены к торгам
-- 💧 **Нулевая ликвидность** — 135 участников, нет деривативов, торги приостановлены в 2022
-- 🔄 **Double counting** — один кредит заявлен несколькими сторонами
-- 🚫 **Непрозрачность** — верификация вручную, конфликт интересов у аудиторов
-
-### Почему всё меняется прямо сейчас
-
-- 🎯 Цель правительства: **$50/тонна к 2030**, углеродная нейтральность к 2060
-- 🏦 **World Bank выделил $4.8M** на развитие углеродного рынка КЗ (март 2025)
-- ⚡ **Solana Economic Zone Kazakhstan** — $100M Web3 зона (май 2025)
-- 💰 **ЦБ РК: $350 млн** в цифровые активы (март 2026)
-- 🪙 **KZTE стейблкоин** — Нацбанк + Solana + Mastercard (сентябрь 2025)
+Казахстан — **349 млн тонн CO₂/год**, 17.5 т/чел (3× ОЭСР). Углеродный рынок KZ ETS мёртв: **$1/тонна** при $91 в ЕС, 135 участников, банки не допущены, double counting — норма. Цель правительства — **$50/т к 2030** (×50). World Bank: $4.8M грант. Solana Economic Zone KZ. **0 блокчейн-проектов** в ЦА.
 
 ---
 
@@ -135,51 +114,11 @@ Listing               ["listing", project, seller, listing_count]
 
 ## 🖥️ Frontend
 
-### Tech Stack
+Next.js 16 · React 19 · Tailwind CSS 4 · shadcn/ui · Recharts · @solana/wallet-adapter · Vercel
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 16, React 19, TypeScript |
-| Styling | Tailwind CSS 4, shadcn/ui |
-| Charts | Recharts 2.x |
-| Wallet | @solana/wallet-adapter (Phantom, Solflare) |
-| Anchor | @coral-xyz/anchor 0.32.1 (typed IDL) |
-| Payments | KZTE stablecoin (1:1 к KZT, decimals: 6) |
-| Deploy | Vercel |
+**6 страниц:** Каталог `/` · Проект `/project/[id]` · Портфель `/portfolio` · Маркетплейс `/marketplace` · Retire `/retire` · Калькулятор `/calculator`
 
-### 📱 Pages (6)
-
-| Страница | Путь | Описание |
-|----------|------|----------|
-| Каталог проектов | `/` | Hero, статистика, фильтрация по типам, "Как работает" |
-| Страница проекта | `/project/[id]` | Детали, прогресс, инвестирование, дивиденды, Solarman |
-| Портфель | `/portfolio` | Инвестиции, доходность, pie chart, claim dividends |
-| Маркетплейс | `/marketplace` | P2P торговля долями, escrow, buy/sell |
-| Гашение | `/retire` | Burn кредитов, RetireRecord, сертификаты |
-| Калькулятор | `/calculator` | Расчёт CO₂ следа с KZ-specific коэффициентами |
-
-### 🔌 API Routes (5)
-
-| Route | Method | Описание |
-|-------|--------|----------|
-| `/api/faucet` | POST | Mint 100K KZTE (rate limit 24h) |
-| `/api/solarman` | GET | Данные солнечного инвертора (live/mock) |
-| `/api/certificate` | GET | SVG сертификат гашения + JSON metadata |
-| `/api/upload` | POST | SHA-256 хеш документа |
-| `/api/actions/retire` | GET/POST | Solana Actions (Blinks) — retire через QR |
-
-### 🪝 Hooks → On-chain Data
-
-| Hook | Данные | Источник |
-|------|--------|----------|
-| `useCarbonProgram` | Typed Program | IDL |
-| `useProjects` | Все CarbonProject | `program.account.carbonProject.all()` |
-| `useProject(id)` | Один проект | `program.account.carbonProject.fetch(pda)` |
-| `useInvestor(id)` | InvestorRecord | `program.account.investorRecord.fetch(pda)` |
-| `usePortfolio` | Все инвестиции | memcmp filter по wallet |
-| `useListings` | Активные листинги | filter `active=true` |
-| `useRetireRecords` | История гашений | `program.account.retireRecord.all()` |
-| `useKzte` | KZTE баланс | SPL token account |
+**5 API routes:** KZTE faucet · Solarman live data · SVG сертификат · SHA-256 upload · Solana Actions (Blinks)
 
 ---
 
@@ -367,28 +306,6 @@ carbon-kz/
 └── README.md
 ```
 
----
-
-## 🎯 Demo Scenario (7 шагов)
-
-1. **Проблема** — «Казахстан — топ-10 по CO₂/ВВП. Рынок мёртв — $1/тонна. Мы это меняем.»
-2. **Каталог** — Показать 4 верифицированных проекта с on-chain данными
-3. **Invest** — Инвестор покупает 100 долей за 50,000 KZTE → live tx → Explorer
-4. **Revenue** — Project owner вносит доход → 10,000 KZTE в vault
-5. **Claim** — Инвестор клеймит дивиденды → получает KZTE на кошелёк
-6. **🔥 RETIRE** — «КазМунайГаз» гасит 500 тонн → burn → RetireRecord → «Double counting решён навсегда»
-7. **Итог** — «Прозрачность. Ликвидность. Верификация. Solana — быстро и дёшево. Казахстан — первый в ЦА.»
-
----
-
-## 📊 Devnet Details
-
-| | |
-|---|---|
-| **Program ID** | [`3nLd8C3s2SAMVWXHy1vb7719zVPKPJWKrgxDDJ9pRRkg`](https://explorer.solana.com/address/3nLd8C3s2SAMVWXHy1vb7719zVPKPJWKrgxDDJ9pRRkg?cluster=devnet) |
-| **KZTE Mint** | [`tFs7nHjQUAbqrVHH6gaMEsjMnfNJRDowxjzeKLfTNqE`](https://explorer.solana.com/address/tFs7nHjQUAbqrVHH6gaMEsjMnfNJRDowxjzeKLfTNqE?cluster=devnet) |
-| **Network** | Solana Devnet |
-| **Tests** | 16/16 passing (10 happy path + 6 negative) |
 
 ---
 
@@ -399,22 +316,6 @@ carbon-kz/
 | **MVP** | Апрель 2026 | Контракт на devnet, веб-интерфейс, полный цикл, демо |
 | **Phase 2** | Q3 2026 | Verra/Gold Standard интеграция, Caspy API, IoT MRV, mainnet |
 | **Phase 3** | 2027 | Центральная Азия, партнёрство с Жасыл Даму, деривативы, DAO |
-
----
-
-## 🏁 Конкуренты
-
-| | CarbonKZ | Toucan Protocol | KlimaDAO |
-|---|---|---|---|
-| Регион | 🇰🇿 Казахстан + ЦА | Глобальный | Глобальный |
-| Блокчейн | Solana | Polygon | Polygon |
-| Стейблкоин | KZTE (₸) | USDC | — |
-| Compliance market | ✅ KZ ETS | ❌ | ❌ |
-| Retire + proof | ✅ Burn + PDA | ✅ Retire | ❌ |
-| P2P marketplace | ✅ On-chain escrow | ❌ | ❌ |
-| Дивиденды | ✅ Claim model | ❌ | Staking |
-
-**В Центральной Азии: 0 конкурентов. Чистая ниша.**
 
 ---
 
