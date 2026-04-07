@@ -708,20 +708,27 @@
     </div>
   </div>
 
-  <div class="card anim anim-d2" style="margin-top: 8px;">
-    <div style="display: flex; gap: 32px; align-items: center;">
+  <div class="card card-accent anim anim-d2" style="--accent: var(--green); margin-top: 8px;">
+    <div class="label" style="color: var(--green); font-size: 11px;">Доходность инвестора</div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; text-align: center; margin-top: 8px;">
       <div>
-        <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">Mint Authority</div>
-        <div style="font-size: 15px; color: var(--text); margin-top: 4px;">CarbonProject PDA <span style="color: var(--text-muted);">(не admin!)</span></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--text-dim);">$1/т</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Сейчас</div>
+        <div style="font-size: 13px; color: var(--text-dim); margin-top: 4px;">$500/год (10% доля)</div>
       </div>
       <div>
-        <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">Vault Authority</div>
-        <div style="font-size: 15px; color: var(--text); margin-top: 4px;">VaultAccount PDA <span style="color: var(--text-muted);">(только программа)</span></div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--yellow);">$15/т</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">2028 (×15)</div>
+        <div style="font-size: 13px; color: var(--yellow); margin-top: 4px;">$7 500/год</div>
       </div>
       <div>
-        <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">Арифметика</div>
-        <div style="font-size: 15px; color: var(--text); margin-top: 4px;"><code>checked_mul</code> / <code>checked_add</code> везде</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--green);">$50/т</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">2030 цель (×50)</div>
+        <div style="font-size: 13px; color: var(--green); margin-top: 4px;">$25 000/год</div>
       </div>
+    </div>
+    <div style="font-size: 12px; color: var(--text-muted); margin-top: 12px; text-align: center;">
+      На примере проекта 5 000 т CO₂/год. Комиссия платформы с инвестиции: <strong style="color: var(--text);">1.5%</strong>
     </div>
   </div>
 </div>
@@ -763,22 +770,35 @@
     </div>
 
     <div>
-      <div class="card card-accent" style="--accent: var(--purple);">
-        <div class="label" style="color: var(--purple); font-size: 11px;">Формула</div>
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 2.2; color: var(--text);">
-          PRECISION = 10<sup>12</sup><br>
-          <br>
-          <span style="color: var(--purple);">distribute:</span><br>
-          dps += amount × P / shares<br>
-          <br>
-          <span style="color: var(--green);">claim:</span><br>
-          payout = (dps - last) × my / P
+      <div class="card card-accent" style="--accent: var(--green);">
+        <div class="label" style="color: var(--green); font-size: 11px;">Пример: Ветропарк 12 000 т CO₂</div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            <span style="font-size: 13px; color: var(--text-dim);">Ваша доля</span>
+            <span style="font-size: 13px; font-weight: 600; color: var(--text);">100 долей (0.83%)</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            <span style="font-size: 13px; color: var(--text-dim);">Вложено</span>
+            <span style="font-size: 13px; font-weight: 600; color: var(--text);">500 000 ₸</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            <span style="font-size: 13px; color: var(--text-dim);">Дивиденды (при $1/т)</span>
+            <span style="font-size: 13px; font-weight: 600; color: var(--text-dim);">~50 000 ₸/год</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            <span style="font-size: 13px; color: var(--text-dim);">Дивиденды (при $50/т)</span>
+            <span style="font-size: 13px; font-weight: 700; color: var(--green);">~2 500 000 ₸/год</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+            <span style="font-size: 13px; color: var(--text-dim);">ROI при $50/т</span>
+            <span style="font-size: 15px; font-weight: 800; color: var(--green);">×50 за 5 лет</span>
+          </div>
         </div>
       </div>
-      <div class="card" style="margin-top: 16px;">
-        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.7;">
-          <span style="color: var(--green);">✓</span> Double-claim невозможен: <code>last_claimed</code> обновляется<br>
-          <span style="color: var(--green);">✓</span> u128 headroom: multiply before divide<br>
+      <div class="card" style="margin-top: 12px;">
+        <div style="font-size: 12px; color: var(--text-dim); line-height: 1.7;">
+          <span style="color: var(--green);">✓</span> Double-claim невозможен через <code>last_claimed</code><br>
+          <span style="color: var(--green);">✓</span> Gas платит инвестор → масштабируемо<br>
           <span style="color: var(--green);">✓</span> Vault PDA — единственный authority
         </div>
       </div>
@@ -834,13 +854,106 @@
       Double counting <span style="color: var(--green);">решён навсегда</span>.
     </p>
     <p style="font-size: 14px; color: var(--text-dim); margin-top: 8px;">
-      Любой может проверить через Solana Explorer. Immutable proof для аудиторов, регуляторов, ESG-отчётов.
+      Любой может проверить через Solana Explorer. Комиссия платформы за retire: <strong style="color: var(--yellow);">1%</strong>. Immutable proof для аудиторов и ESG-отчётов.
     </p>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════ -->
-<!-- SLIDE 7: ИТОГ -->
+<!-- SLIDE 7: БИЗНЕС-МОДЕЛЬ -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="slide" data-glow="#FBBF24" data-glow-pos="center">
+  <div class="anim">
+    <div class="label" style="color: var(--yellow);">Бизнес-модель</div>
+    <h2>Доходность платформы и инвестора</h2>
+  </div>
+
+  <div class="cols anim anim-d1">
+    <div>
+      <div class="card card-accent" style="--accent: var(--yellow);">
+        <div class="label" style="color: var(--yellow); font-size: 11px;">Доход платформы CarbonKZ</div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+            <span style="font-size: 14px; color: var(--text);">Комиссия с инвестиций</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">1.5%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+            <span style="font-size: 14px; color: var(--text);">Комиссия P2P маркетплейс</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">2%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+            <span style="font-size: 14px; color: var(--text);">Комиссия за retire</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">1%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+            <span style="font-size: 14px; color: var(--text);">Листинг проекта</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">50 000 ₸</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+            <span style="font-size: 14px; color: var(--text);">Premium верификация</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">100 000 ₸</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card card-accent" style="--accent: var(--green);">
+        <div class="label" style="color: var(--green); font-size: 11px;">Доход инвестора (10% доля, 5 000 т проект)</div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+            <div>
+              <div style="font-size: 14px; color: var(--text);">Сейчас ($1/т)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">135 участников, спот</div>
+            </div>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--text-dim);">$500/год</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+            <div>
+              <div style="font-size: 14px; color: var(--text);">2028 ($15/т)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">рост ×15</div>
+            </div>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--yellow);">$7 500/год</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+            <div>
+              <div style="font-size: 14px; color: var(--text);">2030 ($50/т)</div>
+              <div style="font-size: 11px; color: var(--text-muted);">цель правительства</div>
+            </div>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--green);">$25 000/год</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+            <div>
+              <div style="font-size: 14px; color: var(--text);">ROI к 2030</div>
+              <div style="font-size: 11px; color: var(--text-muted);">рост стоимости доли</div>
+            </div>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 800; color: var(--green);">×50</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card anim anim-d2" style="margin-top: 16px; text-align: center; padding: 16px;">
+    <div style="display: flex; justify-content: center; gap: 40px;">
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--yellow);">349M т</div>
+        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;">Общий рынок КЗ / год</div>
+      </div>
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--green);">$17.5B</div>
+        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;">TAM при $50/т к 2030</div>
+      </div>
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--orange);">$175M</div>
+        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;">Доход платформы 1%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SLIDE 8: ИТОГ -->
 <!-- ═══════════════════════════════════════════════ -->
 <div class="slide" data-glow="#34D399" data-glow-pos="center">
   <div class="anim" style="text-align: center;">
@@ -854,21 +967,25 @@
     <span class="pill" style="background: #A78BFA15; color: var(--purple); border: 1px solid #A78BFA30;">Верификация</span>
   </div>
 
-  <div class="stats anim anim-d2" style="grid-template-columns: repeat(4, 1fr); margin-top: 32px;">
+  <div class="stats anim anim-d2" style="grid-template-columns: repeat(5, 1fr); margin-top: 32px;">
     <div class="stat" style="text-align: center;">
-      <div class="stat-value" style="color: var(--green); font-size: 28px;">14</div>
+      <div class="stat-value" style="color: var(--green); font-size: 24px;">×50</div>
+      <div class="stat-label">ROI инвестора к 2030</div>
+    </div>
+    <div class="stat" style="text-align: center;">
+      <div class="stat-value" style="color: var(--yellow); font-size: 24px;">1-2%</div>
+      <div class="stat-label">комиссия платформы</div>
+    </div>
+    <div class="stat" style="text-align: center;">
+      <div class="stat-value" style="font-size: 24px;">14</div>
       <div class="stat-label">инструкций</div>
     </div>
     <div class="stat" style="text-align: center;">
-      <div class="stat-value" style="font-size: 28px;">5</div>
-      <div class="stat-label">PDA accounts</div>
-    </div>
-    <div class="stat" style="text-align: center;">
-      <div class="stat-value" style="color: var(--green); font-size: 28px;">16/16</div>
+      <div class="stat-value" style="color: var(--green); font-size: 24px;">16/16</div>
       <div class="stat-label">тестов</div>
     </div>
     <div class="stat" style="text-align: center;">
-      <div class="stat-value" style="color: var(--yellow); font-size: 28px;">0</div>
+      <div class="stat-value" style="color: var(--orange); font-size: 24px;">0</div>
       <div class="stat-label">конкурентов в ЦА</div>
     </div>
   </div>
@@ -903,7 +1020,7 @@
 <!-- PROGRESS + COUNTER -->
 <!-- ═══════════════════════════════════════════════ -->
 <div class="progress-bar" id="progress"></div>
-<div class="counter" id="counter">1 / 7</div>
+<div class="counter" id="counter">1 / 8</div>
 <button class="nav-btn prev" id="btnPrev" disabled onclick="goTo(current - 1)">&#8249;</button>
 <button class="nav-btn next" id="btnNext" onclick="goTo(current + 1)">&#8250;</button>
 
