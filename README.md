@@ -1,5 +1,5 @@
 # 🌿 CarbonKZ — Tokenized Carbon Credits Marketplace on Solana
-DEMO: https://sol-estate-ivory.vercel.app/
+DEMO: https://www.bekarys.me
 
 📹 **Видео:** https://www.youtube.com/watch?v=RwAD03HL6j8
 
