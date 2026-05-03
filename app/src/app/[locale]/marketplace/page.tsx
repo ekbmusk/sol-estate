@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { ArrowLeftRight, BookOpen, BarChart3, History } from "lucide-react";
 import { useTradeHistory } from "@/hooks/useTradeHistory";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { useProjects } from "@/hooks/useProjects";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { simulateTransaction } from "@/lib/utils";
 import { useCarbonProgram } from "@/hooks/useCarbonProgram";
-import { BN } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import {
   getAssociatedTokenAddress,
@@ -18,26 +18,13 @@ import {
 } from "@solana/spl-token";
 import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
 import { toast } from "sonner";
-
-const features = [
-  {
-    icon: ArrowLeftRight,
-    title: "P2P Торговля",
-    desc: "Выставляйте доли на продажу и покупайте напрямую у других инвесторов с escrow on-chain.",
-  },
-  {
-    icon: BookOpen,
-    title: "Книга заявок",
-    desc: "Просматривайте все активные листинги с ценами, объёмами и историей сделок.",
-  },
-  {
-    icon: BarChart3,
-    title: "Ценообразование",
-    desc: "Рыночное ценообразование через конкуренцию покупателей и продавцов.",
-  },
-];
+import { localeToBcp47 } from "@/lib/format";
 
 export default function MarketplacePage() {
+  const t = useTranslations("marketplace");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
+  const bcp = localeToBcp47(locale);
   const { publicKey, connected } = useWallet();
   const { connection } = useConnection();
   const program = useCarbonProgram();
@@ -45,6 +32,15 @@ export default function MarketplacePage() {
   const { projects } = useProjects();
   const [buyingPda, setBuyingPda] = useState<string | null>(null);
   const { trades, loading: tradesLoading } = useTradeHistory();
+
+  const features = [
+    { icon: ArrowLeftRight, titleKey: "p2pTitle", descKey: "p2pDesc" },
+    { icon: BookOpen, titleKey: "orderbookTitle", descKey: "orderbookDesc" },
+    { icon: BarChart3, titleKey: "pricingTitle", descKey: "pricingDesc" },
+  ] as const;
+
+  const tenge = tCommon("units.tenge");
+  const fmt = (n: number, opts?: Intl.NumberFormatOptions) => n.toLocaleString(bcp, opts);
 
   const getProjectName = (projectPda: string) => {
     const p = projects.find((pr) => pr.pda === projectPda);
@@ -57,13 +53,13 @@ export default function MarketplacePage() {
 
   const handleBuy = async (listing: (typeof listings)[0]) => {
     if (!connected || !publicKey || !program) {
-      toast.error("Подключите кошелек");
+      toast.error(t("toasts.connectWallet"));
       return;
     }
 
     const projectId = getProjectId(listing.project);
     if (!projectId) {
-      toast.error("Проект не найден");
+      toast.error(t("toasts.projectNotFound"));
       return;
     }
 
@@ -117,7 +113,6 @@ export default function MarketplacePage() {
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       };
 
-      // Simulate before sending
       const tx = await program.methods.buyShares().accounts(accounts).transaction();
       tx.feePayer = publicKey;
       tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
@@ -125,8 +120,8 @@ export default function MarketplacePage() {
 
       const sig = await program.methods.buyShares().accounts(accounts).rpc();
 
-      toast.success("Доли куплены!", {
-        description: `${listing.amount} долей приобретено`,
+      toast.success(t("toasts.buySuccess"), {
+        description: t("toasts.buySuccessDesc", { amount: listing.amount }),
         action: {
           label: "Explorer",
           onClick: () =>
@@ -135,8 +130,8 @@ export default function MarketplacePage() {
       });
       refetchListings();
     } catch (err) {
-      toast.error("Ошибка покупки", {
-        description: err instanceof Error ? err.message : "Неизвестная ошибка",
+      toast.error(t("toasts.buyError"), {
+        description: err instanceof Error ? err.message : t("toasts.unknownError"),
       });
     } finally {
       setBuyingPda(null);
@@ -147,33 +142,30 @@ export default function MarketplacePage() {
     <div className="mx-auto max-w-[1280px] px-6 py-8 sm:py-16 relative overflow-hidden">
       <div className="dot-grid dot-grid-fade absolute inset-0 opacity-50 pointer-events-none" />
 
-      {/* Header */}
       <div className="relative max-w-[640px] mx-auto text-center mb-8 sm:mb-14">
         <h1 className="font-heading text-[28px] sm:text-[32px] font-bold tracking-[-0.02em] mb-3">
-          Маркетплейс
+          {t("title")}
         </h1>
         <p className="text-[15px] text-[#8A9B94] leading-[1.6]">
-          Вторичный рынок токенизированных долей углеродных кредитов
+          {t("subtitle")}
         </p>
       </div>
 
-      {/* Features */}
       <div className="relative grid sm:grid-cols-3 gap-5 max-w-[900px] mx-auto mb-12">
         {features.map((f) => (
-          <div key={f.title} className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6">
+          <div key={f.titleKey} className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6">
             <div className="w-9 h-9 rounded-lg bg-[rgba(52,211,153,0.08)] flex items-center justify-center mb-4">
               <f.icon size={18} strokeWidth={1.5} className="text-[#34D399]" />
             </div>
-            <h3 className="font-heading text-[14px] font-semibold tracking-[-0.01em] mb-2">{f.title}</h3>
-            <p className="text-[13px] text-[#8A9B94] leading-[1.6]">{f.desc}</p>
+            <h3 className="font-heading text-[14px] font-semibold tracking-[-0.01em] mb-2">{t(`features.${f.titleKey}`)}</h3>
+            <p className="text-[13px] text-[#8A9B94] leading-[1.6]">{t(`features.${f.descKey}`)}</p>
           </div>
         ))}
       </div>
 
-      {/* Active listings */}
       <div className="relative max-w-[900px] mx-auto">
         <h2 className="font-heading text-xl font-bold tracking-[-0.01em] mb-6">
-          Активные листинги
+          {t("activeListings")}
         </h2>
 
         {listingsLoading ? (
@@ -185,22 +177,21 @@ export default function MarketplacePage() {
         ) : listings.length === 0 ? (
           <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-10 text-center">
             <ArrowLeftRight size={32} className="text-[#2A3832] mx-auto mb-4" />
-            <p className="text-[14px] text-[#5A6D65] mb-1">Нет активных листингов</p>
+            <p className="text-[14px] text-[#5A6D65] mb-1">{t("noListings")}</p>
             <p className="text-[12px] text-[#3D5048]">
               {publicKey
-                ? "Листинги появятся когда инвесторы выставят свои доли на продажу"
-                : "Подключите кошелек для просмотра листингов"}
+                ? t("noListingsHintConnected")
+                : t("noListingsHintDisconnected")}
             </p>
           </div>
         ) : (
           <div className="space-y-3">
-            {/* Table header — desktop */}
             <div className="hidden sm:grid grid-cols-5 gap-4 px-5 py-2">
-              <span className="label-upper">Проект</span>
-              <span className="label-upper">Продавец</span>
-              <span className="label-upper text-right">Кол-во</span>
-              <span className="label-upper text-right">Цена/доля</span>
-              <span className="label-upper text-right">Итого</span>
+              <span className="label-upper">{t("table.project")}</span>
+              <span className="label-upper">{t("table.seller")}</span>
+              <span className="label-upper text-right">{t("table.amount")}</span>
+              <span className="label-upper text-right">{t("table.pricePerShare")}</span>
+              <span className="label-upper text-right">{t("table.total")}</span>
             </div>
 
             {listings.map((listing) => {
@@ -212,7 +203,6 @@ export default function MarketplacePage() {
                   key={listing.pda}
                   className="rounded-xl border border-[#1E2B26] bg-[#0C1210] px-5 py-4"
                 >
-                  {/* Desktop row */}
                   <div className="hidden sm:grid grid-cols-5 gap-4 items-center">
                     <div>
                       <p className="text-[13px] font-medium truncate">{getProjectName(listing.project)}</p>
@@ -225,18 +215,18 @@ export default function MarketplacePage() {
                         className="font-mono-data text-[12px] text-[#5A6D65] hover:text-[#34D399] transition-colors"
                       >
                         {listing.seller.slice(0, 4)}...{listing.seller.slice(-4)}
-                        {isSelf && <span className="text-[#34D399] ml-1">(вы)</span>}
+                        {isSelf && <span className="text-[#34D399] ml-1">{t("you")}</span>}
                       </a>
                     </div>
                     <div className="text-right">
-                      <p className="font-mono-data text-[13px]">{listing.amount.toLocaleString("ru-RU")}</p>
+                      <p className="font-mono-data text-[13px]">{fmt(listing.amount)}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-mono-data text-[13px]">{listing.pricePerShare.toLocaleString("ru-RU")} &#x20B8;</p>
+                      <p className="font-mono-data text-[13px]">{fmt(listing.pricePerShare)} {tenge}</p>
                     </div>
                     <div className="text-right flex items-center justify-end gap-3">
                       <p className="font-mono-data text-[13px] font-medium text-[#34D399]">
-                        {total.toLocaleString("ru-RU")} &#x20B8;
+                        {fmt(total)} {tenge}
                       </p>
                       {!isSelf && connected && (
                         <Button
@@ -246,13 +236,12 @@ export default function MarketplacePage() {
                           disabled={buyingPda === listing.pda}
                           onClick={() => handleBuy(listing)}
                         >
-                          {buyingPda === listing.pda ? "..." : "Купить"}
+                          {buyingPda === listing.pda ? "..." : t("buyButton")}
                         </Button>
                       )}
                     </div>
                   </div>
 
-                  {/* Mobile card */}
                   <div className="sm:hidden space-y-3">
                     <div className="flex items-center justify-between">
                       <p className="text-[14px] font-medium truncate">{getProjectName(listing.project)}</p>
@@ -263,21 +252,21 @@ export default function MarketplacePage() {
                         className="font-mono-data text-[11px] text-[#5A6D65] hover:text-[#34D399] transition-colors"
                       >
                         {listing.seller.slice(0, 4)}...{listing.seller.slice(-4)}
-                        {isSelf && <span className="text-[#34D399] ml-1">(вы)</span>}
+                        {isSelf && <span className="text-[#34D399] ml-1">{t("you")}</span>}
                       </a>
                     </div>
                     <div className="grid grid-cols-3 gap-3">
                       <div>
-                        <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Кол-во</p>
-                        <p className="font-mono-data text-[13px] mt-0.5">{listing.amount.toLocaleString("ru-RU")}</p>
+                        <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">{t("table.amount")}</p>
+                        <p className="font-mono-data text-[13px] mt-0.5">{fmt(listing.amount)}</p>
                       </div>
                       <div>
-                        <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Цена</p>
-                        <p className="font-mono-data text-[13px] mt-0.5">{listing.pricePerShare.toLocaleString("ru-RU")} &#x20B8;</p>
+                        <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">{t("table.price")}</p>
+                        <p className="font-mono-data text-[13px] mt-0.5">{fmt(listing.pricePerShare)} {tenge}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">Итого</p>
-                        <p className="font-mono-data text-[13px] font-medium text-[#34D399] mt-0.5">{total.toLocaleString("ru-RU")} &#x20B8;</p>
+                        <p className="text-[10px] text-[#5A6D65] uppercase tracking-wider">{t("table.total")}</p>
+                        <p className="font-mono-data text-[13px] font-medium text-[#34D399] mt-0.5">{fmt(total)} {tenge}</p>
                       </div>
                     </div>
                     {!isSelf && connected && (
@@ -288,7 +277,7 @@ export default function MarketplacePage() {
                         disabled={buyingPda === listing.pda}
                         onClick={() => handleBuy(listing)}
                       >
-                        {buyingPda === listing.pda ? "..." : "Купить"}
+                        {buyingPda === listing.pda ? "..." : t("buyButton")}
                       </Button>
                     )}
                   </div>
@@ -299,13 +288,12 @@ export default function MarketplacePage() {
         )}
       </div>
 
-      {/* Trade history */}
       {(trades.length > 0 || tradesLoading) && (
         <div className="relative max-w-[900px] mx-auto mt-12">
           <div className="flex items-center gap-2 mb-6">
             <History size={18} className="text-[#5A6D65]" />
             <h2 className="font-heading text-xl font-bold tracking-[-0.01em]">
-              История сделок
+              {t("tradesTitle")}
             </h2>
           </div>
 
@@ -333,33 +321,32 @@ export default function MarketplacePage() {
             {trades.map((trade) => {
               const isBuyer = publicKey?.toString() === trade.buyer;
               const isSeller = publicKey?.toString() === trade.seller;
-              const costDisplay = (trade.totalCost / 1_000_000).toLocaleString("ru-RU");
+              const costDisplay = fmt(trade.totalCost / 1_000_000);
               const time = trade.timestamp
-                ? new Date(trade.timestamp * 1000).toLocaleDateString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
+                ? new Date(trade.timestamp * 1000).toLocaleDateString(bcp, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
                 : "";
 
               return (
                 <div key={trade.signature} className="rounded-xl border border-[#1E2B26] bg-[#0C1210] px-5 py-4">
-                  {/* Desktop */}
                   <div className="hidden sm:flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <span className="text-[12px] text-[#5A6D65]">{time}</span>
                       <span className="font-mono-data text-[12px] text-[#8A9B94]">
                         {trade.buyer.slice(0, 4)}...{trade.buyer.slice(-4)}
-                        {isBuyer && <span className="text-[#34D399] ml-1">(вы)</span>}
+                        {isBuyer && <span className="text-[#34D399] ml-1">{t("you")}</span>}
                       </span>
                       <span className="text-[11px] text-[#5A6D65]">→</span>
                       <span className="font-mono-data text-[12px] text-[#8A9B94]">
                         {trade.seller.slice(0, 4)}...{trade.seller.slice(-4)}
-                        {isSeller && <span className="text-[#34D399] ml-1">(вы)</span>}
+                        {isSeller && <span className="text-[#34D399] ml-1">{t("you")}</span>}
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
                       {trade.projectId && (
                         <span className="text-[12px] text-[#8A9B94]">{trade.projectId}</span>
                       )}
-                      <span className="font-mono-data text-[13px]">{trade.amount} долей</span>
-                      <span className="font-mono-data text-[13px] font-medium text-[#34D399]">{costDisplay} ₸</span>
+                      <span className="font-mono-data text-[13px]">{trade.amount} {t("shares")}</span>
+                      <span className="font-mono-data text-[13px] font-medium text-[#34D399]">{costDisplay} {tenge}</span>
                       <a
                         href={`https://explorer.solana.com/tx/${trade.signature}?cluster=devnet`}
                         target="_blank"
@@ -371,21 +358,20 @@ export default function MarketplacePage() {
                     </div>
                   </div>
 
-                  {/* Mobile */}
                   <div className="sm:hidden space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[12px] text-[#5A6D65]">{time}</span>
-                      <span className="font-mono-data text-[13px] font-medium text-[#34D399]">{costDisplay} ₸</span>
+                      <span className="font-mono-data text-[13px] font-medium text-[#34D399]">{costDisplay} {tenge}</span>
                     </div>
                     <div className="flex items-center gap-2 text-[11px]">
                       <span className="font-mono-data text-[#8A9B94]">
                         {trade.buyer.slice(0, 4)}...{trade.buyer.slice(-4)}
-                        {isBuyer && <span className="text-[#34D399] ml-1">(вы)</span>}
+                        {isBuyer && <span className="text-[#34D399] ml-1">{t("you")}</span>}
                       </span>
                       <span className="text-[#5A6D65]">→</span>
                       <span className="font-mono-data text-[#8A9B94]">
                         {trade.seller.slice(0, 4)}...{trade.seller.slice(-4)}
-                        {isSeller && <span className="text-[#34D399] ml-1">(вы)</span>}
+                        {isSeller && <span className="text-[#34D399] ml-1">{t("you")}</span>}
                       </span>
                       <a
                         href={`https://explorer.solana.com/tx/${trade.signature}?cluster=devnet`}
@@ -396,7 +382,7 @@ export default function MarketplacePage() {
                         ↗
                       </a>
                     </div>
-                    <span className="font-mono-data text-[12px] text-[#8A9B94]">{trade.amount} долей</span>
+                    <span className="font-mono-data text-[12px] text-[#8A9B94]">{trade.amount} {t("shares")}</span>
                   </div>
                 </div>
               );

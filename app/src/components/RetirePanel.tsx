@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { useCarbonProgram } from "@/hooks/useCarbonProgram";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
@@ -14,6 +15,7 @@ import {
 import { PROGRAM_ID } from "@/lib/constants";
 import { toast } from "sonner";
 import type { OnChainProject } from "@/hooks/useProjects";
+import { localeToBcp47 } from "@/lib/format";
 
 interface RetirePanelProps {
   project: OnChainProject;
@@ -22,6 +24,10 @@ interface RetirePanelProps {
 }
 
 export default function RetirePanel({ project, onSuccess, initialAmount }: RetirePanelProps) {
+  const t = useTranslations("retirePanel");
+  const locale = useLocale();
+  const bcp = localeToBcp47(locale);
+  const fmt = (n: number) => n.toLocaleString(bcp);
   const [amount, setAmount] = useState(initialAmount ?? 1);
   const [purpose, setPurpose] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,15 +40,19 @@ export default function RetirePanel({ project, onSuccess, initialAmount }: Retir
 
   const handleRetire = async () => {
     if (!connected || !publicKey) {
-      toast.error("Подключите кошелек");
+      toast.error(t("toasts.connectFirst"));
       return;
     }
     if (!program) {
-      toast.error("Программа не инициализирована");
+      toast.error(t("toasts.notInitialized"));
+      return;
+    }
+    if (amount <= 0) {
+      toast.error(t("toasts.invalidAmount"));
       return;
     }
     if (!purpose.trim()) {
-      toast.error("Укажите цель гашения");
+      toast.error(t("toasts.purposeRequired"));
       return;
     }
 
@@ -58,12 +68,8 @@ export default function RetirePanel({ project, onSuccess, initialAmount }: Retir
         PROGRAM_ID
       );
 
-      const buyerCarbonAta = await getAssociatedTokenAddress(
-        carbonMintPda,
-        publicKey
-      );
+      const buyerCarbonAta = await getAssociatedTokenAddress(carbonMintPda, publicKey);
 
-      // Generate unique retire_id
       const retireId = new Uint8Array(16);
       crypto.getRandomValues(retireId);
 
@@ -88,7 +94,6 @@ export default function RetirePanel({ project, onSuccess, initialAmount }: Retir
       };
       const args = [Array.from(retireId), new BN(amount), purpose.trim()] as const;
 
-      // Simulate before sending
       const tx = await program.methods.retireCredits(...args).accounts(accounts).transaction();
       tx.feePayer = publicKey;
       tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
@@ -96,15 +101,12 @@ export default function RetirePanel({ project, onSuccess, initialAmount }: Retir
 
       const sig = await program.methods.retireCredits(...args).accounts(accounts).rpc();
 
-      toast.success(`${amount} углеродных кредитов погашено!`, {
-        description: "Токены сожжены навсегда. RetireRecord создан on-chain.",
+      toast.success(t("toasts.success"), {
+        description: t("toasts.successDesc", { amount }),
         action: {
           label: "Explorer",
           onClick: () =>
-            window.open(
-              `https://explorer.solana.com/tx/${sig}?cluster=devnet`,
-              "_blank"
-            ),
+            window.open(`https://explorer.solana.com/tx/${sig}?cluster=devnet`, "_blank"),
         },
       });
 
@@ -112,8 +114,8 @@ export default function RetirePanel({ project, onSuccess, initialAmount }: Retir
       setPurpose("");
       onSuccess?.();
     } catch (err) {
-      toast.error("Ошибка гашения", {
-        description: err instanceof Error ? err.message : "Неизвестная ошибка",
+      toast.error(t("toasts.error"), {
+        description: err instanceof Error ? err.message : t("toasts.unknownError"),
       });
     } finally {
       setLoading(false);
@@ -130,7 +132,7 @@ export default function RetirePanel({ project, onSuccess, initialAmount }: Retir
           </svg>
         </div>
         <div>
-          <h3 className="text-sm font-semibold">Гашение кредитов</h3>
+          <h3 className="text-sm font-semibold">{t("title")}</h3>
           <p className="text-xs text-muted-foreground">Burn + On-chain Proof</p>
         </div>
       </div>
@@ -138,7 +140,7 @@ export default function RetirePanel({ project, onSuccess, initialAmount }: Retir
       <div className="space-y-3">
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1 block">
-            Количество кредитов (тонн CO₂)
+            {t("amountLabel")}
           </label>
           <input
             type="number"
@@ -149,37 +151,27 @@ export default function RetirePanel({ project, onSuccess, initialAmount }: Retir
               setAmount(Math.max(1, Math.min(maxRetirable, Number(e.target.value))))
             }
             disabled={loading}
+            placeholder={t("amountPlaceholder")}
             className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
           />
           <p className="text-[10px] text-muted-foreground mt-1">
-            Доступно: {maxRetirable.toLocaleString("ru-RU")} тонн
+            {t("available", { count: fmt(maxRetirable) })}
           </p>
         </div>
 
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1 block">
-            Цель гашения
+            {t("purposeLabel")}
           </label>
           <input
             type="text"
             maxLength={128}
             value={purpose}
             onChange={(e) => setPurpose(e.target.value)}
-            placeholder="напр. КазМунайГаз ESG offset Q1 2026"
+            placeholder={t("purposePlaceholder")}
             disabled={loading}
             className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
           />
-        </div>
-      </div>
-
-      <div className="rounded-lg bg-orange-500/5 border border-orange-500/10 p-3 space-y-1">
-        <div className="flex justify-between text-xs">
-          <span className="text-muted-foreground">Токены будут сожжены</span>
-          <span className="font-medium text-orange-400">{amount} CarbonToken</span>
-        </div>
-        <div className="flex justify-between text-xs">
-          <span className="text-muted-foreground">RetireRecord PDA</span>
-          <span className="font-medium text-emerald-400">создаётся on-chain</span>
         </div>
       </div>
 
@@ -188,7 +180,7 @@ export default function RetirePanel({ project, onSuccess, initialAmount }: Retir
         className="w-full bg-orange-500 hover:bg-orange-600 text-white cursor-pointer"
         disabled={loading || !connected || maxRetirable <= 0}
       >
-        {loading ? "Гашение..." : `Погасить ${amount} тонн CO₂`}
+        {loading ? t("processing") : `${t("submit")} — ${amount} t CO₂`}
       </Button>
     </div>
   );

@@ -1,4 +1,4 @@
-# 🌿 CarbonKZ — Tokenized Carbon Credits Marketplace on Solana
+# 🌿 ZhasylKZ — Tokenized Carbon Credits Marketplace on Solana
 DEMO: https://www.bekarys.me
 
 📹 **Видео:** https://www.youtube.com/watch?v=RwAD03HL6j8
@@ -25,7 +25,7 @@ DEMO: https://www.bekarys.me
 
 ## 💡 Решение
 
-CarbonKZ токенизирует углеродные кредиты реальных зелёных проектов Казахстана на Solana и открывает рынок для всех: инвесторов, банков, ESG-компаний.
+ZhasylKZ токенизирует углеродные кредиты реальных зелёных проектов Казахстана на Solana и открывает рынок для всех: инвесторов, банков, ESG-компаний.
 
 ```
  Зелёный проект          Инвестор              Загрязнитель
@@ -191,7 +191,7 @@ Decentrathon 5.0 — Кейс 1 (RWA: Real World Assets)
 ---
 
 <p align="center">
-  <strong>🌿 CarbonKZ</strong> — Углеродный рынок Казахстана. Прозрачный. Токенизированный.
+  <strong>🌿 ZhasylKZ</strong> — Углеродный рынок Казахстана. Прозрачный. Токенизированный.
   <br/>
   <sub>Built on Solana · Powered by KZTE · Made in Kazakhstan 🇰🇿</sub>
 </p>
