@@ -1,7 +1,8 @@
 "use client";
 
 import { use, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations, useLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { ChevronLeft, Droplets } from "lucide-react";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -14,26 +15,34 @@ import { mockProjects, type Project } from "@/lib/mockData";
 import { useProject } from "@/hooks/useProject";
 import { useInvestor } from "@/hooks/useInvestor";
 import { KZTE_DECIMALS } from "@/lib/constants";
+import { localeToBcp47 } from "@/lib/format";
 
-const typeConfig: Record<string, { label: string; bg: string; text: string }> = {
-  solar: { label: "Солнечная", bg: "rgba(251,191,36,0.12)", text: "#FBBF24" },
-  wind: { label: "Ветровая", bg: "rgba(96,165,250,0.12)", text: "#60A5FA" },
-  forest: { label: "Лес", bg: "rgba(52,211,153,0.12)", text: "#34D399" },
-  industrial: { label: "Промышл.", bg: "rgba(167,139,250,0.12)", text: "#A78BFA" },
-  other: { label: "Другое", bg: "rgba(148,163,184,0.12)", text: "#94A3B8" },
+const TYPE_COLORS: Record<string, { bg: string; text: string }> = {
+  solar: { bg: "rgba(251,191,36,0.12)", text: "#FBBF24" },
+  wind: { bg: "rgba(96,165,250,0.12)", text: "#60A5FA" },
+  forest: { bg: "rgba(52,211,153,0.12)", text: "#34D399" },
+  industrial: { bg: "rgba(167,139,250,0.12)", text: "#A78BFA" },
+  other: { bg: "rgba(148,163,184,0.12)", text: "#94A3B8" },
 };
 
 const PRECISION = BigInt("1000000000000");
 
 export default function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  const t = useTranslations("project");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
+  const bcp = localeToBcp47(locale);
   const { id } = use(params);
   const { publicKey } = useWallet();
   const { project: onChainProject, loading: projectLoading } = useProject(id);
   const { investor } = useInvestor(id);
   const [faucetLoading, setFaucetLoading] = useState(false);
 
+  const tenge = tCommon("units.tenge");
+  const fmt = (n: number) => n.toLocaleString(bcp);
+
   const handleFaucet = async () => {
-    if (!publicKey) { toast.error("Подключите кошелёк"); return; }
+    if (!publicKey) { toast.error(t("toasts.connectWallet")); return; }
     setFaucetLoading(true);
     try {
       const res = await fetch("/api/faucet", {
@@ -42,19 +51,18 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
         body: JSON.stringify({ wallet: publicKey.toString() }),
       });
       const data = await res.json();
-      if (!res.ok) { toast.error("Faucet", { description: data.error }); return; }
-      toast.success("100,000 KZTE получены!", {
+      if (!res.ok) { toast.error(t("toasts.faucetTitle"), { description: data.error }); return; }
+      toast.success(t("toasts.faucetReceived"), {
         action: { label: "Explorer", onClick: () => window.open(data.explorer, "_blank") },
       });
     } catch (err) {
-      toast.error("Ошибка", { description: err instanceof Error ? err.message : "Неизвестная ошибка" });
+      toast.error(t("toasts.error"), { description: err instanceof Error ? err.message : t("toasts.unknownError") });
     } finally {
       setFaucetLoading(false);
     }
   };
   const mock = mockProjects.find((p) => p.id === id);
 
-  // Merge on-chain data with mock for location/description
   const project: Project | null = onChainProject
     ? {
         id: onChainProject.id,
@@ -91,9 +99,9 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
   const progress = Math.round((project.sharesSold / project.totalShares) * 100);
   const retireProgress = project.totalCredits > 0
     ? Math.round((project.creditsRetired / project.totalCredits) * 100) : 0;
-  const type = typeConfig[project.projectType] ?? typeConfig.other;
+  const typeColor = TYPE_COLORS[project.projectType] ?? TYPE_COLORS.other;
+  const typeLabel = t(`types.${project.projectType}` as "types.solar");
 
-  // Calculate claimable dividends from on-chain data
   let claimableAmount = 0;
   let totalDividendsPerShareDisplay = 0;
   if (onChainProject && investor) {
@@ -101,20 +109,26 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
     const lastClaimed = BigInt(investor.lastClaimed);
     const sharesOwned = BigInt(investor.sharesOwned);
     const unclaimedPerShare = totalDPS - lastClaimed;
-    // Divide before multiply to match contract (prevent overflow)
     const claimableRaw = (unclaimedPerShare / PRECISION) * sharesOwned;
     claimableAmount = Number(claimableRaw) / 10 ** KZTE_DECIMALS;
     totalDividendsPerShareDisplay = Number(totalDPS / PRECISION) / 10 ** KZTE_DECIMALS;
   }
 
   const stats = [
-    { label: "Цена / доля", value: `${project.pricePerShare.toLocaleString("ru-RU")} \u20B8`, accent: false },
-    { label: "CO\u2082 / год", value: `${project.totalCredits.toLocaleString("ru-RU")} т`, accent: true },
-    { label: "Погашено", value: `${project.creditsRetired.toLocaleString("ru-RU")} т`, accent: false },
-    { label: "Всего долей", value: project.totalShares.toLocaleString("ru-RU"), accent: false },
-    { label: "Продано", value: project.sharesSold.toLocaleString("ru-RU"), accent: false },
-    { label: "Статус", value: project.verified ? "Верифицирован" : "На проверке", accent: project.verified },
+    { label: t("stats.pricePerShare"), value: `${fmt(project.pricePerShare)} ${tenge}`, accent: false },
+    { label: t("stats.co2PerYear"), value: `${fmt(project.totalCredits)} ${t("tonneShort")}`, accent: true },
+    { label: t("stats.retired"), value: `${fmt(project.creditsRetired)} ${t("tonneShort")}`, accent: false },
+    { label: t("stats.totalShares"), value: fmt(project.totalShares), accent: false },
+    { label: t("stats.sold"), value: fmt(project.sharesSold), accent: false },
+    { label: t("stats.status"), value: project.verified ? t("verified") : t("notVerified"), accent: project.verified },
   ];
+
+  const equipmentItems = [
+    { labelKey: "power", valueKey: "powerValue" },
+    { labelKey: "generation", valueKey: "generationValue" },
+    { labelKey: "factor", valueKey: "factorValue" },
+    { labelKey: "insolation", valueKey: "insolationValue" },
+  ] as const;
 
   return (
     <div className="relative">
@@ -125,33 +139,32 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
         className="inline-flex items-center gap-1 text-[13px] text-[#5A6D65] hover:text-[#8A9B94] transition-colors mb-8"
       >
         <ChevronLeft size={14} strokeWidth={1.5} />
-        Проекты
+        {t("backToProjects")}
       </Link>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        {/* Main */}
         <div className="lg:col-span-2 space-y-8">
           <div className="animate-in">
             <div className="flex flex-wrap items-center gap-2 mb-3">
               <span
                 className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-medium uppercase tracking-[0.05em]"
-                style={{ background: type.bg, color: type.text }}
+                style={{ background: typeColor.bg, color: typeColor.text }}
               >
-                {type.label}
+                {typeLabel}
               </span>
               {project.verified && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[rgba(52,211,153,0.08)] text-[11px] font-medium text-[#34D399] uppercase tracking-[0.05em]">
-                  Верифицирован
+                  {t("verified")}
                 </span>
               )}
               {onChainProject && (
                 <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[rgba(52,211,153,0.05)] text-[10px] font-medium text-[#5A6D65] uppercase tracking-[0.05em]">
-                  On-chain
+                  {t("onChain")}
                 </span>
               )}
               {id === "ses-yasavi" && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[rgba(251,191,36,0.1)] border border-[rgba(251,191,36,0.2)] text-[10px] font-semibold text-[#FBBF24] uppercase tracking-[0.05em]">
-                  Наш реальный проект
+                  {t("ourReal")}
                 </span>
               )}
             </div>
@@ -164,7 +177,6 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
             </p>
           </div>
 
-          {/* Stats grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 animate-in delay-1">
             {stats.map((stat) => (
               <div key={stat.label} className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-4">
@@ -176,15 +188,14 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
             ))}
           </div>
 
-          {/* Progress bars */}
           <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6 space-y-5 animate-in delay-2">
-            <h3 className="font-heading text-[14px] font-semibold tracking-[-0.01em]">Углеродный след</h3>
+            <h3 className="font-heading text-[14px] font-semibold tracking-[-0.01em]">{t("carbonFootprint")}</h3>
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[13px] text-[#8A9B94]">Прогресс инвестиций</span>
+                <span className="text-[13px] text-[#8A9B94]">{t("investmentProgress")}</span>
                 <div className="flex items-center gap-2">
                   <span className="font-mono-data text-[13px] text-[#F0F5F3]">
-                    {project.sharesSold.toLocaleString("ru-RU")} / {project.totalShares.toLocaleString("ru-RU")}
+                    {fmt(project.sharesSold)} / {fmt(project.totalShares)}
                   </span>
                   <span className="font-mono-data text-[12px] text-[#34D399]">{progress}%</span>
                 </div>
@@ -195,10 +206,10 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
             </div>
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[13px] text-[#8A9B94]">Кредиты погашены</span>
+                <span className="text-[13px] text-[#8A9B94]">{t("creditsRetired")}</span>
                 <div className="flex items-center gap-2">
                   <span className="font-mono-data text-[13px] text-[#F0F5F3]">
-                    {project.creditsRetired.toLocaleString("ru-RU")} / {project.totalCredits.toLocaleString("ru-RU")}
+                    {fmt(project.creditsRetired)} / {fmt(project.totalCredits)}
                   </span>
                   <span className="font-mono-data text-[12px] text-[#FBBF24]">{retireProgress}%</span>
                 </div>
@@ -209,7 +220,6 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
             </div>
           </div>
 
-          {/* Project details for ses-yasavi */}
           {id === "ses-yasavi" && (
             <div className="rounded-xl border border-[#FBBF24]/20 overflow-hidden animate-in delay-2 relative">
               <div className="absolute inset-0" style={{
@@ -219,37 +229,29 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
               <div className="relative p-5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#FBBF24] animate-pulse" />
-                  <p className="text-[13px] font-semibold text-[#FBBF24] uppercase tracking-wider">Реальное оборудование</p>
+                  <p className="text-[13px] font-semibold text-[#FBBF24] uppercase tracking-wider">{t("realEquipment")}</p>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {[
-                    { label: "Мощность", value: "25 кВт" },
-                    { label: "Выработка", value: "42.65 МВт·ч/год" },
-                    { label: "Коэффициент", value: "0.636 кг/кВт·ч" },
-                    { label: "Инсоляция", value: "1,700+ кВт·ч/м²" },
-                  ].map((s) => (
-                    <div key={s.label} className="rounded-lg bg-[#060A08]/60 border border-[#FBBF24]/10 px-3 py-2.5">
-                      <p className="text-[10px] text-[#FBBF24]/60 uppercase tracking-wider">{s.label}</p>
-                      <p className="font-mono-data text-[15px] font-medium text-[#F0F5F3] mt-0.5">{s.value}</p>
+                  {equipmentItems.map((s) => (
+                    <div key={s.labelKey} className="rounded-lg bg-[#060A08]/60 border border-[#FBBF24]/10 px-3 py-2.5">
+                      <p className="text-[10px] text-[#FBBF24]/60 uppercase tracking-wider">{t(`equipment.${s.labelKey}`)}</p>
+                      <p className="font-mono-data text-[15px] font-medium text-[#F0F5F3] mt-0.5">{t(`equipment.${s.valueKey}`)}</p>
                     </div>
                   ))}
                 </div>
                 <p className="text-[12px] text-[#8A9B94] leading-[1.6]">
-                  Данные генерации поступают в реальном времени с инвертора через SOLARMAN API.
-                  Это не симуляция — live-мониторинг настоящего оборудования на кампусе университета.
+                  {t("realEquipmentDesc")}
                 </p>
               </div>
             </div>
           )}
 
-          {/* SOLARMAN live data — only for solar projects */}
           {project.projectType === "solar" && (
             <div className="animate-in delay-3">
               <SolarmanWidget />
             </div>
           )}
 
-          {/* Credit dynamics chart */}
           <div className="animate-in delay-3">
             <ProjectChart
               totalCredits={project.totalCredits}
@@ -258,10 +260,9 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
             />
           </div>
 
-          {/* Document hash */}
           <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] px-5 py-3.5 animate-in delay-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <span className="label-upper">Хеш документа</span>
+              <span className="label-upper">{t("documentHash")}</span>
               <code className="font-mono-data text-[12px] text-[#5A6D65] truncate max-w-full sm:max-w-[240px]">
                 {project.documentHash}
               </code>
@@ -269,21 +270,20 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
           </div>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-5">
           <div className="rounded-xl border border-[#2A3832] bg-[#131A17] p-6 space-y-5 shadow-[0_1px_3px_rgba(0,0,0,0.4),0_8px_24px_rgba(0,0,0,0.2)]">
-            <p className="label-upper">Инвестировать в проект</p>
+            <p className="label-upper">{t("investSidebar")}</p>
             <div className="text-center py-3">
               <p className="font-mono-data text-[32px] font-medium text-[#F0F5F3]">
-                {project.pricePerShare.toLocaleString("ru-RU")}
-                <span className="text-[16px] text-[#5A6D65] ml-1">{"\u20B8"}</span>
+                {fmt(project.pricePerShare)}
+                <span className="text-[16px] text-[#5A6D65] ml-1">{tenge}</span>
               </p>
-              <p className="text-[12px] text-[#5A6D65] mt-1">за долю</p>
+              <p className="text-[12px] text-[#5A6D65] mt-1">{t("perShare")}</p>
             </div>
             <div className="rounded-lg bg-[#060A08] border border-[#1E2B26] px-4 py-3 text-center">
-              <p className="label-upper mb-0.5">Доступно</p>
+              <p className="label-upper mb-0.5">{t("available")}</p>
               <p className="font-mono-data text-[18px] font-medium text-[#34D399]">
-                {(project.totalShares - project.sharesSold).toLocaleString("ru-RU")}
+                {fmt(project.totalShares - project.sharesSold)}
               </p>
             </div>
             <InvestModal property={project} />
@@ -293,7 +293,7 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
               className="flex items-center justify-center gap-2 w-full rounded-md border border-[#34D399]/30 bg-[#34D399]/5 px-4 py-2.5 text-[13px] font-medium text-[#34D399] hover:bg-[#34D399]/10 disabled:opacity-50 transition-colors cursor-pointer disabled:cursor-default"
             >
               <Droplets size={14} />
-              {faucetLoading ? "..." : "Получить SOL + KZTE"}
+              {faucetLoading ? "..." : t("faucetCta")}
             </button>
           </div>
 

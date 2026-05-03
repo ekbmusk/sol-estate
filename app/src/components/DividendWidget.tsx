@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCarbonProgram } from "@/hooks/useCarbonProgram";
@@ -13,6 +14,7 @@ import {
 } from "@solana/spl-token";
 import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
 import { toast } from "sonner";
+import { localeToBcp47 } from "@/lib/format";
 
 interface DividendWidgetProps {
   projectId: string;
@@ -27,6 +29,10 @@ export default function DividendWidget({
   claimableAmount,
   lastClaimed,
 }: DividendWidgetProps) {
+  const t = useTranslations("dividend");
+  const locale = useLocale();
+  const bcp = localeToBcp47(locale);
+  const fmt = (n: number, opts?: Intl.NumberFormatOptions) => n.toLocaleString(bcp, opts);
   const [loading, setLoading] = useState(false);
 
   const program = useCarbonProgram();
@@ -35,62 +41,43 @@ export default function DividendWidget({
 
   const handleClaim = async () => {
     if (!connected || !publicKey) {
-      toast.error("Подключите кошелек для получения дивидендов");
+      toast.error(t("toasts.connectFirst"));
       return;
     }
-
     if (!program) {
-      toast.error("Программа не инициализирована. Проверьте подключение кошелька.");
+      toast.error(t("toasts.error"));
       return;
     }
 
     setLoading(true);
 
     try {
-      // Derive PDAs
       const [projectPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("project"), Buffer.from(projectId)],
         PROGRAM_ID
       );
-
       const [vaultPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("vault"), Buffer.from(projectId)],
         PROGRAM_ID
       );
-
       const [investorRecordPda] = PublicKey.findProgramAddressSync(
-        [
-          Buffer.from("investor"),
-          projectPda.toBuffer(),
-          publicKey.toBuffer(),
-        ],
+        [Buffer.from("investor"), projectPda.toBuffer(), publicKey.toBuffer()],
         PROGRAM_ID
       );
 
-      // Get Associated Token Accounts
-      const vaultTokenAccount = await getAssociatedTokenAddress(
-        KZTE_MINT,
-        vaultPda,
-        true // allowOwnerOffCurve for PDA
-      );
+      const vaultTokenAccount = await getAssociatedTokenAddress(KZTE_MINT, vaultPda, true);
+      const investorKzteAccount = await getAssociatedTokenAddress(KZTE_MINT, publicKey);
 
-      const investorKzteAccount = await getAssociatedTokenAddress(
-        KZTE_MINT,
-        publicKey
-      );
-
-      // Call the claimDividends instruction
       const accounts = {
         investor: publicKey,
         project: projectPda,
         vault: vaultPda,
         investorRecord: investorRecordPda,
-        vaultTokenAccount: vaultTokenAccount,
-        investorKzteAccount: investorKzteAccount,
+        vaultTokenAccount,
+        investorKzteAccount,
         tokenProgram: TOKEN_PROGRAM_ID,
       };
 
-      // Simulate before sending
       const tx = await program.methods.claimDividends().accounts(accounts).transaction();
       tx.feePayer = publicKey;
       tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
@@ -98,19 +85,16 @@ export default function DividendWidget({
 
       const sig = await program.methods.claimDividends().accounts(accounts).rpc();
 
-      const explorerUrl = `https://explorer.solana.com/tx/${sig}?cluster=devnet`;
-
-      toast.success("Дивиденды получены!", {
-        description: `${claimableAmount.toLocaleString("ru-RU")} ₸ отправлено на ваш кошелек`,
+      toast.success(t("toasts.success"), {
+        description: t("toasts.successDesc", { amount: fmt(claimableAmount, { maximumFractionDigits: 2 }) }),
         action: {
           label: "Explorer",
-          onClick: () => window.open(explorerUrl, "_blank"),
+          onClick: () => window.open(`https://explorer.solana.com/tx/${sig}?cluster=devnet`, "_blank"),
         },
       });
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Неизвестная ошибка транзакции";
-      toast.error("Ошибка получения дивидендов", { description: message });
+      const message = err instanceof Error ? err.message : t("toasts.unknownError");
+      toast.error(t("toasts.error"), { description: message });
       console.error("Claim dividends error:", err);
     } finally {
       setLoading(false);
@@ -120,27 +104,27 @@ export default function DividendWidget({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Дивиденды</CardTitle>
+        <CardTitle>{t("title")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Дивиденд на долю</span>
+            <span className="text-muted-foreground">{t("totalPerShare")}</span>
             <span className="font-medium">
-              {totalDividendsPerShare.toLocaleString("ru-RU")} ₸
+              {fmt(totalDividendsPerShare, { maximumFractionDigits: 4 })} ₸
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">К получению</span>
+            <span className="text-muted-foreground">{t("claimable")}</span>
             <span className="text-lg font-bold text-green-600">
-              {claimableAmount.toLocaleString("ru-RU")} ₸
+              {fmt(claimableAmount, { maximumFractionDigits: 2 })} ₸
             </span>
           </div>
           {lastClaimed > 0 && (
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Последний вывод</span>
+              <span className="text-muted-foreground">{t("lastClaimed")}</span>
               <span className="text-xs text-muted-foreground">
-                {new Date(lastClaimed * 1000).toLocaleDateString("ru-RU")}
+                {new Date(lastClaimed * 1000).toLocaleDateString(bcp)}
               </span>
             </div>
           )}
@@ -152,10 +136,10 @@ export default function DividendWidget({
           disabled={claimableAmount <= 0 || loading}
         >
           {loading
-            ? "Обработка..."
+            ? t("claiming")
             : claimableAmount > 0
-              ? `Получить ${claimableAmount.toLocaleString("ru-RU")} ₸`
-              : "Нет доступных дивидендов"}
+              ? `${t("claim")} — ${fmt(claimableAmount, { maximumFractionDigits: 2 })} ₸`
+              : t("noneYet")}
         </Button>
       </CardContent>
     </Card>

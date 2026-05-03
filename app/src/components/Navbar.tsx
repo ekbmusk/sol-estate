@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { Menu, X } from "lucide-react";
 import dynamic from "next/dynamic";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const WalletMultiButton = dynamic(
   () =>
@@ -14,17 +15,26 @@ const WalletMultiButton = dynamic(
   { ssr: false }
 );
 
-const navLinks = [
-  { href: "/demo", label: "Демо", accent: true },
-  { href: "/", label: "Проекты", exact: true },
-  { href: "/portfolio", label: "Портфель" },
-  { href: "/marketplace", label: "Маркетплейс" },
-  { href: "/retire", label: "Гашение" },
-  { href: "/calculator", label: "Калькулятор" },
+type NavLink = {
+  href: string;
+  labelKey: "demo" | "projects" | "portfolio" | "marketplace" | "retire" | "calculator";
+  exact?: boolean;
+  accent?: boolean;
+};
+
+const navLinks: NavLink[] = [
+  { href: "/demo", labelKey: "demo", accent: true },
+  { href: "/", labelKey: "projects", exact: true },
+  { href: "/portfolio", labelKey: "portfolio" },
+  { href: "/marketplace", labelKey: "marketplace" },
+  { href: "/retire", labelKey: "retire" },
+  { href: "/calculator", labelKey: "calculator" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
+  const tNav = useTranslations("common.nav");
+  const tNet = useTranslations("common.network");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -37,7 +47,7 @@ export default function Navbar() {
               <path d="M14 8C14 8 10 12 10 15C10 17.2 11.8 19 14 19C16.2 19 18 17.2 18 15C18 12 14 8 14 8Z" stroke="currentColor" strokeWidth="1.2" fill="rgba(52,211,153,0.1)"/>
             </svg>
             <span className="font-heading text-[18px] font-bold tracking-[-0.02em]">
-              Carbon<span className="text-[#34D399]">KZ</span>
+              Zhasyl<span className="text-[#34D399]">KZ</span>
             </span>
           </Link>
 
@@ -46,7 +56,7 @@ export default function Navbar() {
               const isActive = link.exact
                 ? pathname === link.href
                 : pathname.startsWith(link.href);
-              if ((link as any).accent) {
+              if (link.accent) {
                 return (
                   <Link
                     key={link.href}
@@ -56,7 +66,7 @@ export default function Navbar() {
                         ? "bg-[#34D399] text-[#060A08]"
                         : "bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/30 hover:bg-[#34D399]/20"}`}
                   >
-                    {link.label}
+                    {tNav(link.labelKey)}
                   </Link>
                 );
               }
@@ -67,7 +77,7 @@ export default function Navbar() {
                   className={`relative px-3 py-2 text-[13px] font-medium transition-colors duration-200
                     ${isActive ? "text-[#F0F5F3]" : "text-[#8A9B94] hover:text-[#F0F5F3]"}`}
                 >
-                  {link.label}
+                  {tNav(link.labelKey)}
                   {isActive && (
                     <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#34D399]" />
                   )}
@@ -80,8 +90,9 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FBBF24]/10 border border-[#FBBF24]/20">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24]" />
-            <span className="text-[11px] font-medium text-[#FBBF24] tracking-wide">Devnet</span>
+            <span className="text-[11px] font-medium text-[#FBBF24] tracking-wide">{tNet("devnet")}</span>
           </div>
+          <LanguageSwitcher />
           <WalletMultiButton />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -99,7 +110,7 @@ export default function Navbar() {
             const isActive = link.exact
               ? pathname === link.href
               : pathname.startsWith(link.href);
-            if ((link as any).accent) {
+            if (link.accent) {
               return (
                 <Link
                   key={link.href}
@@ -110,7 +121,7 @@ export default function Navbar() {
                       ? "bg-[#34D399] text-[#060A08]"
                       : "bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/30"}`}
                 >
-                  {link.label}
+                  {tNav(link.labelKey)}
                 </Link>
               );
             }
@@ -123,7 +134,7 @@ export default function Navbar() {
                   ${isActive ? "text-[#34D399] bg-[#34D399]/5" : "text-[#8A9B94] hover:text-[#F0F5F3] hover:bg-[#1A2320]"}`}
               >
                 {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#34D399]" />}
-                {link.label}
+                {tNav(link.labelKey)}
               </Link>
             );
           })}

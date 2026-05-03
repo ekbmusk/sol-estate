@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -25,8 +26,13 @@ import {
 import { KZTE_MINT, PROGRAM_ID } from "@/lib/constants";
 import { toast } from "sonner";
 import type { Project } from "@/lib/mockData";
+import { localeToBcp47 } from "@/lib/format";
 
 export default function InvestModal({ property }: { property: Project }) {
+  const t = useTranslations("invest");
+  const locale = useLocale();
+  const bcp = localeToBcp47(locale);
+  const fmt = (n: number) => n.toLocaleString(bcp);
   const [shares, setShares] = useState(1);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -40,19 +46,18 @@ export default function InvestModal({ property }: { property: Project }) {
 
   const handleInvest = async () => {
     if (!connected || !publicKey) {
-      toast.error("Подключите кошелек для инвестирования");
+      toast.error(t("toasts.connectFirst"));
       return;
     }
 
     if (!program) {
-      toast.error("Программа не инициализирована. Проверьте подключение кошелька.");
+      toast.error(t("toasts.notInitialized"));
       return;
     }
 
     setLoading(true);
 
     try {
-      // Derive PDAs
       const [projectPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("project"), Buffer.from(property.id)],
         PROGRAM_ID
@@ -77,24 +82,10 @@ export default function InvestModal({ property }: { property: Project }) {
         PROGRAM_ID
       );
 
-      // Get Associated Token Accounts
-      const investorKzteAta = await getAssociatedTokenAddress(
-        KZTE_MINT,
-        publicKey
-      );
+      const investorKzteAta = await getAssociatedTokenAddress(KZTE_MINT, publicKey);
+      const vaultTokenAccount = await getAssociatedTokenAddress(KZTE_MINT, vaultPda, true);
+      const investorShareAccount = await getAssociatedTokenAddress(shareMintPda, publicKey);
 
-      const vaultTokenAccount = await getAssociatedTokenAddress(
-        KZTE_MINT,
-        vaultPda,
-        true // allowOwnerOffCurve for PDA
-      );
-
-      const investorShareAccount = await getAssociatedTokenAddress(
-        shareMintPda,
-        publicKey
-      );
-
-      // Call the invest instruction
       const accounts = {
         investor: publicKey,
         project: projectPda,
@@ -110,7 +101,6 @@ export default function InvestModal({ property }: { property: Project }) {
         systemProgram: PublicKey.default,
       };
 
-      // Simulate before sending
       const tx = await program.methods.invest(new BN(shares)).accounts(accounts).transaction();
       tx.feePayer = publicKey;
       tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
@@ -120,8 +110,8 @@ export default function InvestModal({ property }: { property: Project }) {
 
       const explorerUrl = `https://explorer.solana.com/tx/${sig}?cluster=devnet`;
 
-      toast.success("Инвестиция успешна!", {
-        description: `${shares} долей приобретено`,
+      toast.success(t("toasts.success"), {
+        description: t("toasts.successDesc", { count: shares }),
         action: {
           label: "Explorer",
           onClick: () => window.open(explorerUrl, "_blank"),
@@ -131,9 +121,8 @@ export default function InvestModal({ property }: { property: Project }) {
       setOpen(false);
       setShares(1);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Неизвестная ошибка транзакции";
-      toast.error("Ошибка инвестиции", { description: message });
+      const message = err instanceof Error ? err.message : t("toasts.unknownError");
+      toast.error(t("toasts.error"), { description: message });
       console.error("Invest error:", err);
     } finally {
       setLoading(false);
@@ -145,20 +134,19 @@ export default function InvestModal({ property }: { property: Project }) {
       <DialogTrigger
         className="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 cursor-pointer"
       >
-        Инвестировать
+        {t("trigger")}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Инвестировать в {property.name}</DialogTitle>
+          <DialogTitle>{t("title", { name: property.name })}</DialogTitle>
           <DialogDescription>
-            Укажите количество долей для покупки. Цена за одну долю:{" "}
-            {property.pricePerShare.toLocaleString("ru-RU")} ₸
+            {t("description", { price: fmt(property.pricePerShare) })}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="shares-input">
-              Количество долей
+              {t("sharesLabel")}
             </label>
             <input
               id="shares-input"
@@ -173,14 +161,14 @@ export default function InvestModal({ property }: { property: Project }) {
               className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
             />
             <p className="text-xs text-muted-foreground">
-              Доступно: {remainingShares.toLocaleString("ru-RU")} долей
+              {t("available", { count: fmt(remainingShares) })}
             </p>
           </div>
           <div className="rounded-lg border bg-muted/50 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Итого</span>
+              <span className="text-sm text-muted-foreground">{t("total")}</span>
               <span className="text-lg font-bold">
-                {totalCost.toLocaleString("ru-RU")} ₸
+                {fmt(totalCost)} ₸
               </span>
             </div>
           </div>
@@ -191,7 +179,7 @@ export default function InvestModal({ property }: { property: Project }) {
             className="w-full sm:w-auto"
             disabled={loading}
           >
-            {loading ? "Обработка..." : "Подтвердить инвестицию"}
+            {loading ? t("processing") : t("submit")}
           </Button>
         </DialogFooter>
       </DialogContent>

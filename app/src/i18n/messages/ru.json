@@ -1,0 +1,548 @@
+{
+  "common": {
+    "brand": "ZhasylKZ",
+    "tagline": "Углеродный рынок Казахстана",
+    "metaDescription": "Покупайте, продавайте и погашайте верифицированные углеродные кредиты через смарт-контракты Solana",
+    "nav": {
+      "demo": "Демо",
+      "projects": "Проекты",
+      "portfolio": "Портфель",
+      "marketplace": "Маркетплейс",
+      "retire": "Гашение",
+      "calculator": "Калькулятор"
+    },
+    "network": { "devnet": "Devnet" },
+    "buttons": {
+      "connectWallet": "Подключить кошелёк",
+      "openExplorer": "Открыть в Explorer",
+      "back": "Назад",
+      "more": "Подробнее",
+      "cancel": "Отмена",
+      "confirm": "Подтвердить",
+      "close": "Закрыть"
+    },
+    "footer": {
+      "solana": "Solana",
+      "stablecoin": "KZTE Stablecoin",
+      "hackathon": "Decentrathon 5.0"
+    },
+    "language": {
+      "label": "Язык",
+      "ru": "Русский",
+      "kk": "Қазақша",
+      "en": "English"
+    },
+    "units": {
+      "tco2": "tCO₂",
+      "tenge": "₸",
+      "kzte": "KZTE"
+    },
+    "online": "Онлайн"
+  },
+  "errors": {
+    "walletNotConnected": "Подключите кошелёк",
+    "programNotInitialized": "Программа не инициализирована",
+    "insufficientBalance": "Недостаточно средств",
+    "transactionFailed": "Ошибка транзакции",
+    "loadingFailed": "Не удалось загрузить данные"
+  },
+  "home": {
+    "hero": {
+      "title1": "Углеродный рынок",
+      "title2": "Казахстана.",
+      "titleAccent": "Прозрачный. Токенизированный.",
+      "subtitle": "Покупайте, продавайте и погашайте верифицированные углеродные кредиты через смарт-контракты Solana",
+      "ctaInvest": "Начать инвестировать",
+      "ctaHow": "Как это работает"
+    },
+    "stats": {
+      "overview": "Обзор платформы",
+      "totalCredits": "Всего кредитов",
+      "retired": "Погашено",
+      "activeProjects": "Активных проектов",
+      "invested": "Инвестировано"
+    },
+    "projects": {
+      "title": "Зелёные проекты",
+      "subtitle": "Верифицированные проекты по сокращению CO₂ в Казахстане",
+      "filters": {
+        "all": "Все",
+        "solar": "Солнечная",
+        "wind": "Ветровая",
+        "forest": "Лес",
+        "industrial": "Промышленность"
+      }
+    },
+    "problem": {
+      "label": "Проблема",
+      "headline": "Казахстан входит в топ-10 стран мира по углеродоёмкости ВВП",
+      "p1": "349 млн тонн CO₂ в год. 17.5 тонн на человека — почти в 3 раза выше среднего по ОЭСР. Рынок углеродных кредитов существует с 2013 года (KZ ETS), но фактически мёртв: $1 за тонну при $91 в Евросоюзе, всего 135 участников, только спот, без деривативов.",
+      "p2": "Цель правительства — $50 за тонну к 2030 году (×50 рост). World Bank выделил $4.8 млн на развитие рынка. Но банки и финансовые институты не допущены к торгам на Caspy Exchange — по закону участвовать могут только промышленные эмитенты. Прозрачность нулевая. Двойной учёт кредитов — норма."
+    },
+    "audience": {
+      "label": "Для кого",
+      "investors": {
+        "title": "Инвесторы",
+        "desc": "Покупайте доли зелёных проектов за тенге. Получайте дивиденды от продажи углеродных кредитов. Цена кредита $1 сегодня → цель $50 к 2030. Потенциальный ROI — ×50. Комиссия платформы — 1.5%."
+      },
+      "polluters": {
+        "title": "Компании-загрязнители",
+        "desc": "КазМунайГаз, ArcelorMittal, угольные ТЭЦ — 135 предприятий обязаны компенсировать выбросы. Прозрачная покупка и гашение кредитов с доказательством на блокчейне."
+      },
+      "greenProjects": {
+        "title": "Зелёные проекты",
+        "desc": "Солнечные станции, ветропарки, лесовосстановление — получают финансирование напрямую от инвесторов. Верификация и все расчёты прозрачны."
+      }
+    },
+    "how": {
+      "label": "Как это работает",
+      "step1Title": "Проект проходит проверку",
+      "step1Desc": "Владелец солнечной станции или ветропарка загружает документы. Хеш сертификата записывается на блокчейн — его нельзя подделать или изменить. Независимый верификатор подтверждает проект.",
+      "step2Title": "Инвестор покупает доли",
+      "step2Desc": "Вы выбираете проект и покупаете доли за KZTE (1 KZTE = 1 тенге). Деньги уходят в защищённое хранилище проекта. Вам на кошелёк приходят токены-доли — подтверждение вашей инвестиции.",
+      "step3Title": "Загрязнители платят — вы получаете",
+      "step3Desc": "Заводы и ТЭЦ покупают углеродные кредиты у проекта. Выручка автоматически распределяется между всеми инвесторами пропорционально долям. Забираете дивиденды одной кнопкой. До $25 000/год с 10% доли при $50/т.",
+      "step4Title": "Гашение — доказательство навсегда",
+      "step4Desc": "Когда компания компенсирует свои выбросы, углеродные токены сжигаются навсегда. На блокчейне остаётся запись: кто погасил, сколько тонн, когда и зачем. Использовать один кредит дважды невозможно — его просто больше не существует."
+    },
+    "whySolana": {
+      "label": "Почему Solana",
+      "transparencyTitle": "Прозрачность",
+      "transparencyDesc": "Все операции видны на блокчейне. Любой может проверить: сколько кредитов выпущено, кто купил, кто погасил.",
+      "speedTitle": "Скорость и стоимость",
+      "speedDesc": "Транзакция занимает 0.4 секунды и стоит меньше 1 тенге. Для сравнения — Ethereum: минуты и тысячи тенге.",
+      "integrityTitle": "Невозможность подделки",
+      "integrityDesc": "Хеш документа, гашение кредитов, дивиденды — всё записано навечно. Изменить задним числом нельзя."
+    }
+  },
+  "calculator": {
+    "label": "Углеродный калькулятор",
+    "headline1": "Рассчитайте свой",
+    "headlineAccent": "углеродный след",
+    "subtitle": "Узнайте сколько CO₂ вы производите и компенсируйте через ZhasylKZ. Данные основаны на коэффициентах выбросов для Казахстана.",
+    "consumption": "Ваше потребление",
+    "fields": {
+      "electricity": { "label": "Электричество", "unit": "кВт·ч / мес", "hint": "Средний дом в КЗ: ~250 кВт·ч" },
+      "car": { "label": "Автомобиль", "unit": "км / мес", "hint": "Среднее: ~1 000 км" },
+      "flights": { "label": "Авиаперелёты", "unit": "км / год", "hint": "Алматы — Москва: ~2 400 км" },
+      "gas": { "label": "Газ (отопление)", "unit": "м³ / мес", "hint": "Среднее: ~150 м³" }
+    },
+    "methodologyLabel": "Методология:",
+    "methodologyText": "Коэффициент электричества — 0.636 кг CO₂/кВт·ч (угольная генерация КЗ). Автомобиль — 0.21 кг/км (средний бензиновый). Авиация — 0.255 кг/пасс-км (ICAO). Газ — 2.0 кг/м³ (природный газ).",
+    "footprintLabel": "Ваш углеродный след",
+    "tonnesPerYear": "тонн CO₂/год",
+    "aboveAverage": "Выше среднего казахстанца на {pct}%",
+    "ofAverage": "{pct}% от среднего казахстанца (17.5 т)",
+    "tonneShort": "т",
+    "tonnesCO2Tooltip": "т CO₂",
+    "equivalent": "Это эквивалентно",
+    "treesLabel": "{count, plural, one {# дерево} few {# дерева} other {# деревьев}}",
+    "treesHint": "нужно для поглощения за год",
+    "ofAvgShort": "{pct}% от среднего",
+    "kazakhPersonHint": "казахстанца (17.5 т CO₂/год)",
+    "flightsLabel": "{count} перелётов",
+    "flightsHint": "Алматы — Москва (в одну сторону)",
+    "compensationLabel": "Компенсация",
+    "creditsLine1": "Вам нужно",
+    "creditsLine2": "углеродных кредитов",
+    "creditsHint": "для полной компенсации годовых выбросов",
+    "compensateCta": "Компенсировать на ZhasylKZ"
+  },
+  "portfolio": {
+    "title": "Мой портфель",
+    "connectHint": "Подключите кошелёк для просмотра",
+    "balanceLabel": "Баланс KZTE",
+    "faucetCta": "Получить SOL + KZTE",
+    "summary": {
+      "totalValue": "Общая стоимость",
+      "investments": "Инвестиций",
+      "claimable": "К получению"
+    },
+    "noInvestments": "Нет инвестиций",
+    "goToCatalog": "Перейдите в",
+    "catalogLink": "каталог проектов",
+    "toStart": "чтобы начать",
+    "tableHeaders": {
+      "project": "Проект",
+      "shares": "Доли",
+      "value": "Стоимость",
+      "claimable": "К выплате"
+    },
+    "claimButton": "Получить",
+    "toasts": {
+      "claimSuccess": "Дивиденды получены",
+      "claimError": "Ошибка",
+      "txFailed": "Транзакция не выполнена",
+      "faucetReceived": "100 000 KZTE получены!",
+      "faucetTitle": "Faucet",
+      "faucetError": "Ошибка faucet",
+      "unknownError": "Неизвестная ошибка"
+    }
+  },
+  "retire": {
+    "title": "Гашение кредитов",
+    "subtitle": "Гасите углеродные кредиты навсегда. Каждое гашение создаёт immutable proof on-chain. Double counting невозможен.",
+    "counterLabel": "тонн CO₂ погашено на платформе",
+    "selectProject": "Выберите проект для гашения",
+    "connectToLoad": "Подключите кошелёк для загрузки проектов",
+    "noProjectsBlockchain": "Нет проектов на блокчейне. Запустите setup-devnet скрипт.",
+    "noVerified": "Нет верифицированных проектов",
+    "retiredOf": "{retired} / {total} т погашено",
+    "available": "доступно",
+    "tonneShort": "т",
+    "buyHeader": "Купить углеродные кредиты",
+    "buyHint": "Приобретите Carbon Tokens проекта «{name}» для последующего гашения",
+    "tonnesCO2": "тонн CO₂",
+    "buyCta": "Купить",
+    "selectToRetire": "Выберите проект для гашения кредитов",
+    "howTitle": "Как работает",
+    "steps": {
+      "step1Title": "Выберите проект",
+      "step1Desc": "Определите проект для гашения",
+      "step2Title": "Количество и цель",
+      "step2Desc": "Сколько тонн CO₂ и для чего",
+      "step3Title": "Burn токенов",
+      "step3Desc": "SPL Token burn — навсегда",
+      "step4Title": "RetireRecord",
+      "step4Desc": "Immutable PDA on-chain proof"
+    },
+    "whyTitle": "Почему это важно",
+    "why": {
+      "noDoubleTitle": "Double counting невозможен",
+      "noDoubleDesc": "сожжённый токен не существует",
+      "immutableTitle": "Immutable proof",
+      "immutableDesc": "RetireRecord PDA: кто, сколько, когда, зачем",
+      "verifiableTitle": "Верифицируемо",
+      "verifiableDesc": "любой проверит через Solana Explorer"
+    },
+    "statsRetired": "тонн погашено",
+    "statsProjects": "проектов",
+    "historyTitle": "История гашений",
+    "history": {
+      "project": "Проект",
+      "who": "Кто погасил",
+      "tonnes": "Тонн",
+      "purpose": "Цель",
+      "certificate": "Сертификат"
+    },
+    "toasts": {
+      "buySuccess": "{count} углеродных кредитов получено!",
+      "buyError": "Ошибка",
+      "unknownError": "Неизвестная ошибка"
+    }
+  },
+  "marketplace": {
+    "title": "Маркетплейс",
+    "subtitle": "Вторичный рынок токенизированных долей углеродных кредитов",
+    "features": {
+      "p2pTitle": "P2P Торговля",
+      "p2pDesc": "Выставляйте доли на продажу и покупайте напрямую у других инвесторов с escrow on-chain.",
+      "orderbookTitle": "Книга заявок",
+      "orderbookDesc": "Просматривайте все активные листинги с ценами, объёмами и историей сделок.",
+      "pricingTitle": "Ценообразование",
+      "pricingDesc": "Рыночное ценообразование через конкуренцию покупателей и продавцов."
+    },
+    "activeListings": "Активные листинги",
+    "noListings": "Нет активных листингов",
+    "noListingsHintConnected": "Листинги появятся когда инвесторы выставят свои доли на продажу",
+    "noListingsHintDisconnected": "Подключите кошелёк для просмотра листингов",
+    "table": {
+      "project": "Проект",
+      "seller": "Продавец",
+      "amount": "Кол-во",
+      "pricePerShare": "Цена/доля",
+      "total": "Итого",
+      "price": "Цена"
+    },
+    "you": "(вы)",
+    "buyButton": "Купить",
+    "shares": "долей",
+    "tradesTitle": "История сделок",
+    "toasts": {
+      "connectWallet": "Подключите кошелёк",
+      "projectNotFound": "Проект не найден",
+      "buySuccess": "Доли куплены!",
+      "buySuccessDesc": "{amount} долей приобретено",
+      "buyError": "Ошибка покупки",
+      "unknownError": "Неизвестная ошибка"
+    }
+  },
+  "project": {
+    "backToProjects": "Проекты",
+    "types": {
+      "solar": "Солнечная",
+      "wind": "Ветровая",
+      "forest": "Лес",
+      "industrial": "Промышл.",
+      "other": "Другое"
+    },
+    "verified": "Верифицирован",
+    "notVerified": "На проверке",
+    "onChain": "On-chain",
+    "ourReal": "Наш реальный проект",
+    "stats": {
+      "pricePerShare": "Цена / доля",
+      "co2PerYear": "CO₂ / год",
+      "retired": "Погашено",
+      "totalShares": "Всего долей",
+      "sold": "Продано",
+      "status": "Статус"
+    },
+    "tonneShort": "т",
+    "carbonFootprint": "Углеродный след",
+    "investmentProgress": "Прогресс инвестиций",
+    "creditsRetired": "Кредиты погашены",
+    "realEquipment": "Реальное оборудование",
+    "equipment": {
+      "power": "Мощность",
+      "powerValue": "25 кВт",
+      "generation": "Выработка",
+      "generationValue": "42.65 МВт·ч/год",
+      "factor": "Коэффициент",
+      "factorValue": "0.636 кг/кВт·ч",
+      "insolation": "Инсоляция",
+      "insolationValue": "1 700+ кВт·ч/м²"
+    },
+    "realEquipmentDesc": "Данные генерации поступают в реальном времени с инвертора через SOLARMAN API. Это не симуляция — live-мониторинг настоящего оборудования на кампусе университета.",
+    "documentHash": "Хеш документа",
+    "investSidebar": "Инвестировать в проект",
+    "perShare": "за долю",
+    "available": "Доступно",
+    "faucetCta": "Получить SOL + KZTE",
+    "toasts": {
+      "connectWallet": "Подключите кошелёк",
+      "faucetTitle": "Faucet",
+      "faucetReceived": "100 000 KZTE получены!",
+      "error": "Ошибка",
+      "unknownError": "Неизвестная ошибка"
+    }
+  },
+  "card": {
+    "types": {
+      "solar": "Солнечная",
+      "wind": "Ветровая",
+      "forest": "Лес",
+      "industrial": "Промышл.",
+      "other": "Другое"
+    },
+    "status": {
+      "active": "Активный",
+      "funded": "Собран",
+      "retired": "Завершён"
+    },
+    "liveMonitoring": "Live мониторинг",
+    "pricePerShare": "Цена/доля",
+    "co2PerYear": "CO₂/год",
+    "tonneShort": "т",
+    "more": "Подробнее",
+    "realProject": "real project",
+    "invest": "Инвестировать"
+  },
+  "invest": {
+    "trigger": "Инвестировать",
+    "title": "Инвестировать в {name}",
+    "description": "Укажите количество долей для покупки. Цена за одну долю: {price} ₸",
+    "sharesLabel": "Количество долей",
+    "available": "Доступно: {count} долей",
+    "total": "Итого",
+    "submit": "Подтвердить инвестицию",
+    "processing": "Обработка...",
+    "toasts": {
+      "connectFirst": "Подключите кошелёк для инвестирования",
+      "notInitialized": "Программа не инициализирована. Проверьте подключение кошелька.",
+      "success": "Инвестиция успешна!",
+      "successDesc": "{count} долей приобретено",
+      "error": "Ошибка инвестиции",
+      "unknownError": "Неизвестная ошибка транзакции"
+    }
+  },
+  "listShares": {
+    "trigger": "Продать",
+    "title": "Выставить доли на продажу",
+    "description": "Доли «{name}» (escrow)",
+    "amountLabel": "Количество долей",
+    "available": "Доступно: {count}",
+    "priceLabel": "Цена за долю (₸)",
+    "currentPrice": "Текущая: {price} ₸",
+    "totalReceive": "Получите при продаже",
+    "submit": "Выставить",
+    "processing": "Обработка...",
+    "toasts": {
+      "connectFirst": "Подключите кошелёк",
+      "notInitialized": "Программа не инициализирована",
+      "invalidAmount": "Укажите корректное количество",
+      "invalidPrice": "Укажите корректную цену",
+      "success": "Листинг создан!",
+      "successDesc": "{amount} долей выставлены по цене {price} ₸",
+      "error": "Ошибка создания листинга",
+      "unknownError": "Неизвестная ошибка"
+    }
+  },
+  "retirePanel": {
+    "title": "Гасить кредиты",
+    "amountLabel": "Сколько тонн CO₂",
+    "amountPlaceholder": "Например, 10",
+    "available": "Доступно: {count} т",
+    "purposeLabel": "Цель гашения",
+    "purposePlaceholder": "Например, ESG-отчёт Q1 2026",
+    "submit": "Гасить",
+    "processing": "Обработка...",
+    "toasts": {
+      "connectFirst": "Подключите кошелёк",
+      "notInitialized": "Программа не инициализирована",
+      "invalidAmount": "Укажите корректное количество",
+      "purposeRequired": "Укажите цель гашения",
+      "success": "Кредиты погашены!",
+      "successDesc": "{amount} т CO₂ навсегда сожжены",
+      "error": "Ошибка гашения",
+      "unknownError": "Неизвестная ошибка"
+    }
+  },
+  "dividend": {
+    "title": "Дивиденды",
+    "claimable": "К получению",
+    "totalPerShare": "Всего на долю",
+    "lastClaimed": "Последнее получение",
+    "claim": "Получить дивиденды",
+    "claiming": "Получение...",
+    "noneYet": "Пока нет дивидендов",
+    "toasts": {
+      "connectFirst": "Подключите кошелёк",
+      "success": "Дивиденды получены!",
+      "successDesc": "{amount} ₸ зачислены",
+      "error": "Ошибка получения",
+      "unknownError": "Неизвестная ошибка"
+    }
+  },
+  "demo": {
+    "back": "Назад",
+    "next": "Далее",
+    "stepLabels": {
+      "problem": "Проблема",
+      "solution": "Решение",
+      "projects": "Проекты",
+      "investments": "Инвестиции",
+      "dividends": "Дивиденды",
+      "retire": "Retire",
+      "summary": "Итог"
+    },
+    "step1": {
+      "label": "Проблема",
+      "headline": "Казахстан входит в топ-10 стран мира по углеродоёмкости ВВП",
+      "stats": {
+        "co2Year": "CO₂ / год",
+        "perPerson": "на человека",
+        "pricePerTonne": "цена / тонна",
+        "euEts": "EU ETS"
+      },
+      "deadMarket": "Рынок углеродных кредитов существует с 2013 года (KZ ETS), но фактически мёртв: $1 за тонну при $91 в Евросоюзе. Всего 135 участников, только спот, без деривативов. Банки и финансовые институты не допущены к торгам.",
+      "target2030": "цель к 2030 (×50 рост)",
+      "wbGrant": "World Bank грант (март 2025)",
+      "noBlockchain": "блокчейн-проектов в ЦА",
+      "personalLabel": "Личная мотивация",
+      "personalText": "Я изучаю возобновляемую энергетику в Международном казахско-турецком университете им. Ахмеда Ясави в Туркестане. На кампусе стоит реальная солнечная электростанция на 25 кВт — мы подключили её к платформе через SOLARMAN API. Тема углеродных кредитов не абстрактная для нас — мы видим, как генерируется чистая энергия каждый день, и хотим дать инструмент для монетизации этого вклада через блокчейн."
+    },
+    "step2": {
+      "label": "Решение",
+      "headline": "ZhasylKZ — первый маркетплейс токенизированных углеродных кредитов в ЦА",
+      "blocks": {
+        "verifyTitle": "Верификация",
+        "verifyDesc": "doc_hash on-chain",
+        "investTitle": "Инвестирование",
+        "investDesc": "KZTE → vault, share tokens",
+        "dividendsTitle": "Дивиденды",
+        "dividendsDesc": "выручка → инвесторам",
+        "retireTitle": "Retire",
+        "retireDesc": "burn + immutable proof"
+      },
+      "ctaContract": "Контракт в Explorer",
+      "ctaGithub": "GitHub",
+      "techStack": "Tech Stack"
+    },
+    "step3": {
+      "label": "Реальные проекты",
+      "headline": "4 верифицированных проекта на devnet",
+      "subtitle": "Данные основаны на реальных зелёных проектах Казахстана. On-chain с mock fallback.",
+      "liveBadge": "Live",
+      "liveTitle": "СЭС Университета Ахмеда Ясави — наш реальный проект",
+      "liveDesc": "25 кВт солнечная станция на кампусе университета в Туркестане. Данные генерации поступают в реальном времени через SOLARMAN API — это не симуляция, а live-мониторинг настоящего оборудования.",
+      "openCatalog": "Открыть каталог"
+    },
+    "step4": {
+      "label": "Попробуйте сами",
+      "headline": "Инвестирование за KZTE",
+      "step1Title": "Подключите Phantom кошелёк",
+      "step1Desc": "Нажмите кнопку кошелька в правом верхнем углу. Сеть — Devnet.",
+      "step2Title": "Получите тестовые KZTE",
+      "step2Desc": "Перейдите в Портфель и нажмите «Получить KZTE» — 100 000 ₸ на кошелёк.",
+      "step3Title": "Выберите проект и инвестируйте",
+      "step3Desc": "Откройте любой проект → «Инвестировать» → укажите количество долей → подтвердите. Комиссия платформы — 1.5%.",
+      "step4Title": "Проверьте в кошельке",
+      "step4Desc": "Share tokens (sYSV, sBRB, sAMT) появятся в Phantom. Доходность при росте цены до $50/т — до ×50 ROI.",
+      "ctaPortfolio": "Портфель (KZTE Faucet)",
+      "ctaSesYasavi": "СЭС Ясави",
+      "ctaWind": "Ветропарк Ерейментау"
+    },
+    "step5": {
+      "label": "Пассивный доход",
+      "headline": "Дивиденды от продажи кредитов",
+      "howTitle": "Как работает",
+      "howStep1": "Загрязнитель (КазМунайГаз, ArcelorMittal) покупает углеродные кредиты у проекта за KZTE.",
+      "howStep2_part1": "Владелец проекта вызывает",
+      "howStep2_part2": "— KZTE уходит в vault, обновляется",
+      "howStep3": "Инвестор заходит в Портфель и нажимает «Получить» — забирает свою долю дивидендов.",
+      "exampleTitle": "Пример: проект 5 000 т CO₂, ваша доля 10%",
+      "income1": "доход/год при $1/т",
+      "income2": "доход/год при $15/т (2028)",
+      "income3": "доход/год при $50/т (2030)",
+      "exampleNote": "Gas платит инвестор, не владелец → масштабируемо. Double-claim невозможен через last_claimed.",
+      "ctaPortfolio": "Перейти в Портфель"
+    },
+    "step6": {
+      "label": "Killer Feature",
+      "headline": "Retire — гашение кредитов навсегда",
+      "step1Title": "Купить Carbon Tokens",
+      "step1Desc": "Загрязнитель приобретает углеродные кредиты проекта",
+      "step2Title": "SPL Token BURN",
+      "step2Desc": "Токены уничтожаются навсегда — исчезают из обращения",
+      "step3Title": "RetireRecord PDA",
+      "step3Desc": "Immutable proof on-chain: кто, сколько, когда, зачем",
+      "step4Title": "NFT Сертификат",
+      "step4Desc": "Mint NFT с metadata — видно в Phantom, скачиваемый SVG",
+      "whyImportantLabel": "Почему это важно:",
+      "whyImportantText": "Сожжённый токен не существует. Double counting невозможен. RetireRecord PDA — immutable proof для аудиторов. Комиссия платформы за гашение — 1%. Любой может проверить через Solana Explorer.",
+      "ctaTry": "Попробовать Retire"
+    },
+    "step7": {
+      "label": "Архитектура и итог",
+      "headline": "Полноценный DeFi продукт на Solana",
+      "stats": {
+        "instructions": "инструкций",
+        "tests": "тестов",
+        "fee": "комиссия платформы",
+        "roi": "ROI инвестора к 2030"
+      },
+      "instructionsTitle": "On-chain инструкции",
+      "securityTitle": "Безопасность",
+      "security": {
+        "checked": "checked_add / checked_mul / checked_div — везде",
+        "vault": "Vault PDA — единственный authority над KZTE ATA",
+        "burn": "Burn ПЕРЕД state mutation (reentrancy protection)",
+        "uniqueness": "RetireRecord PDA uniqueness — double-retire невозможен",
+        "escrow": "Escrow owner validation в buy_shares"
+      },
+      "summaryHeadline": "ZhasylKZ решает три проблемы",
+      "tags": {
+        "transparency": "Прозрачность",
+        "liquidity": "Ликвидность",
+        "verification": "Верификация"
+      },
+      "summaryFooter": "Solana — быстро и дёшево. Казахстан — первый в ЦА. TAM при $50/т — $17.5B.",
+      "teamLabel": "Команда Zerde",
+      "teamDesc": "г. Павлодар, г. Туркестан · Decentrathon 5.0 · Кейс 1 (RWA)",
+      "ctaExplorer": "Explorer",
+      "ctaGithub": "GitHub",
+      "ctaCatalog": "Каталог проектов"
+    }
+  }
+}

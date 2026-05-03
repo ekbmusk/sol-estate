@@ -56,7 +56,7 @@ function generateSVG(params: {
 
   <!-- Header row -->
   <text x="64" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="700" fill="#F0F5F3">
-    Carbon<tspan fill="#34D399">KZ</tspan>
+    Zhasyl<tspan fill="#34D399">KZ</tspan>
   </text>
   <text x="1126" y="72" font-family="system-ui, sans-serif" font-size="11" fill="#5A6D65" text-anchor="end" letter-spacing="0.18em">
     CARBON RETIREMENT CERTIFICATE

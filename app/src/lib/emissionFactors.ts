@@ -31,9 +31,9 @@ export function calculateFootprint(inputs: CalculatorInputs): number {
 
 export function getCategoryBreakdown(inputs: CalculatorInputs) {
   return [
-    { key: "electricity", label: "Электричество", value: inputs.electricityKwh * 12 * EMISSION_FACTORS.electricity / 1000, color: "#FBBF24" },
-    { key: "car", label: "Автомобиль", value: inputs.carKm * 12 * EMISSION_FACTORS.carTransport / 1000, color: "#60A5FA" },
-    { key: "flights", label: "Авиаперелёты", value: inputs.flightsKm * EMISSION_FACTORS.flights / 1000, color: "#A78BFA" },
-    { key: "gas", label: "Отопление", value: inputs.gasM3 * 12 * EMISSION_FACTORS.naturalGas / 1000, color: "#F87171" },
+    { key: "electricity", value: inputs.electricityKwh * 12 * EMISSION_FACTORS.electricity / 1000, color: "#FBBF24" },
+    { key: "car", value: inputs.carKm * 12 * EMISSION_FACTORS.carTransport / 1000, color: "#60A5FA" },
+    { key: "flights", value: inputs.flightsKm * EMISSION_FACTORS.flights / 1000, color: "#A78BFA" },
+    { key: "gas", value: inputs.gasM3 * 12 * EMISSION_FACTORS.naturalGas / 1000, color: "#F87171" },
   ];
 }

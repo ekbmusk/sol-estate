@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         icon: `${baseUrl}/api/certificate?project=${encodeURIComponent(proj.name)}&amount=0&buyer=&purpose=&date=0&pda=`,
-        title: `CarbonKZ — Retire: ${proj.name}`,
+        title: `ZhasylKZ — Retire: ${proj.name}`,
         description: `Permanently retire carbon credits from "${proj.name}". Available: ${proj.available.toLocaleString()} tCO₂. Tokens are burned on Solana — double counting impossible.`,
         label: "Retire Credits",
         links: {
@@ -120,8 +120,8 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json(
     {
-      icon: `${baseUrl}/api/certificate?project=CarbonKZ&amount=0&buyer=&purpose=&date=0&pda=`,
-      title: "CarbonKZ — Retire Carbon Credits",
+      icon: `${baseUrl}/api/certificate?project=ZhasylKZ&amount=0&buyer=&purpose=&date=0&pda=`,
+      title: "ZhasylKZ — Retire Carbon Credits",
       description:
         "Permanently retire carbon credits from verified green projects in Kazakhstan. Tokens are burned on Solana blockchain — double counting impossible.",
       label: "Retire Credits",

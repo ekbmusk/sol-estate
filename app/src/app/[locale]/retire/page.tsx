@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { Check, Flame, ExternalLink, Award, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import RetirePanel from "@/components/RetirePanel";
@@ -9,15 +10,21 @@ import CarbonCounter from "@/components/CarbonCounter";
 import { useProjects } from "@/hooks/useProjects";
 import { useRetireRecords } from "@/hooks/useRetireRecords";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { localeToBcp47 } from "@/lib/format";
 
 export default function RetirePage() {
+  const t = useTranslations("retire");
+  const locale = useLocale();
+  const bcp = localeToBcp47(locale);
   const { publicKey } = useWallet();
   const { projects, loading, refetch } = useProjects();
-  const { records: retireRecords, loading: recordsLoading, refetch: refetchRecords } = useRetireRecords();
+  const { records: retireRecords, refetch: refetchRecords } = useRetireRecords();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [certRecordPda, setCertRecordPda] = useState<string | null>(null);
   const [buyAmount, setBuyAmount] = useState(10);
   const [buyingCarbon, setBuyingCarbon] = useState(false);
+
+  const fmt = (n: number) => n.toLocaleString(bcp);
 
   const handleBuyCarbon = async () => {
     if (!publicKey || !selectedId) return;
@@ -29,13 +36,13 @@ export default function RetirePage() {
         body: JSON.stringify({ wallet: publicKey.toString(), projectId: selectedId, amount: buyAmount }),
       });
       const data = await res.json();
-      if (!res.ok) { toast.error("Ошибка", { description: data.error }); return; }
-      toast.success(`${data.amount} углеродных кредитов получено!`, {
+      if (!res.ok) { toast.error(t("toasts.buyError"), { description: data.error }); return; }
+      toast.success(t("toasts.buySuccess", { count: data.amount }), {
         action: { label: "Explorer", onClick: () => window.open(data.explorer, "_blank") },
       });
       refetch();
     } catch (err) {
-      toast.error("Ошибка", { description: err instanceof Error ? err.message : "Неизвестная ошибка" });
+      toast.error(t("toasts.buyError"), { description: err instanceof Error ? err.message : t("toasts.unknownError") });
     } finally {
       setBuyingCarbon(false);
     }
@@ -58,30 +65,25 @@ export default function RetirePage() {
     <div className="mx-auto max-w-[960px] px-6 py-8 sm:py-16 relative overflow-hidden">
       <div className="dot-grid dot-grid-fade absolute inset-0 opacity-50 pointer-events-none" />
 
-      {/* Header */}
       <div className="relative mb-12">
         <h1 className="font-heading text-[32px] font-bold tracking-[-0.02em] mb-3">
-          Гашение кредитов
+          {t("title")}
         </h1>
         <p className="text-[15px] text-[#8A9B94] max-w-[520px]">
-          Гасите углеродные кредиты навсегда. Каждое гашение создаёт immutable proof on-chain.
-          Double counting невозможен.
+          {t("subtitle")}
         </p>
       </div>
 
-      {/* Counter */}
       {totalRetired > 0 && (
         <div className="relative rounded-xl border border-[#1E2B26] bg-[#0C1210] p-8 mb-10">
-          <CarbonCounter target={totalRetired} label="тонн CO₂ погашено на платформе" />
+          <CarbonCounter target={totalRetired} label={t("counterLabel")} />
         </div>
       )}
 
       <div className="relative grid gap-8 lg:grid-cols-5">
-        {/* Left: select project + retire (3 cols) */}
         <div className="lg:col-span-3 space-y-6">
-          {/* Project selector */}
           <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6">
-            <p className="label-upper mb-4">Выберите проект для гашения</p>
+            <p className="label-upper mb-4">{t("selectProject")}</p>
 
             {loading ? (
               <div className="space-y-3">
@@ -91,14 +93,14 @@ export default function RetirePage() {
               </div>
             ) : !publicKey ? (
               <div className="rounded-lg bg-[#060A08] border border-[#2A3832] p-6 text-center">
-                <p className="text-[13px] text-[#5A6D65]">Подключите кошелёк для загрузки проектов</p>
+                <p className="text-[13px] text-[#5A6D65]">{t("connectToLoad")}</p>
               </div>
             ) : verifiedProjects.length === 0 ? (
               <div className="rounded-lg bg-[#060A08] border border-[#2A3832] p-6 text-center">
                 <p className="text-[13px] text-[#5A6D65]">
                   {projects.length === 0
-                    ? "Нет проектов на блокчейне. Запустите setup-devnet скрипт."
-                    : "Нет верифицированных проектов"}
+                    ? t("noProjectsBlockchain")
+                    : t("noVerified")}
                 </p>
               </div>
             ) : (
@@ -120,14 +122,14 @@ export default function RetirePage() {
                         <div>
                           <p className="text-[14px] font-medium">{p.name}</p>
                           <p className="text-[12px] text-[#5A6D65] mt-0.5">
-                            {p.creditsRetired.toLocaleString("ru-RU")} / {p.totalCredits.toLocaleString("ru-RU")} т погашено
+                            {t("retiredOf", { retired: fmt(p.creditsRetired), total: fmt(p.totalCredits) })}
                           </p>
                         </div>
                         <div className="text-right">
                           <p className="font-mono-data text-[14px] font-medium text-[#F97316]">
-                            {available.toLocaleString("ru-RU")} т
+                            {fmt(available)} {t("tonneShort")}
                           </p>
-                          <p className="text-[10px] text-[#5A6D65]">доступно</p>
+                          <p className="text-[10px] text-[#5A6D65]">{t("available")}</p>
                         </div>
                       </div>
                       <div className="mt-2.5 h-[3px] rounded-full bg-[#1E2B26] overflow-hidden">
@@ -140,15 +142,14 @@ export default function RetirePage() {
             )}
           </div>
 
-          {/* Buy carbon tokens */}
           {selectedProject && publicKey && (
             <div className="rounded-xl border border-[#F97316]/20 bg-[#F97316]/5 p-5">
               <div className="flex items-center gap-2 mb-3">
                 <ShoppingCart size={16} className="text-[#F97316]" />
-                <p className="text-[14px] font-medium">Купить углеродные кредиты</p>
+                <p className="text-[14px] font-medium">{t("buyHeader")}</p>
               </div>
               <p className="text-[12px] text-[#8A9B94] mb-4">
-                Приобретите Carbon Tokens проекта «{selectedProject.name}» для последующего гашения
+                {t("buyHint", { name: selectedProject.name })}
               </p>
               <div className="flex items-center gap-3">
                 <input
@@ -159,41 +160,38 @@ export default function RetirePage() {
                   onChange={(e) => setBuyAmount(Math.max(1, Number(e.target.value)))}
                   className="flex h-9 w-24 rounded-md border border-[#1E2B26] bg-[#060A08] px-3 text-sm font-mono-data text-[#F0F5F3] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#F97316]/50"
                 />
-                <span className="text-[12px] text-[#5A6D65]">тонн CO₂</span>
+                <span className="text-[12px] text-[#5A6D65]">{t("tonnesCO2")}</span>
                 <button
                   onClick={handleBuyCarbon}
                   disabled={buyingCarbon}
                   className="ml-auto flex items-center gap-2 rounded-lg bg-[#F97316] px-4 py-2 text-[13px] font-semibold text-[#060A08] hover:bg-[#EA580C] disabled:opacity-50 transition-colors cursor-pointer disabled:cursor-default"
                 >
-                  {buyingCarbon ? "..." : "Купить"}
+                  {buyingCarbon ? "..." : t("buyCta")}
                 </button>
               </div>
             </div>
           )}
 
-          {/* Retire panel */}
           {selectedProject ? (
             <RetirePanel project={selectedProject} onSuccess={handleRetireSuccess} />
           ) : publicKey ? (
             <div className="rounded-xl border border-dashed border-[#2A3832] p-8 text-center">
               <Flame size={24} className="text-[#5A6D65] mx-auto mb-3" />
-              <p className="text-[13px] text-[#5A6D65]">Выберите проект для гашения кредитов</p>
+              <p className="text-[13px] text-[#5A6D65]">{t("selectToRetire")}</p>
             </div>
           ) : null}
         </div>
 
-        {/* Right: how it works (2 cols) */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Steps */}
           <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6">
-            <h3 className="font-heading text-[14px] font-semibold tracking-[-0.01em] mb-5">Как работает</h3>
+            <h3 className="font-heading text-[14px] font-semibold tracking-[-0.01em] mb-5">{t("howTitle")}</h3>
             <div className="space-y-4">
-              {[
-                { n: "1", title: "Выберите проект", desc: "Определите проект для гашения", orange: false },
-                { n: "2", title: "Количество и цель", desc: "Сколько тонн CO₂ и для чего", orange: false },
-                { n: "3", title: "Burn токенов", desc: "SPL Token burn — навсегда", orange: true },
-                { n: "4", title: "RetireRecord", desc: "Immutable PDA on-chain proof", orange: true },
-              ].map((s) => (
+              {([
+                { n: "1", titleKey: "step1Title", descKey: "step1Desc", orange: false },
+                { n: "2", titleKey: "step2Title", descKey: "step2Desc", orange: false },
+                { n: "3", titleKey: "step3Title", descKey: "step3Desc", orange: true },
+                { n: "4", titleKey: "step4Title", descKey: "step4Desc", orange: true },
+              ] as const).map((s) => (
                 <div key={s.n} className="flex gap-3">
                   <div className={`w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[11px] font-bold
                     ${s.orange
@@ -203,57 +201,53 @@ export default function RetirePage() {
                     {s.n}
                   </div>
                   <div>
-                    <p className="text-[13px] font-medium">{s.title}</p>
-                    <p className="text-[11px] text-[#5A6D65]">{s.desc}</p>
+                    <p className="text-[13px] font-medium">{t(`steps.${s.titleKey}`)}</p>
+                    <p className="text-[11px] text-[#5A6D65]">{t(`steps.${s.descKey}`)}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Why it matters */}
           <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-6 space-y-3">
-            <h3 className="font-heading text-[14px] font-semibold text-[#34D399]">Почему это важно</h3>
+            <h3 className="font-heading text-[14px] font-semibold text-[#34D399]">{t("whyTitle")}</h3>
             <ul className="space-y-2.5">
-              {[
-                ["Double counting невозможен", "сожжённый токен не существует"],
-                ["Immutable proof", "RetireRecord PDA: кто, сколько, когда, зачем"],
-                ["Верифицируемо", "любой проверит через Solana Explorer"],
-              ].map(([title, desc], i) => (
-                <li key={i} className="flex items-start gap-2.5 text-[13px] leading-[1.5]">
+              {([
+                ["noDoubleTitle", "noDoubleDesc"],
+                ["immutableTitle", "immutableDesc"],
+                ["verifiableTitle", "verifiableDesc"],
+              ] as const).map(([titleKey, descKey]) => (
+                <li key={titleKey} className="flex items-start gap-2.5 text-[13px] leading-[1.5]">
                   <Check size={14} strokeWidth={2} className="text-[#34D399] mt-0.5 shrink-0" />
                   <span className="text-[#8A9B94]">
-                    <strong className="text-[#F0F5F3]">{title}</strong> — {desc}
+                    <strong className="text-[#F0F5F3]">{t(`why.${titleKey}`)}</strong> — {t(`why.${descKey}`)}
                   </span>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Stats */}
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-4 text-center">
-              <p className="font-mono-data text-xl font-bold text-[#F97316]">{totalRetired.toLocaleString("ru-RU")}</p>
-              <p className="label-upper mt-1" style={{ fontSize: "9px" }}>тонн погашено</p>
+              <p className="font-mono-data text-xl font-bold text-[#F97316]">{fmt(totalRetired)}</p>
+              <p className="label-upper mt-1" style={{ fontSize: "9px" }}>{t("statsRetired")}</p>
             </div>
             <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] p-4 text-center">
               <p className="font-mono-data text-xl font-bold">{verifiedProjects.length}</p>
-              <p className="label-upper mt-1" style={{ fontSize: "9px" }}>проектов</p>
+              <p className="label-upper mt-1" style={{ fontSize: "9px" }}>{t("statsProjects")}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Retire history */}
       {retireRecords.length > 0 && (
         <div className="relative mt-12">
           <h2 className="font-heading text-xl font-bold tracking-[-0.01em] mb-6">
-            История гашений
+            {t("historyTitle")}
           </h2>
           <div className="rounded-xl border border-[#1E2B26] bg-[#0C1210] overflow-hidden">
-            {/* Header */}
             <div className="hidden sm:grid grid-cols-[1fr_1fr_80px_1fr_40px_40px] gap-4 px-5 py-3 border-b border-[#1E2B26]">
-              {["Проект", "Кто погасил", "Тонн", "Цель", "", ""].map((h, i) => (
+              {[t("history.project"), t("history.who"), t("history.tonnes"), t("history.purpose"), "", ""].map((h, i) => (
                 <span key={i} className="label-upper">{h}</span>
               ))}
             </div>
@@ -261,7 +255,6 @@ export default function RetirePage() {
             {retireRecords.map((rec, i) => (
               <div key={rec.pda}>
                 <div className={`px-5 py-3.5 ${i > 0 ? "border-t border-[#1E2B26]" : ""}`}>
-                  {/* Desktop row */}
                   <div className="hidden sm:grid grid-cols-[1fr_1fr_80px_1fr_40px_40px] gap-4 items-center">
                     <span className="text-[13px] font-medium truncate">{getProjectName(rec.project)}</span>
                     <span className="font-mono-data text-[12px] text-[#5A6D65]">
@@ -274,7 +267,7 @@ export default function RetirePage() {
                     <button
                       onClick={() => setCertRecordPda(certRecordPda === rec.pda ? null : rec.pda)}
                       className={`transition-colors ${certRecordPda === rec.pda ? "text-[#34D399]" : "text-[#5A6D65] hover:text-[#34D399]"}`}
-                      title="Сертификат"
+                      title={t("history.certificate")}
                     >
                       <Award size={14} />
                     </button>
@@ -288,12 +281,11 @@ export default function RetirePage() {
                     </a>
                   </div>
 
-                  {/* Mobile card */}
                   <div className="sm:hidden space-y-2.5">
                     <div className="flex items-center justify-between">
                       <span className="text-[14px] font-medium truncate">{getProjectName(rec.project)}</span>
                       <span className="font-mono-data text-[14px] font-medium text-[#F97316]">
-                        {rec.amountRetired} т
+                        {rec.amountRetired} {t("tonneShort")}
                       </span>
                     </div>
                     <p className="text-[12px] text-[#8A9B94]">{rec.purpose}</p>
@@ -305,7 +297,7 @@ export default function RetirePage() {
                         <button
                           onClick={() => setCertRecordPda(certRecordPda === rec.pda ? null : rec.pda)}
                           className={`transition-colors ${certRecordPda === rec.pda ? "text-[#34D399]" : "text-[#5A6D65] hover:text-[#34D399]"}`}
-                          title="Сертификат"
+                          title={t("history.certificate")}
                         >
                           <Award size={14} />
                         </button>
@@ -322,7 +314,6 @@ export default function RetirePage() {
                   </div>
                 </div>
 
-                {/* Certificate expand */}
                 {certRecordPda === rec.pda && (
                   <div className="px-5 pb-5 pt-2 border-t border-[#1E2B26]">
                     <RetireCertificate

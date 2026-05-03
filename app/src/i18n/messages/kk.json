@@ -1,0 +1,548 @@
+{
+  "common": {
+    "brand": "ZhasylKZ",
+    "tagline": "Қазақстанның көміртек нарығы",
+    "metaDescription": "Solana смарт-келісімшарттары арқылы расталған көміртек кредиттерін сатып алыңыз, сатыңыз және өтеңіз",
+    "nav": {
+      "demo": "Демо",
+      "projects": "Жобалар",
+      "portfolio": "Портфель",
+      "marketplace": "Маркетплейс",
+      "retire": "Өтеу",
+      "calculator": "Калькулятор"
+    },
+    "network": { "devnet": "Devnet" },
+    "buttons": {
+      "connectWallet": "Әмиянды қосу",
+      "openExplorer": "Explorer-де ашу",
+      "back": "Артқа",
+      "more": "Толығырақ",
+      "cancel": "Бас тарту",
+      "confirm": "Растау",
+      "close": "Жабу"
+    },
+    "footer": {
+      "solana": "Solana",
+      "stablecoin": "KZTE Stablecoin",
+      "hackathon": "Decentrathon 5.0"
+    },
+    "language": {
+      "label": "Тіл",
+      "ru": "Русский",
+      "kk": "Қазақша",
+      "en": "English"
+    },
+    "units": {
+      "tco2": "tCO₂",
+      "tenge": "₸",
+      "kzte": "KZTE"
+    },
+    "online": "Онлайн"
+  },
+  "errors": {
+    "walletNotConnected": "Әмиянды қосыңыз",
+    "programNotInitialized": "Бағдарлама іске қосылмаған",
+    "insufficientBalance": "Қаражат жеткіліксіз",
+    "transactionFailed": "Транзакция қатесі",
+    "loadingFailed": "Деректерді жүктеу мүмкін болмады"
+  },
+  "home": {
+    "hero": {
+      "title1": "Қазақстанның",
+      "title2": "көміртек нарығы.",
+      "titleAccent": "Ашық. Токенделген.",
+      "subtitle": "Solana смарт-келісімшарттары арқылы расталған көміртек кредиттерін сатып алыңыз, сатыңыз және өтеңіз",
+      "ctaInvest": "Инвестициялауды бастау",
+      "ctaHow": "Бұл қалай жұмыс істейді"
+    },
+    "stats": {
+      "overview": "Платформа шолуы",
+      "totalCredits": "Барлық кредиттер",
+      "retired": "Өтелген",
+      "activeProjects": "Белсенді жобалар",
+      "invested": "Инвестицияланған"
+    },
+    "projects": {
+      "title": "Жасыл жобалар",
+      "subtitle": "Қазақстанда CO₂ азайту бойынша расталған жобалар",
+      "filters": {
+        "all": "Барлығы",
+        "solar": "Күн",
+        "wind": "Жел",
+        "forest": "Орман",
+        "industrial": "Өнеркәсіп"
+      }
+    },
+    "problem": {
+      "label": "Мәселе",
+      "headline": "Қазақстан ЖІӨ көміртек сыйымдылығы бойынша әлемнің топ-10 елінің қатарында",
+      "p1": "Жылына 349 млн тонна CO₂. Адам басына 17.5 тонна — ЭЫДҰ орташасынан шамамен 3 есе көп. Көміртек кредиттерінің нарығы 2013 жылдан бері бар (KZ ETS), бірақ іс жүзінде өлі: ЕО-да $91 болғанда тоннасы $1, барлығы 135 қатысушы, тек спот, дериватив жоқ.",
+      "p2": "Үкімет мақсаты — 2030 жылға қарай тоннасына $50 (×50 өсу). Әлемдік банк нарықты дамытуға $4,8 млн бөлді. Бірақ банктер мен қаржы институттары Caspy Exchange-те сауда жасауға жіберілмейді — заң бойынша тек өнеркәсіптік эмитенттер ғана қатыса алады. Ашықтық нөл. Кредиттердің қос есебі — норма."
+    },
+    "audience": {
+      "label": "Кімге арналған",
+      "investors": {
+        "title": "Инвесторлар",
+        "desc": "Жасыл жобалардың үлестерін теңгеге сатып алыңыз. Көміртек кредиттерін сатудан дивидендтер алыңыз. Бүгінгі $1 → 2030 жылға $50. Әлеуетті ROI — ×50. Платформа комиссиясы — 1,5%."
+      },
+      "polluters": {
+        "title": "Ластаушы компаниялар",
+        "desc": "ҚазМұнайГаз, ArcelorMittal, көмір ЖЭО — 135 кәсіпорын шығарындыларды өтеуге міндетті. Блокчейнде дәлелді ашық сатып алу және өтеу."
+      },
+      "greenProjects": {
+        "title": "Жасыл жобалар",
+        "desc": "Күн станциялары, жел паркі, орманды қалпына келтіру — инвесторлардан тікелей қаржыландыру алады. Тексеру және барлық есеп ашық."
+      }
+    },
+    "how": {
+      "label": "Бұл қалай жұмыс істейді",
+      "step1Title": "Жоба тексеруден өтеді",
+      "step1Desc": "Күн станциясының немесе жел паркінің иесі құжаттарды жүктейді. Сертификат хеші блокчейнге жазылады — оны бұрмалау немесе өзгерту мүмкін емес. Тәуелсіз верификатор жобаны растайды.",
+      "step2Title": "Инвестор үлес сатып алады",
+      "step2Desc": "Сіз жобаны таңдап, KZTE-ге үлестерін сатып аласыз (1 KZTE = 1 теңге). Ақша жобаның қорғалған қоймасына түседі. Әмиянға үлес-токендер келеді — сіздің инвестицияңыздың растамасы.",
+      "step3Title": "Ластаушылар төлейді — сіз аласыз",
+      "step3Desc": "Зауыттар мен ЖЭО жобадан көміртек кредиттерін сатып алады. Кіріс автоматты түрде барлық инвесторлардың үлесіне сай бөлінеді. Бір батырмамен дивидендтер аласыз. $50/т кезінде 10% үлеспен жылына $25 000-ға дейін.",
+      "step4Title": "Өтеу — мәңгілік дәлел",
+      "step4Desc": "Компания шығарындыларын өтегенде көміртек токендері мәңгілікке жанады. Блокчейнде жазба қалады: кім өтеді, қанша тонна, қашан және не үшін. Бір кредитті екі рет пайдалану мүмкін емес — ол енді жоқ."
+    },
+    "whySolana": {
+      "label": "Неге Solana",
+      "transparencyTitle": "Ашықтық",
+      "transparencyDesc": "Барлық операциялар блокчейнде көрінеді. Кез келген адам тексере алады: қанша кредит шығарылған, кім сатып алған, кім өтеген.",
+      "speedTitle": "Жылдамдық пен құн",
+      "speedDesc": "Транзакция 0,4 секундты алады және 1 теңгеден аз тұрады. Ethereum-мен салыстырғанда — минуттар мен мың теңге.",
+      "integrityTitle": "Бұрмалаудың мүмкін еместігі",
+      "integrityDesc": "Құжат хеші, кредиттерді өтеу, дивидендтер — бәрі мәңгілікке жазылған. Кейіннен өзгерту мүмкін емес."
+    }
+  },
+  "calculator": {
+    "label": "Көміртек калькуляторы",
+    "headline1": "Өзіңіздің",
+    "headlineAccent": "көміртек ізіңізді есептеңіз",
+    "subtitle": "Қанша CO₂ шығаратыныңызды біліп, ZhasylKZ арқылы өтеңіз. Деректер Қазақстанға арналған шығарынды коэффициенттеріне негізделген.",
+    "consumption": "Сіздің тұтынуыңыз",
+    "fields": {
+      "electricity": { "label": "Электр энергиясы", "unit": "кВт·сағ / ай", "hint": "ҚР орташа үй: ~250 кВт·сағ" },
+      "car": { "label": "Автомобиль", "unit": "км / ай", "hint": "Орташа: ~1 000 км" },
+      "flights": { "label": "Әуе ұшулары", "unit": "км / жыл", "hint": "Алматы — Мәскеу: ~2 400 км" },
+      "gas": { "label": "Газ (жылыту)", "unit": "м³ / ай", "hint": "Орташа: ~150 м³" }
+    },
+    "methodologyLabel": "Әдістеме:",
+    "methodologyText": "Электр коэффициенті — 0,636 кг CO₂/кВт·сағ (ҚР көмір генерациясы). Автомобиль — 0,21 кг/км (орташа бензинді). Авиация — 0,255 кг/жол·км (ICAO). Газ — 2,0 кг/м³ (табиғи газ).",
+    "footprintLabel": "Сіздің көміртек ізіңіз",
+    "tonnesPerYear": "тонна CO₂/жыл",
+    "aboveAverage": "Орташа қазақстандықтан {pct}%-ға жоғары",
+    "ofAverage": "Орташа қазақстандықтың {pct}%-ы (17,5 т)",
+    "tonneShort": "т",
+    "tonnesCO2Tooltip": "т CO₂",
+    "equivalent": "Бұл мынаған тең",
+    "treesLabel": "{count} ағаш",
+    "treesHint": "жыл бойы сіңіруге қажет",
+    "ofAvgShort": "Орташаның {pct}%-ы",
+    "kazakhPersonHint": "қазақстандықтың (17,5 т CO₂/жыл)",
+    "flightsLabel": "{count} ұшу",
+    "flightsHint": "Алматы — Мәскеу (бір жаққа)",
+    "compensationLabel": "Өтеу",
+    "creditsLine1": "Сізге қажет",
+    "creditsLine2": "көміртек кредиттері",
+    "creditsHint": "жылдық шығарындыларды толық өтеу үшін",
+    "compensateCta": "ZhasylKZ-те өтеу"
+  },
+  "portfolio": {
+    "title": "Менің портфелім",
+    "connectHint": "Көру үшін әмиянды қосыңыз",
+    "balanceLabel": "KZTE балансы",
+    "faucetCta": "SOL + KZTE алу",
+    "summary": {
+      "totalValue": "Жалпы құны",
+      "investments": "Инвестициялар",
+      "claimable": "Алуға тиіс"
+    },
+    "noInvestments": "Инвестициялар жоқ",
+    "goToCatalog": "Бастау үшін",
+    "catalogLink": "жобалар каталогына",
+    "toStart": "өтіңіз",
+    "tableHeaders": {
+      "project": "Жоба",
+      "shares": "Үлестер",
+      "value": "Құны",
+      "claimable": "Төленетін"
+    },
+    "claimButton": "Алу",
+    "toasts": {
+      "claimSuccess": "Дивидендтер алынды",
+      "claimError": "Қате",
+      "txFailed": "Транзакция орындалмады",
+      "faucetReceived": "100 000 KZTE алынды!",
+      "faucetTitle": "Faucet",
+      "faucetError": "Faucet қатесі",
+      "unknownError": "Белгісіз қате"
+    }
+  },
+  "retire": {
+    "title": "Кредиттерді өтеу",
+    "subtitle": "Көміртек кредиттерін мәңгілікке өтеңіз. Әрбір өтеу блокчейнде өзгермейтін дәлел жасайды. Қос есеп мүмкін емес.",
+    "counterLabel": "платформада өтелген тонна CO₂",
+    "selectProject": "Өтеу үшін жобаны таңдаңыз",
+    "connectToLoad": "Жобаларды жүктеу үшін әмиянды қосыңыз",
+    "noProjectsBlockchain": "Блокчейнде жобалар жоқ. setup-devnet скриптін іске қосыңыз.",
+    "noVerified": "Расталған жобалар жоқ",
+    "retiredOf": "{retired} / {total} т өтелген",
+    "available": "қолжетімді",
+    "tonneShort": "т",
+    "buyHeader": "Көміртек кредиттерін сатып алу",
+    "buyHint": "Кейіннен өтеу үшін «{name}» жобасының Carbon Tokens сатып алыңыз",
+    "tonnesCO2": "тонна CO₂",
+    "buyCta": "Сатып алу",
+    "selectToRetire": "Кредиттерді өтеу үшін жобаны таңдаңыз",
+    "howTitle": "Қалай жұмыс істейді",
+    "steps": {
+      "step1Title": "Жобаны таңдаңыз",
+      "step1Desc": "Өтеу үшін жобаны анықтаңыз",
+      "step2Title": "Саны және мақсаты",
+      "step2Desc": "Қанша тонна CO₂ және не үшін",
+      "step3Title": "Токендерді жағу",
+      "step3Desc": "SPL Token burn — мәңгілікке",
+      "step4Title": "RetireRecord",
+      "step4Desc": "Өзгермейтін PDA on-chain дәлелі"
+    },
+    "whyTitle": "Неге бұл маңызды",
+    "why": {
+      "noDoubleTitle": "Қос есеп мүмкін емес",
+      "noDoubleDesc": "жанған токен жоқ",
+      "immutableTitle": "Өзгермейтін дәлел",
+      "immutableDesc": "RetireRecord PDA: кім, қанша, қашан, не үшін",
+      "verifiableTitle": "Тексерілетін",
+      "verifiableDesc": "кез келген адам Solana Explorer арқылы тексере алады"
+    },
+    "statsRetired": "тонна өтелген",
+    "statsProjects": "жобалар",
+    "historyTitle": "Өтеу тарихы",
+    "history": {
+      "project": "Жоба",
+      "who": "Кім өтеді",
+      "tonnes": "Тонна",
+      "purpose": "Мақсат",
+      "certificate": "Сертификат"
+    },
+    "toasts": {
+      "buySuccess": "{count} көміртек кредиттері алынды!",
+      "buyError": "Қате",
+      "unknownError": "Белгісіз қате"
+    }
+  },
+  "marketplace": {
+    "title": "Маркетплейс",
+    "subtitle": "Көміртек кредиттері үлестерінің қайталама нарығы",
+    "features": {
+      "p2pTitle": "P2P сауда",
+      "p2pDesc": "Үлестерді сатуға қойыңыз және басқа инвесторлардан escrow арқылы тікелей сатып алыңыз.",
+      "orderbookTitle": "Тапсырыстар кітабы",
+      "orderbookDesc": "Бағалармен, көлемдермен және мәмілелер тарихымен барлық белсенді листингтерді көріңіз.",
+      "pricingTitle": "Бағалау",
+      "pricingDesc": "Сатушылар мен сатып алушылардың бәсекелестігі арқылы нарықтық бағалау."
+    },
+    "activeListings": "Белсенді листингтер",
+    "noListings": "Белсенді листингтер жоқ",
+    "noListingsHintConnected": "Инвесторлар үлестерін сатуға қойғанда листингтер пайда болады",
+    "noListingsHintDisconnected": "Листингтерді көру үшін әмиянды қосыңыз",
+    "table": {
+      "project": "Жоба",
+      "seller": "Сатушы",
+      "amount": "Саны",
+      "pricePerShare": "Бір үлес бағасы",
+      "total": "Барлығы",
+      "price": "Баға"
+    },
+    "you": "(сіз)",
+    "buyButton": "Сатып алу",
+    "shares": "үлес",
+    "tradesTitle": "Мәмілелер тарихы",
+    "toasts": {
+      "connectWallet": "Әмиянды қосыңыз",
+      "projectNotFound": "Жоба табылмады",
+      "buySuccess": "Үлестер сатып алынды!",
+      "buySuccessDesc": "{amount} үлес алынды",
+      "buyError": "Сатып алу қатесі",
+      "unknownError": "Белгісіз қате"
+    }
+  },
+  "project": {
+    "backToProjects": "Жобалар",
+    "types": {
+      "solar": "Күн",
+      "wind": "Жел",
+      "forest": "Орман",
+      "industrial": "Өнеркәс.",
+      "other": "Басқа"
+    },
+    "verified": "Расталған",
+    "notVerified": "Тексерілуде",
+    "onChain": "On-chain",
+    "ourReal": "Біздің нақты жобамыз",
+    "stats": {
+      "pricePerShare": "Бір үлестің бағасы",
+      "co2PerYear": "CO₂ / жыл",
+      "retired": "Өтелген",
+      "totalShares": "Барлық үлестер",
+      "sold": "Сатылған",
+      "status": "Күй"
+    },
+    "tonneShort": "т",
+    "carbonFootprint": "Көміртек ізі",
+    "investmentProgress": "Инвестиция прогресі",
+    "creditsRetired": "Кредиттер өтелген",
+    "realEquipment": "Нақты жабдық",
+    "equipment": {
+      "power": "Қуат",
+      "powerValue": "25 кВт",
+      "generation": "Өндіру",
+      "generationValue": "42,65 МВт·сағ/жыл",
+      "factor": "Коэффициент",
+      "factorValue": "0,636 кг/кВт·сағ",
+      "insolation": "Күн радиациясы",
+      "insolationValue": "1 700+ кВт·сағ/м²"
+    },
+    "realEquipmentDesc": "Генерация деректері инвертордан SOLARMAN API арқылы нақты уақытта түседі. Бұл симуляция емес — университет кампусындағы нақты жабдықтың live-мониторингі.",
+    "documentHash": "Құжат хеші",
+    "investSidebar": "Жобаға инвестициялау",
+    "perShare": "бір үлес үшін",
+    "available": "Қолжетімді",
+    "faucetCta": "SOL + KZTE алу",
+    "toasts": {
+      "connectWallet": "Әмиянды қосыңыз",
+      "faucetTitle": "Faucet",
+      "faucetReceived": "100 000 KZTE алынды!",
+      "error": "Қате",
+      "unknownError": "Белгісіз қате"
+    }
+  },
+  "card": {
+    "types": {
+      "solar": "Күн",
+      "wind": "Жел",
+      "forest": "Орман",
+      "industrial": "Өнеркәс.",
+      "other": "Басқа"
+    },
+    "status": {
+      "active": "Белсенді",
+      "funded": "Жиналған",
+      "retired": "Аяқталған"
+    },
+    "liveMonitoring": "Live мониторинг",
+    "pricePerShare": "Бір үлес бағасы",
+    "co2PerYear": "CO₂/жыл",
+    "tonneShort": "т",
+    "more": "Толығырақ",
+    "realProject": "real project",
+    "invest": "Инвестициялау"
+  },
+  "invest": {
+    "trigger": "Инвестициялау",
+    "title": "{name} жобасына инвестициялау",
+    "description": "Сатып алу үшін үлес санын көрсетіңіз. Бір үлестің бағасы: {price} ₸",
+    "sharesLabel": "Үлес саны",
+    "available": "Қолжетімді: {count} үлес",
+    "total": "Барлығы",
+    "submit": "Инвестицияны растау",
+    "processing": "Өңделуде...",
+    "toasts": {
+      "connectFirst": "Инвестиция үшін әмиянды қосыңыз",
+      "notInitialized": "Бағдарлама іске қосылмаған. Әмиян қосылымын тексеріңіз.",
+      "success": "Инвестиция сәтті!",
+      "successDesc": "{count} үлес сатып алынды",
+      "error": "Инвестиция қатесі",
+      "unknownError": "Транзакция қатесі белгісіз"
+    }
+  },
+  "listShares": {
+    "trigger": "Сату",
+    "title": "Үлестерді сатуға қою",
+    "description": "«{name}» үлестері (escrow)",
+    "amountLabel": "Үлес саны",
+    "available": "Қолжетімді: {count}",
+    "priceLabel": "Бір үлес бағасы (₸)",
+    "currentPrice": "Қазіргі: {price} ₸",
+    "totalReceive": "Сатудан түсетін сома",
+    "submit": "Қою",
+    "processing": "Өңделуде...",
+    "toasts": {
+      "connectFirst": "Әмиянды қосыңыз",
+      "notInitialized": "Бағдарлама іске қосылмаған",
+      "invalidAmount": "Дұрыс санды көрсетіңіз",
+      "invalidPrice": "Дұрыс бағаны көрсетіңіз",
+      "success": "Листинг жасалды!",
+      "successDesc": "{amount} үлес {price} ₸ бағамен қойылды",
+      "error": "Листинг жасау қатесі",
+      "unknownError": "Белгісіз қате"
+    }
+  },
+  "retirePanel": {
+    "title": "Кредиттерді өтеу",
+    "amountLabel": "Қанша тонна CO₂",
+    "amountPlaceholder": "Мысалы, 10",
+    "available": "Қолжетімді: {count} т",
+    "purposeLabel": "Өтеу мақсаты",
+    "purposePlaceholder": "Мысалы, ESG-есеп Q1 2026",
+    "submit": "Өтеу",
+    "processing": "Өңделуде...",
+    "toasts": {
+      "connectFirst": "Әмиянды қосыңыз",
+      "notInitialized": "Бағдарлама іске қосылмаған",
+      "invalidAmount": "Дұрыс санды көрсетіңіз",
+      "purposeRequired": "Өтеу мақсатын көрсетіңіз",
+      "success": "Кредиттер өтелді!",
+      "successDesc": "{amount} т CO₂ мәңгілікке жанды",
+      "error": "Өтеу қатесі",
+      "unknownError": "Белгісіз қате"
+    }
+  },
+  "dividend": {
+    "title": "Дивидендтер",
+    "claimable": "Алуға тиіс",
+    "totalPerShare": "Бір үлеске жалпы",
+    "lastClaimed": "Соңғы алу",
+    "claim": "Дивидендтерді алу",
+    "claiming": "Алынуда...",
+    "noneYet": "Әзірге дивидендтер жоқ",
+    "toasts": {
+      "connectFirst": "Әмиянды қосыңыз",
+      "success": "Дивидендтер алынды!",
+      "successDesc": "{amount} ₸ есепке алынды",
+      "error": "Алу қатесі",
+      "unknownError": "Белгісіз қате"
+    }
+  },
+  "demo": {
+    "back": "Артқа",
+    "next": "Алға",
+    "stepLabels": {
+      "problem": "Мәселе",
+      "solution": "Шешім",
+      "projects": "Жобалар",
+      "investments": "Инвестициялар",
+      "dividends": "Дивидендтер",
+      "retire": "Retire",
+      "summary": "Қорытынды"
+    },
+    "step1": {
+      "label": "Мәселе",
+      "headline": "Қазақстан ЖІӨ көміртек сыйымдылығы бойынша әлемнің топ-10 елінің қатарында",
+      "stats": {
+        "co2Year": "CO₂ / жыл",
+        "perPerson": "адам басына",
+        "pricePerTonne": "тонна бағасы",
+        "euEts": "EU ETS"
+      },
+      "deadMarket": "Көміртек кредиттерінің нарығы 2013 жылдан бері бар (KZ ETS), бірақ іс жүзінде өлі: ЕО-да $91 болғанда тоннасы $1. Барлығы 135 қатысушы, тек спот, дериватив жоқ. Банктер мен қаржы институттары саудаға жіберілмейді.",
+      "target2030": "2030 жылға мақсат (×50 өсу)",
+      "wbGrant": "Әлемдік банк гранты (наурыз 2025)",
+      "noBlockchain": "ОА-да блокчейн-жобалар",
+      "personalLabel": "Жеке мотивация",
+      "personalText": "Мен Түркістандағы Қожа Ахмет Ясауи атындағы Халықаралық қазақ-түрік университетінде жаңартылатын энергия саласын зерттеп жүрмін. Кампуста нақты 25 кВт күн электр станциясы тұр — біз оны SOLARMAN API арқылы платформаға қостық. Көміртек кредиттері тақырыбы біз үшін абстрактілі емес — біз күн сайын таза энергияның қалай өндірілетінін көреміз және блокчейн арқылы осы үлесті монетизациялау құралын бергіміз келеді."
+    },
+    "step2": {
+      "label": "Шешім",
+      "headline": "ZhasylKZ — ОА-дағы токенделген көміртек кредиттерінің бірінші маркетплейсі",
+      "blocks": {
+        "verifyTitle": "Тексеру",
+        "verifyDesc": "doc_hash on-chain",
+        "investTitle": "Инвестициялау",
+        "investDesc": "KZTE → vault, share tokens",
+        "dividendsTitle": "Дивидендтер",
+        "dividendsDesc": "кіріс → инвесторларға",
+        "retireTitle": "Retire",
+        "retireDesc": "burn + immutable proof"
+      },
+      "ctaContract": "Explorer-дегі келісімшарт",
+      "ctaGithub": "GitHub",
+      "techStack": "Tech Stack"
+    },
+    "step3": {
+      "label": "Нақты жобалар",
+      "headline": "Devnet-те 4 расталған жоба",
+      "subtitle": "Деректер Қазақстанның нақты жасыл жобаларына негізделген. On-chain mock fallback-пен.",
+      "liveBadge": "Live",
+      "liveTitle": "Қожа Ахмет Ясауи университетінің КЭС — біздің нақты жобамыз",
+      "liveDesc": "Түркістандағы университет кампусындағы 25 кВт күн станциясы. Генерация деректері SOLARMAN API арқылы нақты уақытта түседі — бұл симуляция емес, шынайы жабдықтың live-мониторингі.",
+      "openCatalog": "Каталогты ашу"
+    },
+    "step4": {
+      "label": "Өзіңіз байқап көріңіз",
+      "headline": "KZTE-ге инвестициялау",
+      "step1Title": "Phantom әмиянды қосыңыз",
+      "step1Desc": "Жоғарғы оң жақ бұрыштағы әмиян батырмасын басыңыз. Желі — Devnet.",
+      "step2Title": "Тестілік KZTE алыңыз",
+      "step2Desc": "Портфельге өтіп, «KZTE алу» батырмасын басыңыз — әмиянға 100 000 ₸.",
+      "step3Title": "Жобаны таңдап, инвестициялаңыз",
+      "step3Desc": "Кез келген жобаны ашыңыз → «Инвестициялау» → үлес санын көрсетіңіз → растаңыз. Платформа комиссиясы — 1,5%.",
+      "step4Title": "Әмияннан тексеріңіз",
+      "step4Desc": "Share tokens (sYSV, sBRB, sAMT) Phantom-да пайда болады. Баға $50/т-ға дейін өскенде кірістілік — ×50 ROI-ға дейін.",
+      "ctaPortfolio": "Портфель (KZTE Faucet)",
+      "ctaSesYasavi": "Ясауи КЭС",
+      "ctaWind": "Ереймен жел паркі"
+    },
+    "step5": {
+      "label": "Пассивті табыс",
+      "headline": "Кредиттерді сатудан түсетін дивидендтер",
+      "howTitle": "Қалай жұмыс істейді",
+      "howStep1": "Ластаушы (ҚазМұнайГаз, ArcelorMittal) жобадан көміртек кредиттерін KZTE-ге сатып алады.",
+      "howStep2_part1": "Жоба иесі",
+      "howStep2_part2": "шақырады — KZTE vault-қа кетеді, жаңартылады",
+      "howStep3": "Инвестор Портфельге кіріп, «Алу» басады — өз дивидендтер үлесін алады.",
+      "exampleTitle": "Мысал: 5 000 т CO₂ жоба, сіздің үлесіңіз 10%",
+      "income1": "$1/т кезінде кіріс/жыл",
+      "income2": "$15/т кезінде кіріс/жыл (2028)",
+      "income3": "$50/т кезінде кіріс/жыл (2030)",
+      "exampleNote": "Gas-ты иесі емес инвестор төлейді → масштабталады. last_claimed арқылы double-claim мүмкін емес.",
+      "ctaPortfolio": "Портфельге өту"
+    },
+    "step6": {
+      "label": "Killer Feature",
+      "headline": "Retire — кредиттерді мәңгілікке өтеу",
+      "step1Title": "Carbon Tokens сатып алу",
+      "step1Desc": "Ластаушы жобаның көміртек кредиттерін сатып алады",
+      "step2Title": "SPL Token BURN",
+      "step2Desc": "Токендер мәңгілікке жойылады — айналыстан жоғалады",
+      "step3Title": "RetireRecord PDA",
+      "step3Desc": "Immutable proof on-chain: кім, қанша, қашан, не үшін",
+      "step4Title": "NFT сертификаты",
+      "step4Desc": "Metadata-мен NFT mint — Phantom-да көрінеді, жүктелетін SVG",
+      "whyImportantLabel": "Неге бұл маңызды:",
+      "whyImportantText": "Жанған токен жоқ. Қос есеп мүмкін емес. RetireRecord PDA — аудиторларға арналған immutable proof. Өтеу үшін платформа комиссиясы — 1%. Кез келген адам Solana Explorer арқылы тексере алады.",
+      "ctaTry": "Retire-ді сынап көру"
+    },
+    "step7": {
+      "label": "Архитектура және қорытынды",
+      "headline": "Solana-дағы толыққанды DeFi өнім",
+      "stats": {
+        "instructions": "нұсқаулықтар",
+        "tests": "тесттер",
+        "fee": "платформа комиссиясы",
+        "roi": "инвестордың 2030-ға ROI-і"
+      },
+      "instructionsTitle": "On-chain нұсқаулықтар",
+      "securityTitle": "Қауіпсіздік",
+      "security": {
+        "checked": "checked_add / checked_mul / checked_div — барлық жерде",
+        "vault": "Vault PDA — KZTE ATA үстіндегі жалғыз authority",
+        "burn": "Burn — state mutation алдында (reentrancy protection)",
+        "uniqueness": "RetireRecord PDA uniqueness — double-retire мүмкін емес",
+        "escrow": "buy_shares-те Escrow owner validation"
+      },
+      "summaryHeadline": "ZhasylKZ үш мәселені шешеді",
+      "tags": {
+        "transparency": "Ашықтық",
+        "liquidity": "Өтімділік",
+        "verification": "Тексеру"
+      },
+      "summaryFooter": "Solana — жылдам әрі арзан. Қазақстан — ОА-дағы бірінші. $50/т кезіндегі TAM — $17,5B.",
+      "teamLabel": "Zerde командасы",
+      "teamDesc": "Павлодар қ., Түркістан қ. · Decentrathon 5.0 · Кейс 1 (RWA)",
+      "ctaExplorer": "Explorer",
+      "ctaGithub": "GitHub",
+      "ctaCatalog": "Жобалар каталогы"
+    }
+  }
+}

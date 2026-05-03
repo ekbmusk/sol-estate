@@ -1,0 +1,548 @@
+{
+  "common": {
+    "brand": "ZhasylKZ",
+    "tagline": "Carbon market of Kazakhstan",
+    "metaDescription": "Buy, sell, and retire verified carbon credits via Solana smart contracts",
+    "nav": {
+      "demo": "Demo",
+      "projects": "Projects",
+      "portfolio": "Portfolio",
+      "marketplace": "Marketplace",
+      "retire": "Retire",
+      "calculator": "Calculator"
+    },
+    "network": { "devnet": "Devnet" },
+    "buttons": {
+      "connectWallet": "Connect wallet",
+      "openExplorer": "Open in Explorer",
+      "back": "Back",
+      "more": "Details",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "close": "Close"
+    },
+    "footer": {
+      "solana": "Solana",
+      "stablecoin": "KZTE Stablecoin",
+      "hackathon": "Decentrathon 5.0"
+    },
+    "language": {
+      "label": "Language",
+      "ru": "Русский",
+      "kk": "Қазақша",
+      "en": "English"
+    },
+    "units": {
+      "tco2": "tCO₂",
+      "tenge": "₸",
+      "kzte": "KZTE"
+    },
+    "online": "Online"
+  },
+  "errors": {
+    "walletNotConnected": "Connect your wallet",
+    "programNotInitialized": "Program not initialized",
+    "insufficientBalance": "Insufficient balance",
+    "transactionFailed": "Transaction failed",
+    "loadingFailed": "Failed to load data"
+  },
+  "home": {
+    "hero": {
+      "title1": "Carbon market of",
+      "title2": "Kazakhstan.",
+      "titleAccent": "Transparent. Tokenized.",
+      "subtitle": "Buy, sell, and retire verified carbon credits through Solana smart contracts",
+      "ctaInvest": "Start investing",
+      "ctaHow": "How it works"
+    },
+    "stats": {
+      "overview": "Platform overview",
+      "totalCredits": "Total credits",
+      "retired": "Retired",
+      "activeProjects": "Active projects",
+      "invested": "Invested"
+    },
+    "projects": {
+      "title": "Green projects",
+      "subtitle": "Verified CO₂-reduction projects in Kazakhstan",
+      "filters": {
+        "all": "All",
+        "solar": "Solar",
+        "wind": "Wind",
+        "forest": "Forest",
+        "industrial": "Industrial"
+      }
+    },
+    "problem": {
+      "label": "Problem",
+      "headline": "Kazakhstan ranks in the world's top 10 by GDP carbon intensity",
+      "p1": "349 million tonnes of CO₂ per year. 17.5 tonnes per person — almost 3× the OECD average. The carbon credit market has existed since 2013 (KZ ETS) but is effectively dead: $1 per tonne versus $91 in the EU, only 135 participants, spot only, no derivatives.",
+      "p2": "The government's target: $50 per tonne by 2030 (×50 growth). The World Bank allocated $4.8M to develop the market. Yet banks and financial institutions are barred from trading on Caspy Exchange — by law only industrial emitters may participate. Transparency is zero. Double counting is the norm."
+    },
+    "audience": {
+      "label": "Who it's for",
+      "investors": {
+        "title": "Investors",
+        "desc": "Buy shares of green projects in tenge. Earn dividends from carbon-credit sales. Credit price is $1 today → target $50 by 2030. Potential ROI: ×50. Platform fee: 1.5%."
+      },
+      "polluters": {
+        "title": "Emitters",
+        "desc": "KazMunaiGas, ArcelorMittal, coal-fired power plants — 135 enterprises must offset their emissions. Transparent purchase and retirement of credits with proof on-chain."
+      },
+      "greenProjects": {
+        "title": "Green projects",
+        "desc": "Solar plants, wind farms, reforestation — funded directly by investors. Verification and all calculations are transparent."
+      }
+    },
+    "how": {
+      "label": "How it works",
+      "step1Title": "Project gets verified",
+      "step1Desc": "The owner of a solar plant or wind farm uploads documents. The certificate hash is recorded on-chain — it can't be forged or changed. An independent verifier confirms the project.",
+      "step2Title": "Investor buys shares",
+      "step2Desc": "You pick a project and buy shares with KZTE (1 KZTE = 1 tenge). Funds go to the project's secured vault. Share tokens land in your wallet — proof of your investment.",
+      "step3Title": "Emitters pay — you earn",
+      "step3Desc": "Factories and power plants buy carbon credits from the project. Revenue is automatically distributed to investors pro rata. Claim dividends with one click. Up to $25,000/year on a 10% share at $50/t.",
+      "step4Title": "Retirement — proof forever",
+      "step4Desc": "When a company offsets its emissions, the carbon tokens are burned forever. The blockchain keeps the record: who retired, how many tonnes, when, and why. A credit can never be used twice — it simply no longer exists."
+    },
+    "whySolana": {
+      "label": "Why Solana",
+      "transparencyTitle": "Transparency",
+      "transparencyDesc": "Every operation is visible on-chain. Anyone can verify: how many credits were issued, who bought, who retired.",
+      "speedTitle": "Speed and cost",
+      "speedDesc": "A transaction takes 0.4 seconds and costs less than a tenge. Compared to Ethereum: minutes and thousands of tenge.",
+      "integrityTitle": "Tamper-proof",
+      "integrityDesc": "Document hash, credit retirement, dividends — all written forever. Can't be changed retroactively."
+    }
+  },
+  "calculator": {
+    "label": "Carbon calculator",
+    "headline1": "Calculate your",
+    "headlineAccent": "carbon footprint",
+    "subtitle": "Find out how much CO₂ you produce and offset it via ZhasylKZ. Data is based on emission factors for Kazakhstan.",
+    "consumption": "Your consumption",
+    "fields": {
+      "electricity": { "label": "Electricity", "unit": "kWh / month", "hint": "Average KZ home: ~250 kWh" },
+      "car": { "label": "Car", "unit": "km / month", "hint": "Average: ~1,000 km" },
+      "flights": { "label": "Flights", "unit": "km / year", "hint": "Almaty — Moscow: ~2,400 km" },
+      "gas": { "label": "Gas (heating)", "unit": "m³ / month", "hint": "Average: ~150 m³" }
+    },
+    "methodologyLabel": "Methodology:",
+    "methodologyText": "Electricity factor — 0.636 kg CO₂/kWh (KZ coal generation). Car — 0.21 kg/km (average gasoline). Aviation — 0.255 kg/passenger-km (ICAO). Gas — 2.0 kg/m³ (natural gas).",
+    "footprintLabel": "Your carbon footprint",
+    "tonnesPerYear": "tonnes CO₂/year",
+    "aboveAverage": "{pct}% above the average Kazakh",
+    "ofAverage": "{pct}% of the average Kazakh (17.5 t)",
+    "tonneShort": "t",
+    "tonnesCO2Tooltip": "t CO₂",
+    "equivalent": "This equals",
+    "treesLabel": "{count, plural, one {# tree} other {# trees}}",
+    "treesHint": "needed to absorb in a year",
+    "ofAvgShort": "{pct}% of average",
+    "kazakhPersonHint": "Kazakh (17.5 t CO₂/year)",
+    "flightsLabel": "{count} flights",
+    "flightsHint": "Almaty — Moscow (one way)",
+    "compensationLabel": "Offset",
+    "creditsLine1": "You need",
+    "creditsLine2": "carbon credits",
+    "creditsHint": "to fully offset yearly emissions",
+    "compensateCta": "Offset via ZhasylKZ"
+  },
+  "portfolio": {
+    "title": "My portfolio",
+    "connectHint": "Connect your wallet to view",
+    "balanceLabel": "KZTE balance",
+    "faucetCta": "Get SOL + KZTE",
+    "summary": {
+      "totalValue": "Total value",
+      "investments": "Investments",
+      "claimable": "Claimable"
+    },
+    "noInvestments": "No investments",
+    "goToCatalog": "Visit the",
+    "catalogLink": "project catalog",
+    "toStart": "to begin",
+    "tableHeaders": {
+      "project": "Project",
+      "shares": "Shares",
+      "value": "Value",
+      "claimable": "Claimable"
+    },
+    "claimButton": "Claim",
+    "toasts": {
+      "claimSuccess": "Dividends claimed",
+      "claimError": "Error",
+      "txFailed": "Transaction failed",
+      "faucetReceived": "100,000 KZTE received!",
+      "faucetTitle": "Faucet",
+      "faucetError": "Faucet error",
+      "unknownError": "Unknown error"
+    }
+  },
+  "retire": {
+    "title": "Retire credits",
+    "subtitle": "Retire carbon credits forever. Every retirement creates immutable on-chain proof. Double counting is impossible.",
+    "counterLabel": "tonnes of CO₂ retired on the platform",
+    "selectProject": "Select a project to retire",
+    "connectToLoad": "Connect your wallet to load projects",
+    "noProjectsBlockchain": "No projects on the blockchain. Run the setup-devnet script.",
+    "noVerified": "No verified projects",
+    "retiredOf": "{retired} / {total} t retired",
+    "available": "available",
+    "tonneShort": "t",
+    "buyHeader": "Buy carbon credits",
+    "buyHint": "Buy Carbon Tokens of project \"{name}\" for subsequent retirement",
+    "tonnesCO2": "tonnes CO₂",
+    "buyCta": "Buy",
+    "selectToRetire": "Pick a project to retire credits",
+    "howTitle": "How it works",
+    "steps": {
+      "step1Title": "Pick a project",
+      "step1Desc": "Choose a project to retire from",
+      "step2Title": "Amount and purpose",
+      "step2Desc": "How many tonnes of CO₂ and why",
+      "step3Title": "Burn tokens",
+      "step3Desc": "SPL Token burn — forever",
+      "step4Title": "RetireRecord",
+      "step4Desc": "Immutable PDA on-chain proof"
+    },
+    "whyTitle": "Why it matters",
+    "why": {
+      "noDoubleTitle": "Double counting impossible",
+      "noDoubleDesc": "a burned token doesn't exist",
+      "immutableTitle": "Immutable proof",
+      "immutableDesc": "RetireRecord PDA: who, how much, when, why",
+      "verifiableTitle": "Verifiable",
+      "verifiableDesc": "anyone can check via Solana Explorer"
+    },
+    "statsRetired": "tonnes retired",
+    "statsProjects": "projects",
+    "historyTitle": "Retirement history",
+    "history": {
+      "project": "Project",
+      "who": "Who retired",
+      "tonnes": "Tonnes",
+      "purpose": "Purpose",
+      "certificate": "Certificate"
+    },
+    "toasts": {
+      "buySuccess": "{count} carbon credits received!",
+      "buyError": "Error",
+      "unknownError": "Unknown error"
+    }
+  },
+  "marketplace": {
+    "title": "Marketplace",
+    "subtitle": "Secondary market for tokenized carbon credit shares",
+    "features": {
+      "p2pTitle": "P2P trading",
+      "p2pDesc": "List shares for sale and buy directly from other investors with on-chain escrow.",
+      "orderbookTitle": "Order book",
+      "orderbookDesc": "Browse all active listings with prices, volumes, and trade history.",
+      "pricingTitle": "Pricing",
+      "pricingDesc": "Market pricing via competition between buyers and sellers."
+    },
+    "activeListings": "Active listings",
+    "noListings": "No active listings",
+    "noListingsHintConnected": "Listings will appear when investors put their shares up for sale",
+    "noListingsHintDisconnected": "Connect your wallet to view listings",
+    "table": {
+      "project": "Project",
+      "seller": "Seller",
+      "amount": "Amount",
+      "pricePerShare": "Price/share",
+      "total": "Total",
+      "price": "Price"
+    },
+    "you": "(you)",
+    "buyButton": "Buy",
+    "shares": "shares",
+    "tradesTitle": "Trade history",
+    "toasts": {
+      "connectWallet": "Connect your wallet",
+      "projectNotFound": "Project not found",
+      "buySuccess": "Shares purchased!",
+      "buySuccessDesc": "{amount} shares acquired",
+      "buyError": "Purchase error",
+      "unknownError": "Unknown error"
+    }
+  },
+  "project": {
+    "backToProjects": "Projects",
+    "types": {
+      "solar": "Solar",
+      "wind": "Wind",
+      "forest": "Forest",
+      "industrial": "Industrial",
+      "other": "Other"
+    },
+    "verified": "Verified",
+    "notVerified": "Pending",
+    "onChain": "On-chain",
+    "ourReal": "Our real project",
+    "stats": {
+      "pricePerShare": "Price / share",
+      "co2PerYear": "CO₂ / year",
+      "retired": "Retired",
+      "totalShares": "Total shares",
+      "sold": "Sold",
+      "status": "Status"
+    },
+    "tonneShort": "t",
+    "carbonFootprint": "Carbon footprint",
+    "investmentProgress": "Investment progress",
+    "creditsRetired": "Credits retired",
+    "realEquipment": "Real equipment",
+    "equipment": {
+      "power": "Power",
+      "powerValue": "25 kW",
+      "generation": "Generation",
+      "generationValue": "42.65 MWh/year",
+      "factor": "Factor",
+      "factorValue": "0.636 kg/kWh",
+      "insolation": "Insolation",
+      "insolationValue": "1,700+ kWh/m²"
+    },
+    "realEquipmentDesc": "Generation data is streamed in real time from the inverter via the SOLARMAN API. This is not a simulation — live monitoring of real equipment on the university campus.",
+    "documentHash": "Document hash",
+    "investSidebar": "Invest in project",
+    "perShare": "per share",
+    "available": "Available",
+    "faucetCta": "Get SOL + KZTE",
+    "toasts": {
+      "connectWallet": "Connect your wallet",
+      "faucetTitle": "Faucet",
+      "faucetReceived": "100,000 KZTE received!",
+      "error": "Error",
+      "unknownError": "Unknown error"
+    }
+  },
+  "card": {
+    "types": {
+      "solar": "Solar",
+      "wind": "Wind",
+      "forest": "Forest",
+      "industrial": "Industrial",
+      "other": "Other"
+    },
+    "status": {
+      "active": "Active",
+      "funded": "Funded",
+      "retired": "Retired"
+    },
+    "liveMonitoring": "Live monitoring",
+    "pricePerShare": "Price/share",
+    "co2PerYear": "CO₂/year",
+    "tonneShort": "t",
+    "more": "Details",
+    "realProject": "real project",
+    "invest": "Invest"
+  },
+  "invest": {
+    "trigger": "Invest",
+    "title": "Invest in {name}",
+    "description": "Enter the number of shares to buy. Price per share: {price} ₸",
+    "sharesLabel": "Number of shares",
+    "available": "Available: {count} shares",
+    "total": "Total",
+    "submit": "Confirm investment",
+    "processing": "Processing...",
+    "toasts": {
+      "connectFirst": "Connect your wallet to invest",
+      "notInitialized": "Program not initialized. Check your wallet connection.",
+      "success": "Investment successful!",
+      "successDesc": "{count} shares acquired",
+      "error": "Investment error",
+      "unknownError": "Unknown transaction error"
+    }
+  },
+  "listShares": {
+    "trigger": "Sell",
+    "title": "List shares for sale",
+    "description": "Shares of \"{name}\" (escrow)",
+    "amountLabel": "Number of shares",
+    "available": "Available: {count}",
+    "priceLabel": "Price per share (₸)",
+    "currentPrice": "Current: {price} ₸",
+    "totalReceive": "You'll receive",
+    "submit": "List",
+    "processing": "Processing...",
+    "toasts": {
+      "connectFirst": "Connect your wallet",
+      "notInitialized": "Program not initialized",
+      "invalidAmount": "Enter a valid amount",
+      "invalidPrice": "Enter a valid price",
+      "success": "Listing created!",
+      "successDesc": "{amount} shares listed at {price} ₸",
+      "error": "Failed to create listing",
+      "unknownError": "Unknown error"
+    }
+  },
+  "retirePanel": {
+    "title": "Retire credits",
+    "amountLabel": "Tonnes of CO₂",
+    "amountPlaceholder": "e.g., 10",
+    "available": "Available: {count} t",
+    "purposeLabel": "Retirement purpose",
+    "purposePlaceholder": "e.g., ESG report Q1 2026",
+    "submit": "Retire",
+    "processing": "Processing...",
+    "toasts": {
+      "connectFirst": "Connect your wallet",
+      "notInitialized": "Program not initialized",
+      "invalidAmount": "Enter a valid amount",
+      "purposeRequired": "Specify a retirement purpose",
+      "success": "Credits retired!",
+      "successDesc": "{amount} t CO₂ burned forever",
+      "error": "Retirement error",
+      "unknownError": "Unknown error"
+    }
+  },
+  "dividend": {
+    "title": "Dividends",
+    "claimable": "Claimable",
+    "totalPerShare": "Total per share",
+    "lastClaimed": "Last claimed",
+    "claim": "Claim dividends",
+    "claiming": "Claiming...",
+    "noneYet": "No dividends yet",
+    "toasts": {
+      "connectFirst": "Connect your wallet",
+      "success": "Dividends claimed!",
+      "successDesc": "{amount} ₸ credited",
+      "error": "Claim error",
+      "unknownError": "Unknown error"
+    }
+  },
+  "demo": {
+    "back": "Back",
+    "next": "Next",
+    "stepLabels": {
+      "problem": "Problem",
+      "solution": "Solution",
+      "projects": "Projects",
+      "investments": "Invest",
+      "dividends": "Dividends",
+      "retire": "Retire",
+      "summary": "Summary"
+    },
+    "step1": {
+      "label": "Problem",
+      "headline": "Kazakhstan ranks in the world's top 10 by GDP carbon intensity",
+      "stats": {
+        "co2Year": "CO₂ / year",
+        "perPerson": "per person",
+        "pricePerTonne": "price / tonne",
+        "euEts": "EU ETS"
+      },
+      "deadMarket": "The carbon credit market has existed since 2013 (KZ ETS) but is effectively dead: $1 per tonne versus $91 in the EU. Only 135 participants, spot only, no derivatives. Banks and financial institutions are barred from trading.",
+      "target2030": "target by 2030 (×50 growth)",
+      "wbGrant": "World Bank grant (March 2025)",
+      "noBlockchain": "blockchain projects in Central Asia",
+      "personalLabel": "Personal motivation",
+      "personalText": "I study renewable energy at the Akhmet Yassawi International Kazakh-Turkish University in Turkestan. There's a real 25 kW solar plant on campus — we connected it to the platform via the SOLARMAN API. The carbon-credit topic isn't abstract for us — we see clean energy generated every day, and we want to give a tool to monetize that contribution via blockchain."
+    },
+    "step2": {
+      "label": "Solution",
+      "headline": "ZhasylKZ — the first marketplace of tokenized carbon credits in Central Asia",
+      "blocks": {
+        "verifyTitle": "Verification",
+        "verifyDesc": "doc_hash on-chain",
+        "investTitle": "Invest",
+        "investDesc": "KZTE → vault, share tokens",
+        "dividendsTitle": "Dividends",
+        "dividendsDesc": "revenue → investors",
+        "retireTitle": "Retire",
+        "retireDesc": "burn + immutable proof"
+      },
+      "ctaContract": "Contract on Explorer",
+      "ctaGithub": "GitHub",
+      "techStack": "Tech stack"
+    },
+    "step3": {
+      "label": "Real projects",
+      "headline": "4 verified projects on devnet",
+      "subtitle": "Data is based on real green projects in Kazakhstan. On-chain with mock fallback.",
+      "liveBadge": "Live",
+      "liveTitle": "Yassawi University Solar Plant — our real project",
+      "liveDesc": "A 25 kW solar plant on the university campus in Turkestan. Generation data is streamed in real time via the SOLARMAN API — not a simulation, but live monitoring of real equipment.",
+      "openCatalog": "Open catalog"
+    },
+    "step4": {
+      "label": "Try it yourself",
+      "headline": "Investing with KZTE",
+      "step1Title": "Connect Phantom wallet",
+      "step1Desc": "Click the wallet button in the top right. Network — Devnet.",
+      "step2Title": "Get test KZTE",
+      "step2Desc": "Go to Portfolio and tap \"Get KZTE\" — 100,000 ₸ to your wallet.",
+      "step3Title": "Pick a project and invest",
+      "step3Desc": "Open any project → \"Invest\" → enter the number of shares → confirm. Platform fee — 1.5%.",
+      "step4Title": "Check your wallet",
+      "step4Desc": "Share tokens (sYSV, sBRB, sAMT) appear in Phantom. With price growing to $50/t — up to ×50 ROI.",
+      "ctaPortfolio": "Portfolio (KZTE Faucet)",
+      "ctaSesYasavi": "Yassawi SES",
+      "ctaWind": "Yereymentau Wind Farm"
+    },
+    "step5": {
+      "label": "Passive income",
+      "headline": "Dividends from credit sales",
+      "howTitle": "How it works",
+      "howStep1": "An emitter (KazMunaiGas, ArcelorMittal) buys carbon credits from the project for KZTE.",
+      "howStep2_part1": "The project owner calls",
+      "howStep2_part2": "— KZTE goes into the vault, updating",
+      "howStep3": "The investor opens Portfolio and clicks \"Claim\" — taking their share of the dividends.",
+      "exampleTitle": "Example: 5,000 t CO₂ project, your share 10%",
+      "income1": "income/year at $1/t",
+      "income2": "income/year at $15/t (2028)",
+      "income3": "income/year at $50/t (2030)",
+      "exampleNote": "Gas is paid by the investor, not the owner → scalable. Double-claim is impossible via last_claimed.",
+      "ctaPortfolio": "Open Portfolio"
+    },
+    "step6": {
+      "label": "Killer feature",
+      "headline": "Retire — burn credits forever",
+      "step1Title": "Buy Carbon Tokens",
+      "step1Desc": "Emitter purchases the project's carbon credits",
+      "step2Title": "SPL Token BURN",
+      "step2Desc": "Tokens are destroyed forever — removed from circulation",
+      "step3Title": "RetireRecord PDA",
+      "step3Desc": "Immutable on-chain proof: who, how much, when, why",
+      "step4Title": "NFT certificate",
+      "step4Desc": "Mint NFT with metadata — visible in Phantom, downloadable SVG",
+      "whyImportantLabel": "Why it matters:",
+      "whyImportantText": "A burned token doesn't exist. Double counting is impossible. RetireRecord PDA — immutable proof for auditors. Platform fee for retirement — 1%. Anyone can verify on Solana Explorer.",
+      "ctaTry": "Try Retire"
+    },
+    "step7": {
+      "label": "Architecture and summary",
+      "headline": "A full DeFi product on Solana",
+      "stats": {
+        "instructions": "instructions",
+        "tests": "tests",
+        "fee": "platform fee",
+        "roi": "investor ROI by 2030"
+      },
+      "instructionsTitle": "On-chain instructions",
+      "securityTitle": "Security",
+      "security": {
+        "checked": "checked_add / checked_mul / checked_div — everywhere",
+        "vault": "Vault PDA — sole authority over KZTE ATA",
+        "burn": "Burn before state mutation (reentrancy protection)",
+        "uniqueness": "RetireRecord PDA uniqueness — no double-retire",
+        "escrow": "Escrow owner validation in buy_shares"
+      },
+      "summaryHeadline": "ZhasylKZ solves three problems",
+      "tags": {
+        "transparency": "Transparency",
+        "liquidity": "Liquidity",
+        "verification": "Verification"
+      },
+      "summaryFooter": "Solana — fast and cheap. Kazakhstan — first in Central Asia. TAM at $50/t — $17.5B.",
+      "teamLabel": "Zerde team",
+      "teamDesc": "Pavlodar, Turkestan · Decentrathon 5.0 · Case 1 (RWA)",
+      "ctaExplorer": "Explorer",
+      "ctaGithub": "GitHub",
+      "ctaCatalog": "Project catalog"
+    }
+  }
+}
